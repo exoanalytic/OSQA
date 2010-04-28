@@ -125,6 +125,7 @@ class Node(BaseModel, NodeContent, DeletableContent):
     wiki = models.BooleanField(default=False)
 
     comment_count = DenormalizedField("children", node_type="comment", canceled=False)
+    flag_count = DenormalizedField("actions", action_type="flag", canceled=False)
 
     objects = NodeManager()
 

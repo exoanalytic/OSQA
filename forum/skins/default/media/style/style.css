@@ -1305,3 +1305,5 @@ div.comment-tools a:hover {
 }
 
 .action-link-separator { color: #CCCCCC; }
+
+.deleted {background-color: #F4E7E7;}

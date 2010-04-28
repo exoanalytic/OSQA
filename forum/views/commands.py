@@ -156,18 +156,18 @@ def like_comment(request, id):
         raise NotEnoughRepPointsException( _('like comments'))    
 
     try:
-        like = LikedComment.active.get(comment=comment, user=user)
+        like = VoteUpCommentAction.objects.get(node=comment, user=user)
         like.cancel()
         likes = False
     except ObjectDoesNotExist:
-        like = LikedComment(comment=comment, user=user)
+        like = VoteUpCommentAction(node=comment, user=user)
         like.save()
         likes = True
 
     return {
         'commands': {
-            'update_comment_score': [comment.id, likes and 1 or -1],
-            'update_likes_comment_mark': [comment.id, likes and 'on' or 'off']
+            'update_post_score': [comment.id, likes and 1 or -1],
+            'update_user_post_vote': [comment.id, likes and 'on' or 'off']
         }
     }
 
@@ -273,16 +273,19 @@ def accept_answer(request, id):
 
     commands = {}
 
-    if answer.accepted:
-        answer.unmark_accepted(user)
+    if answer.marked:
+        old = AcceptAnswerAction.objects.get(node=answer)
+        old.cancel(user)
         commands['unmark_accepted'] = [answer.id]
     else:
-        if question.accepted_answer is not None:
+        if question.answer_accepted:
             accepted = question.accepted_answer
-            accepted.unmark_accepted(user)
+            old = AcceptAnswerAction.objects.get(node=accepted)
+            old.cancel(user)
             commands['unmark_accepted'] = [accepted.id]
 
-        answer.mark_accepted(user)
+        new = AcceptAnswerAction(node=answer, user=user)
+        new.save()
         commands['mark_accepted'] = [answer.id]
 
     return {'commands': commands}

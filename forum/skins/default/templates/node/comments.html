@@ -18,7 +18,7 @@
                     <a class="comment-user userinfo" href="{{comment.user.get_profile_url}}">{{comment.user}}</a>
                     <span class="comment-age">({% diff_date comment.added_at %})</span>
                     {% if comment.can_like %}
-                        <a id="post-{{ comment.id }}-upvote" href="{% url vote_post id=comment.id,vote_type='up' %}"
+                        <a id="post-{{ comment.id }}-upvote" href="{% url like_comment id=comment.id %}"
                          title="{% trans "I like this comment (click again to cancel)" %}" class="ajax-command comment-like{% if comment.likes %} on{% endif %}"
                         rel="nofollow"> </a>
                     {% endif %}

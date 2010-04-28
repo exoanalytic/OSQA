@@ -43,8 +43,8 @@ def favorite_mark(question, user):
 
     return {'favorited': favorited, 'favorite_count': question.favorite_count, 'question': question}
 
-def post_control(text, url, command=False, title=""):
-    return {'text': text, 'url': url, 'command': command, 'title': title}
+def post_control(text, url, command=False, withprompt=False, title=""):
+    return {'text': text, 'url': url, 'command': command, 'withprompt': withprompt ,'title': title}
 
 @register.inclusion_tag('node/post_controls.html')
 def post_controls(post, user):
@@ -75,7 +75,7 @@ def post_controls(post, user):
                 label =  "%s (%d)" % (label, post.flaggeditems.count())
 
             controls.append(post_control(label, reverse('flag_post', kwargs={'id': post.id}),
-                    command=True, title=_("report as offensive (i.e containing spam, advertising, malicious text, etc.)")))
+                    command=True, withprompt=True, title=_("report as offensive (i.e containing spam, advertising, malicious text, etc.)")))
 
         if user.can_delete_post(post):
             controls.append(post_control(_('delete'), reverse('delete_post', kwargs={'id': post.id}),
@@ -107,9 +107,9 @@ def comments(post, user):
         
         if context['can_like']:
             try:
-                c.votes.get(user=user)
+                VoteUpCommentAction.objects.get(node=c, user=user)
                 context['likes'] = True
-            except:
+            except Exception, e:
                 context['likes'] = False
 
         context['user'] = c.user

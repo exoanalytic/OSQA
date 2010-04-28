@@ -121,6 +121,28 @@ function show_message(object, msg) {
     div.fadeIn("fast");
 }
 
+function show_prompt(object, msg, callback) {
+    var div = $('<div class="vote-notification">' + msg + '<br />' +
+            '<textarea class="command-prompt"></textarea><br />' +
+            '<button class="prompt-cancel">Cancel</button>' +
+            '<button class="prompt-ok">OK</button>' +
+            '</div>');
+
+    function fade_out() {
+        div.fadeOut("fast", function() { div.remove(); });
+    }
+
+    div.find('.prompt-cancel').click(fade_out);
+
+    div.find('.prompt-ok').click(function(event) {
+        callback(div.find('.command-prompt').html());
+        fade_out();
+    });
+
+    object.parent().append(div);
+    div.fadeIn("fast");    
+}
+
 function process_ajax_response(data, el) {
     if (!data.success && data['error_message'] != undefined) {
         show_message(el, data.error_message)
@@ -138,9 +160,16 @@ function process_ajax_response(data, el) {
 $(function() {
     $('a.ajax-command').live('click', function() {
         var el = $(this);
-        $.getJSON(el.attr('href'), function(data) {
-            process_ajax_response(data, el);
-        });
+
+        if (el.is('.withprompt')) {
+            show_prompt(el, "Please provide a reason:", function(text) {
+                alert(text);
+            });
+        } else {
+            $.getJSON(el.attr('href'), function(data) {
+                process_ajax_response(data, el);
+            });
+        }
 
         return false
     });

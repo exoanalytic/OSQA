@@ -42,7 +42,7 @@ class Action(models.Model):
     def repute_users(self):
         pass
 
-    def proccess_action(self):
+    def process_action(self):
         pass
 
     def cancel_action(self):
@@ -80,7 +80,7 @@ class Action(models.Model):
 
         if self._is_new:
             self.repute_users()
-            self.proccess_action()
+            self.process_action()
             user_action.send(sender=self.__class__, instance=self)
 
     def cancel_or_delete(self, user=None):

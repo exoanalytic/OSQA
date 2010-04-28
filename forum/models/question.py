@@ -33,6 +33,10 @@ class Question(Node):
     def answer_accepted(self):
         return self.extra_ref is not None
 
+    @property
+    def accepted_answer(self):
+        return self.extra_ref
+
     @models.permalink    
     def get_absolute_url(self):
         return ('question', (), {'id': self.id, 'slug': django_urlquote(slugify(self.title))})
