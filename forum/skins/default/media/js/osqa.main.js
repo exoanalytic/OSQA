@@ -135,7 +135,7 @@ function show_prompt(object, msg, callback) {
     div.find('.prompt-cancel').click(fade_out);
 
     div.find('.prompt-ok').click(function(event) {
-        callback(div.find('.command-prompt').html());
+        callback(div.find('.command-prompt').val());
         fade_out();
     });
 
@@ -146,6 +146,7 @@ function show_prompt(object, msg, callback) {
 function process_ajax_response(data, el) {
     if (!data.success && data['error_message'] != undefined) {
         show_message(el, data.error_message)
+        end_command(false);
     } else if (typeof data['commands'] != undefined){
         for (var command in data.commands) {
             response_commands[command].apply(null, data.commands[command])
@@ -154,18 +155,45 @@ function process_ajax_response(data, el) {
         if (data['message'] != undefined) {
             show_message(el, data.message)
         }
+        end_command(true);
+    }
+}
+
+var running = false;
+
+function start_command() {
+    $('body').append($('<div id="command-loader"></div>'));
+    running = true;
+}
+
+function end_command(success) {
+    if (success) {
+        $('#command-loader').addClass('success');
+        $('#command-loader').fadeOut("slow", function() {
+            $('#command-loader').remove();
+            running = false;
+        });
+    } else {
+        $('#command-loader').remove();
+        running = false;
     }
 }
 
 $(function() {
     $('a.ajax-command').live('click', function() {
+        if (running) return false;
+
         var el = $(this);
 
         if (el.is('.withprompt')) {
             show_prompt(el, "Please provide a reason:", function(text) {
-                alert(text);
+                start_command();
+                $.post(el.attr('href'), {prompt: text}, function(data) {
+                    process_ajax_response(data, el);
+                }, "json")
             });
         } else {
+            start_command();
             $.getJSON(el.attr('href'), function(data) {
                 process_ajax_response(data, el);
             });
@@ -267,6 +295,7 @@ $(function() {
                     post_data['id'] = comment_in_form;
                 }
 
+                start_command();
                 $.post($form.attr('action'), post_data, function(data) {
                     process_ajax_response(data, $button);
                     cleanup_form();

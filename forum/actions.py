@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from forum.models.action import ActionProxy
 import settings
 
@@ -47,7 +48,12 @@ class FlagAction(ActionProxy):
 
         if self.node.flag_count == int(settings.FLAG_COUNT_TO_DELETE_POST):
             self.repute(self.node.author, -int(settings.REP_LOST_BY_FLAGGED_5_TIMES))
-            #todo: issue a delete action
+            if not self.node.deleted:
+                delete = DeleteAction(node=self.node, user=self.user, extra="BYFLAGGED")
+                delete.save()
+
+        def cancel_action(self):
+            self.node.reset_flag_count_cache()
 
 
 class AcceptAnswerAction(ActionProxy):
@@ -77,3 +83,19 @@ class FavoriteAction(ActionProxy):
 
     def cancel_action(self):
         self.proccess_action()
+
+
+class DeleteAction(ActionProxy):
+    def process_action(self):
+        self.node.mark_deleted(self.user)
+
+    def cancel_action(self):
+        self.node.unmark_deleted()
+
+    def reason(self):
+        if self.extra != "BYFLAGGED":
+            return self.extra
+        else:
+            return _("This post was deleted because it reached the number of flags necessary to delete a post: %(reasons)s") % {
+                'resons': "; ".join([f.extra for f in FlagAction.objects.filter(node=self.node)])
+            }

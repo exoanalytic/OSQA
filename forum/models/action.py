@@ -3,6 +3,33 @@ import re
 
 user_action = django.dispatch.Signal(providing_args=['instance'])
 
+
+class ActionField(models.ForeignKey):
+    __metaclass__ = models.SubfieldBase
+
+    def __init__(self, **kwargs):
+        super(ActionField, self).__init__('Node', **kwargs)
+
+
+    def contribute_to_class(self, cls, name):
+        super (ActionField, self).contribute_to_class(cls, name)
+
+        def at(inst):
+            action = getattr(inst, name)
+            if action is not None:
+                return action.action_date
+            return None
+
+        def by(inst):
+            action = getattr(inst, name)
+            if action is not None:
+                return action.user
+            return None
+
+        cls.add_to_class(name + '_at', property(at))
+        cls.add_to_class(name + '_by', property(by))
+
+
 class ActionManager(models.Manager):
     use_for_related_fields = True
 
@@ -27,7 +54,8 @@ class ActionManager(models.Manager):
 
 class Action(models.Model):
     user = models.ForeignKey(User, related_name="actions")
-    node = models.ForeignKey(Node, null=True, related_name="actions")
+    ip   = models.CharField(max_length=16)
+    node = models.ForeignKey('Node', null=True, related_name="actions")
     action_type = models.CharField(max_length=16)
     action_date = models.DateTimeField(default=datetime.datetime.now)
 

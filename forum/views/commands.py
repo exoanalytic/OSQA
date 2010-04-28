@@ -133,10 +133,15 @@ def flag_post(request, id):
         raise NotEnoughLeftException(_('flags'), str(settings.MAX_FLAGS_PER_DAY))
 
     try:
-        post.flaggeditems.get(user=user)
-        raise CannotDoubleActionException(_('flag'))
+        current = FlagAction.objects.get(user=user, node=post)
+        raise Exception(_("You already flagged this post with the following reason: %(reason)s") % {'reason': current.extra})
     except ObjectDoesNotExist:
-        flag = FlaggedItem(user=user, content_object=post)
+        reason = request.POST.get('prompt', '').strip()
+
+        if not len(reason):
+            raise Exception(_("Reason is empty"))
+
+        flag = FlagAction(user=user, node=post, extra=reason)
         flag.save()
 
     return {}

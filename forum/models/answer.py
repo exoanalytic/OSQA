@@ -1,7 +1,5 @@
 from base import *
 
-from question import Question
-
 class Answer(Node):
     class Meta(Node.Meta):
         proxy = True

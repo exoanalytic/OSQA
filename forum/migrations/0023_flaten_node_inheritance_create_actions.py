@@ -27,6 +27,28 @@ class Migration(DataMigration):
 
             n.save()
 
+            ask = orm.Action(
+                user = n.author,
+                action_date = n.added_at,
+                node = n,
+                action_type = "ask",
+                extra = ''
+            )
+
+            ask.save()
+
+            if n.deleted:
+                action = orm.Action(
+                    user = n.deleted_by,
+                    node = n,
+                    action_type = "delete",
+                    action_date = n.deleted_at or datetime.datetime.now(),
+                    extra = ''
+                )
+
+                action.save()
+
+
             if n.marked:
                 action = orm.Action(
                     user = q.closed_by,
@@ -44,6 +66,7 @@ class Migration(DataMigration):
                     node = n,
                     action_type = "wikify",
                     action_date = q.wikified_at or datetime.datetime.now(),
+                    extra = ''
                 )
 
                 action.save()
@@ -64,12 +87,34 @@ class Migration(DataMigration):
 
             n.save()
 
+            ans = orm.Action(
+                user = n.author,
+                action_date = n.added_at,
+                node = n,
+                action_type = "answer",
+                extra = ''
+            )
+
+            ans.save()
+
+            if n.deleted:
+                action = orm.Action(
+                    user = n.deleted_by,
+                    node = n,
+                    action_type = "delete",
+                    action_date = n.deleted_at or datetime.datetime.now(),
+                    extra = ''
+                )
+
+                action.save()
+
             if n.marked:
                 action = orm.Action(
                     user = a.accepted_by,
                     node = n,
                     action_type = "acceptanswer",
                     action_date = a.accepted_at or datetime.datetime.now(),
+                    extra = ''
                 )
 
                 action.save()
@@ -80,6 +125,7 @@ class Migration(DataMigration):
                     node = n,
                     action_type = "wikify",
                     action_date = a.wikified_at or datetime.datetime.now(),
+                    extra = ''
                 )
 
                 action.save()
@@ -88,6 +134,96 @@ class Migration(DataMigration):
 
         print "\n...done\n"
 
+        v_count = orm.Vote.objects.count()
+        print "\nConverting %d votes:" % v_count
+        progress = ProgressBar(v_count)
+
+        for v in orm.Vote.objects.all():
+            a = orm.Action(
+                action_type = (v.vote == 1) and "voteup" or "votedown",
+                user = v.user,
+                node = v.node,
+                action_date = v.voted_at,
+                canceled = v.canceled,
+                extra = ''
+            )
+
+            if a.canceled:
+                a.canceled_at = v.voted_at
+                a.canceled_by = v.user
+
+            a.save()
+            progress.update()
+
+        print "\n...done\n"
+
+        f_count = orm.FlaggedItem.objects.count()
+        print "\nConverting %d flags:" % f_count
+        progress = ProgressBar(f_count)
+
+        for f in orm.FlaggedItem.objects.all():
+            a = orm.Action(
+                action_type = "flag",
+                user = f.user,
+                node = f.node,
+                action_date = f.flagged_at,
+                extra = f.reason or ''
+            )
+
+            a.save()
+            progress.update()
+
+        print "\n...done\n"
+
+
+        c_count = orm.Node.objects.filter(node_type="comment").count()
+        print "\nCreating %d comment actions:" % c_count
+        progress = ProgressBar(c_count)
+
+        for c in orm.Node.objects.filter(node_type="comment").all():
+            a = orm.Action(
+                action_type = "comment",
+                user = c.author,
+                node = c,
+                action_date = c.added_at,
+                extra = ''
+            )
+
+            a.save()
+
+            if c.deleted:
+                action = orm.Action(
+                    user = c.deleted_by,
+                    node = c,
+                    action_type = "delete",
+                    action_date = c.deleted_at or datetime.datetime.now(),
+                    extra = ''
+                )
+
+                action.save()
+
+            progress.update()
+
+        print "\n...done\n"
+
+
+        r_count = orm.NodeRevision.objects.count()
+        print "\nCreating %d edit actions:" % r_count
+        progress = ProgressBar(r_count)
+
+        for r in orm.NodeRevision.objects.all():
+            a = orm.Action(
+                action_type = "revise",
+                user = r.author,
+                node = r.node,
+                action_date = r.revised_at,
+                extra = r.revision
+            )
+
+            a.save()
+            progress.update()
+
+        print "\n...done\n"
     
     
     def backwards(self, orm):
@@ -139,6 +275,7 @@ class Migration(DataMigration):
             'canceled_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'canceled_actions'", 'null': 'True', 'to': "orm['forum.User']"}),
             'extra': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'ip': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
             'node': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']", 'null': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'actions'", 'to': "orm['forum.User']"})
         },
@@ -203,13 +340,6 @@ class Migration(DataMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '50', 'blank': 'True'}),
             'type': ('django.db.models.fields.SmallIntegerField', [], {})
-        },
-        'forum.favoritenode': {
-            'Meta': {'unique_together': "(('node', 'user'),)", 'object_name': 'FavoriteNode'},
-            'added_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'node': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'user_favorite_nodes'", 'to': "orm['forum.User']"})
         },
         'forum.favoritequestion': {
             'Meta': {'unique_together': "(('question', 'user'),)", 'object_name': 'FavoriteQuestion', 'db_table': "u'favorite_question'"},

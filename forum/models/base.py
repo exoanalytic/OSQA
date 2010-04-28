@@ -234,8 +234,6 @@ class UserContent(models.Model):
         app_label = 'forum'
 
 
-marked_deleted = django.dispatch.Signal(providing_args=["instance", "deleted_by"])
-
 class DeletableContent(models.Model):
     deleted     = models.BooleanField(default=False)
     deleted_at  = models.DateTimeField(null=True, blank=True)
@@ -253,7 +251,6 @@ class DeletableContent(models.Model):
             self.deleted_at = datetime.datetime.now()
             self.deleted_by = user
             self.save()
-            marked_deleted.send(sender=self.__class__, instance=self, deleted_by=user)
             return True
         else:
             return False

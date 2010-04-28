@@ -89,7 +89,9 @@ class NodeManager(CachedManager):
 
     def get(self, *args, **kwargs):
         node = super(NodeManager, self).get(*args, **kwargs)
-        if self.model == Node:
+        cls = NodeMetaClass.types.get(node.node_type, None)
+
+        if cls and node.__class__ is not cls:
             return node.leaf
         return node
 
@@ -98,7 +100,9 @@ class NodeManager(CachedManager):
         return self.get(*args, **kwargs)
 
 
-class Node(BaseModel, NodeContent, DeletableContent):
+from action import ActionField
+
+class Node(BaseModel, NodeContent):
     __metaclass__ = NodeMetaClass
 
     node_type            = models.CharField(max_length=16, default='node')
@@ -106,20 +110,20 @@ class Node(BaseModel, NodeContent, DeletableContent):
     abs_parent           = models.ForeignKey('Node', related_name='all_children', null=True)
 
     added_at             = models.DateTimeField(default=datetime.datetime.now)
-
     score                 = models.IntegerField(default=0)
 
-    last_edited_at        = models.DateTimeField(null=True, blank=True)
-    last_edited_by        = models.ForeignKey(User, null=True, blank=True, related_name='last_edited_%(class)ss')
+    #deleted               = ActionField(null=True)
+    #last_edited           = ActionField(null=True)
 
-    last_activity_at     = models.DateTimeField(null=True, blank=True)
-    last_activity_by     = models.ForeignKey(User, null=True)
+    last_activity_by       = models.ForeignKey(User, null=True)
+    last_activity_at       = models.DateTimeField(null=True, blank=True)
 
     tags                 = models.ManyToManyField('Tag', related_name='%(class)ss')
     active_revision       = models.OneToOneField('NodeRevision', related_name='active', null=True)
 
     extra_ref = models.ForeignKey('Node', null=True)
     extra_count = models.IntegerField(default=0)
+    #extra_action = ActionField(null=True)
     
     marked = models.BooleanField(default=False)
     wiki = models.BooleanField(default=False)
@@ -266,29 +270,4 @@ class NodeRevision(BaseModel, NodeContent):
         unique_together = ('node', 'revision')
         app_label = 'forum'
 
-
-class FavoriteNode(models.Model):
-    node          = models.ForeignKey(Node, "favorites")
-    user          = models.ForeignKey(User, related_name='user_favorite_nodes')
-    added_at      = models.DateTimeField(default=datetime.datetime.now)
-
-    class Meta:
-        unique_together = ('node', 'user')
-        app_label = 'forum'
-
-    def __unicode__(self):
-        return '[%s] favorited at %s' %(self.user, self.added_at)
-
-    def _update_question_fav_count(self, diff):
-        self.question.favourite_count = self.question.favourite_count + diff
-        self.question.save()
-
-    def save(self, *args, **kwargs):
-        super(FavoriteNode, self).save(*args, **kwargs)
-        if self._is_new:
-            self._update_question_fav_count(1)
-
-    def delete(self):
-        self._update_question_fav_count(-1)
-        super(FavoriteNode, self).delete()
 

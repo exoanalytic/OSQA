@@ -5,11 +5,11 @@ from django.utils.translation import ugettext as _
 question_view = django.dispatch.Signal(providing_args=['instance', 'user'])
 
 class Question(Node):
-    answer_count = DenormalizedField("children", node_type="answer")
-    favorite_count = DenormalizedField("actions", action_type="favorite", canceled=False)
-
     class Meta(Node.Meta):
         proxy = True
+
+    answer_count = DenormalizedField("children", node_type="answer")
+    favorite_count = DenormalizedField("actions", action_type="favorite", canceled=False)
 
     @property   
     def closed(self):

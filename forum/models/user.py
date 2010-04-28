@@ -135,10 +135,10 @@ class User(BaseModel, DjangoUser):
                 action_date__range=(today - datetime.timedelta(days=1), today)).count()
 
     def get_up_vote_count(self):
-        return self.votes.filter(vote=1).count()
+        return self.actions.filter(canceled=False, action_type="voteup").count()
 
     def get_down_vote_count(self):
-        return self.votes.filter(vote=-1).count()
+        return self.actions.filter(canceled=False, action_type="votedown").count()
 
     def get_reputation_by_upvoted_today(self):
         today = datetime.datetime.now()
@@ -152,7 +152,8 @@ class User(BaseModel, DjangoUser):
 
     def get_flagged_items_count_today(self):
         today = datetime.date.today()
-        return self.flaggeditems.filter(flagged_at__range=(today - datetime.timedelta(days=1), today)).count()
+        return self.actions.filter(canceled=False, action_type="flag",
+                action_date__range=(today - datetime.timedelta(days=1), today)).count()
 
     def get_visible_answers(self, question):
         if self.is_superuser:

@@ -1307,3 +1307,16 @@ div.comment-tools a:hover {
 .action-link-separator { color: #CCCCCC; }
 
 .deleted {background-color: #F4E7E7;}
+
+#command-loader {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    width: 24px;
+    height: 24px;
+    background: url('/m/default/media/images/indicator.gif')
+}
+
+#command-loader.success {
+    background: url('/m/default/media/images/vote-accepted-on.png')
+}

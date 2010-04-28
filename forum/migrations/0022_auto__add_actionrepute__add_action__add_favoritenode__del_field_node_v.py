@@ -29,17 +29,9 @@ class Migration(SchemaMigration):
             ('action_type', self.gf('django.db.models.fields.CharField')(max_length=16)),
             ('canceled_at', self.gf('django.db.models.fields.DateTimeField')(null=True)),
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('ip', self.gf('django.db.models.fields.CharField')(max_length=16, null=True)),
         ))
         db.send_create_signal('forum', ['Action'])
-
-        # Adding model 'FavoriteNode'
-        db.create_table('forum_favoritenode', (
-            ('node', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.Node'])),
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('added_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='user_favorite_nodes', to=orm['forum.User'])),
-        ))
-        db.send_create_signal('forum', ['FavoriteNode'])
 
         # Deleting field 'Node.vote_up_count'
         db.delete_column('forum_node', 'vote_up_count')
@@ -214,6 +206,7 @@ class Migration(SchemaMigration):
             'canceled_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'canceled_actions'", 'null': 'True', 'to': "orm['forum.User']"}),
             'extra': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'ip': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
             'node': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']", 'null': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'actions'", 'to': "orm['forum.User']"})
         },
@@ -278,13 +271,6 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '50', 'blank': 'True'}),
             'type': ('django.db.models.fields.SmallIntegerField', [], {})
-        },
-        'forum.favoritenode': {
-            'Meta': {'unique_together': "(('node', 'user'),)", 'object_name': 'FavoriteNode'},
-            'added_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'node': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'user_favorite_nodes'", 'to': "orm['forum.User']"})
         },
         'forum.favoritequestion': {
             'Meta': {'unique_together': "(('question', 'user'),)", 'object_name': 'FavoriteQuestion', 'db_table': "u'favorite_question'"},

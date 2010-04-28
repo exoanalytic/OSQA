@@ -72,7 +72,7 @@ def post_controls(post, user):
             label = _('flag')
             
             if user.can_view_offensive_flags(post):
-                label =  "%s (%d)" % (label, post.flaggeditems.count())
+                label =  "%s (%d)" % (label, post.flag_count)
 
             controls.append(post_control(label, reverse('flag_post', kwargs={'id': post.id}),
                     command=True, withprompt=True, title=_("report as offensive (i.e containing spam, advertising, malicious text, etc.)")))

@@ -1,10 +1,9 @@
 from question import Question ,QuestionRevision, QuestionSubscription
 from answer import Answer, AnswerRevision
 from tag import Tag, MarkedTag
-from meta import Vote, FlaggedItem
 from user import User, Activity, ValidationHash, AuthKeyUserAssociation, SubscriptionSettings
 from repute import Badge, Award, Repute
-from node import Node, NodeRevision, NodeMetaClass, FavoriteNode
+from node import Node, NodeRevision, NodeMetaClass
 from comment import Comment
 from action import Action, ActionRepute
 from utils import KeyValue
@@ -26,10 +25,10 @@ def is_new(sender, instance, **kwargs):
 pre_save.connect(is_new)
 
 __all__ = [
-        'Node', 'NodeRevision', 'FavoriteNode', 
+        'Node', 'NodeRevision',  
         'Question', 'QuestionSubscription', 'QuestionRevision',
         'Answer', 'AnswerRevision',
-        'Tag', 'Comment', 'Vote', 'FlaggedItem', 'MarkedTag', 'Badge', 'Award', 'Repute',
+        'Tag', 'Comment', 'MarkedTag', 'Badge', 'Award', 'Repute',
         'Activity', 'ValidationHash', 'AuthKeyUserAssociation', 'SubscriptionSettings', 'KeyValue', 'User',
         'Action', 'ActionRepute',
         ]

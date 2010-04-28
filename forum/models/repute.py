@@ -89,7 +89,7 @@ class Award(GenericContent, UserContent):
 
 class Repute(MetaContent, CancelableContent, UserContent):
     value    = models.SmallIntegerField(default=0)
-    question = models.ForeignKey('Question')
+    question = models.ForeignKey('Node')
     reputed_at = models.DateTimeField(default=datetime.datetime.now)
     reputation_type = models.SmallIntegerField(choices=TYPE_REPUTATION)
     user_previous_rep = models.IntegerField(default=0)
