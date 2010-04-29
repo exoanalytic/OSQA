@@ -73,9 +73,6 @@ class NodeMetaClass(BaseMetaClass):
         Node.add_to_class(name, property(parent))
 
 
-node_create = django.dispatch.Signal(providing_args=['instance'])
-node_edit = django.dispatch.Signal(providing_args=['instance'])
-
 class NodeManager(CachedManager):
     use_for_related_fields = True
 
@@ -168,7 +165,7 @@ class Node(BaseModel, NodeContent):
         if self.parent:
             self.parent.update_last_activity(user)
 
-    def create_revision(self, user, **kwargs):
+    def create_revision(self, user, revise=None, **kwargs):
         revision = NodeRevision(author=user, **kwargs)
         
         if not self.id:
@@ -180,29 +177,26 @@ class Node(BaseModel, NodeContent):
 
         revision.node_id = self.id
         revision.save()
-        self.activate_revision(user, revision)
+        self.activate_revision(user, revision, revise)
+        return revision
 
-    def activate_revision(self, user, revision):
+    def activate_revision(self, user, revision, revise=None):
         self.title = revision.title
         self.tagnames = revision.tagnames
         self.body = revision.body
 
-        old_revision = self.active_revision
         self.active_revision = revision
 
-        if not old_revision:
-            signal = node_create
-        else:
-            self.last_edited_at = datetime.datetime.now()
-            self.last_edited_by = user
-            signal = node_edit
-
         self.update_last_activity(user)
+
+        if revise:
+            self.last_edited = revise
+
         self.save()
-        signal.send(sender=self.__class__, instance=self)
 
     def get_tag_list_if_changed(self):
         dirty = self.get_dirty_fields()
+        active_user = self.last_edited and self.last_edited.by or self.author
 
         if 'tagnames' in dirty:
             new_tags = self.tagname_list()
@@ -219,7 +213,7 @@ class Node(BaseModel, NodeContent):
                 try:
                     tag = Tag.objects.get(name=name)
                 except:
-                    tag = Tag.objects.create(name=name, created_by=self.last_edited_by or self.author)
+                    tag = Tag.objects.create(name=name, created_by=active_user or self.author)
 
                 tag_list.append(tag)
 
@@ -233,7 +227,7 @@ class Node(BaseModel, NodeContent):
                 tag = Tag.objects.get(name=name)
                 tag.used_count = tag.used_count - 1
                 if tag.used_count == 0:
-                    tag.mark_deleted(self.last_edited_by or self.author)
+                    tag.mark_deleted(active_user)
                 tag.save()
 
             return tag_list

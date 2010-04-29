@@ -100,6 +100,16 @@ var response_commands = {
         }
     },
 
+    unmark_deleted: function(post_type, post_id) {
+        if (post_type == 'answer') {
+            var $answer = $('#answer-container-' + post_id);
+            $answer.removeClass('deleted');
+        } else {
+            var $container = $('#question-table');
+            $container.removeClass('deleted');
+        }
+    },
+
     set_subscription_button: function(text) {
         $('.subscription_switch').html(text);
     },

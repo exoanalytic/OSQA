@@ -95,8 +95,7 @@ def vote_post(request, id, vote_type):
         vote_type = "none"
     except ObjectDoesNotExist:
         vote_cls, vote_update = (vote_type == 'up') and (VoteUpAction, 1) or (VoteDownAction, -1)
-        vote = vote_cls(user=user, node=post)
-        vote.save()
+        vote_cls(user=user, node=post, ip=request.META['REMOTE_ADDR']).save()
 
     response = {
         'commands': {
@@ -141,8 +140,7 @@ def flag_post(request, id):
         if not len(reason):
             raise Exception(_("Reason is empty"))
 
-        flag = FlagAction(user=user, node=post, extra=reason)
-        flag.save()
+        FlagAction(user=user, node=post, extra=reason, ip=request.META['REMOTE_ADDR']).save()
 
     return {}
         
@@ -165,8 +163,7 @@ def like_comment(request, id):
         like.cancel()
         likes = False
     except ObjectDoesNotExist:
-        like = VoteUpCommentAction(node=comment, user=user)
-        like.save()
+        VoteUpCommentAction(node=comment, user=user, ip=request.META['REMOTE_ADDR']).save()
         likes = True
 
     return {
@@ -187,7 +184,13 @@ def delete_comment(request, id):
     if not user.can_delete_comment(comment):
         raise NotEnoughRepPointsException( _('delete comments'))
 
-    comment.mark_deleted(user)
+    reason = request.POST.get('prompt', '').strip()
+
+    if not len(reason):
+        raise Exception(_("Reason is empty"))
+
+    if not comment.deleted:
+        DeleteAction(node=comment, user=user, extra=reason, ip=request.META['REMOTE_ADDR']).save()
 
     return {
         'commands': {
@@ -207,8 +210,7 @@ def mark_favorite(request, id):
         favorite.cancel()
         added = False
     except ObjectDoesNotExist:
-        favorite = FavoriteAction(node=question, user=request.user)
-        favorite.save()
+        FavoriteAction(node=question, user=request.user, ip=request.META['REMOTE_ADDR']).save()
         added = True
 
     return {
@@ -229,23 +231,23 @@ def comment(request, id):
     if not request.method == 'POST':
         raise Exception(_("Invalid request"))
 
-    if 'id' in request.POST:
-        comment = get_object_or_404(Comment, id=request.POST['id'])
-
-        if not user.can_edit_comment(comment):
-            raise NotEnoughRepPointsException( _('edit comments'))
-    else:
-        if not user.can_comment(post):
-            raise NotEnoughRepPointsException( _('comment'))
-
-        comment = Comment(parent=post)
-
     comment_text = request.POST.get('comment', '').strip()
 
     if not len(comment_text):
         raise Exception(_("Comment is empty"))
 
-    comment.create_revision(user, body=comment_text)
+    if 'id' in request.POST:
+        comment = get_object_or_404(Comment, id=request.POST['id'])
+
+        if not user.can_edit_comment(comment):
+            raise NotEnoughRepPointsException( _('edit comments'))
+
+        comment = ReviseAction(user=user, node=comment, ip=request.META['REMOTE_ADDR']).save(data=dict(text=comment_text)).node
+    else:
+        if not user.can_comment(post):
+            raise NotEnoughRepPointsException( _('comment'))
+
+        comment = CommentAction(user=user, ip=request.META['REMOTE_ADDR']).save(data=dict(text=comment_text, parent=post)).node
 
     if comment.active_revision.revision == 1:
         return {
@@ -278,19 +280,16 @@ def accept_answer(request, id):
 
     commands = {}
 
-    if answer.marked:
-        old = AcceptAnswerAction.objects.get(node=answer)
-        old.cancel(user)
+    if answer.accepted:
+        answer.accepted.cancel(user)
         commands['unmark_accepted'] = [answer.id]
     else:
         if question.answer_accepted:
             accepted = question.accepted_answer
-            old = AcceptAnswerAction.objects.get(node=accepted)
-            old.cancel(user)
+            accepted.accepted.cancel(user)
             commands['unmark_accepted'] = [accepted.id]
 
-        new = AcceptAnswerAction(node=answer, user=user)
-        new.save()
+        AcceptAnswerAction(node=answer, user=user, ip=request.META['REMOTE_ADDR']).save()
         commands['mark_accepted'] = [answer.id]
 
     return {'commands': commands}
@@ -306,13 +305,22 @@ def delete_post(request, id):
     if not (user.can_delete_post(post)):
         raise NotEnoughRepPointsException(_('delete posts'))
 
-    post.mark_deleted(user)
+    ret = {'commands': {}}
 
-    return {
-        'commands': {
-                'mark_deleted': [post.node_type, id]
-            }
-    }
+    if post.deleted:
+        post.deleted.cancel()
+        ret['commands']['unmark_deleted'] = [post.node_type, id]
+    else:
+        reason = request.POST.get('prompt', '').strip()
+
+        if not len(reason):
+            raise Exception(_("Reason is empty"))
+
+        DeleteAction(node=post, user=user, extra=reason, ip=request.META['REMOTE_ADDR']).save()
+
+        ret['commands']['mark_deleted'] = [post.node_type, id]
+
+    return ret
 
 @command
 def subscribe(request, id):

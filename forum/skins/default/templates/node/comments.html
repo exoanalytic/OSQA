@@ -28,7 +28,7 @@
                     {% endif %}
                     {% if comment.can_delete %}
                         <a id="comment-{{ comment.id }}-delete" href="{% url delete_comment id=comment.id %}" title="{% trans "Delete comment" %}"
-                            class="ajax-command comment-delete" rel="nofollow"> </a>
+                            class="ajax-command withprompt comment-delete" rel="nofollow"> </a>
                     {% endif %}
                 </td>
             </tr>

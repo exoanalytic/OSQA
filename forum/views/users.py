@@ -201,14 +201,17 @@ def user_votes(request, user):
 
 @user_view('users/reputation.html', 'reputation', _('user reputation in the community'), _('profile - user reputation'))
 def user_reputation(request, user):
-    reputation = user.reputes.order_by('-reputed_at')
+    rep = list(user.reputes.order_by('id'))
+    values = [r.value for r in rep]
+    redux = lambda x, y: x+y
+    
 
     graph_data = simplejson.dumps([
-            (time.mktime(rep.reputed_at.timetuple()) * 1000, rep.reputation)
-            for rep in reputation
+            (time.mktime(rep[i].reputed_at.timetuple()) * 1000, reduce(redux, values[:i], 0))
+            for i in range(len(values))
     ])
 
-    return {"view_user": user, "reputation": reputation, "graph_data": graph_data}
+    return {"view_user": user, "reputation": rep, "graph_data": graph_data}
 
 @user_view('users/questions.html', 'favorites', _('favorite questions'),  _('profile - favorite questions'))
 def user_favorites(request, user):

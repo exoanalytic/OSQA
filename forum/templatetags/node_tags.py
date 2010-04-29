@@ -78,8 +78,12 @@ def post_controls(post, user):
                     command=True, withprompt=True, title=_("report as offensive (i.e containing spam, advertising, malicious text, etc.)")))
 
         if user.can_delete_post(post):
-            controls.append(post_control(_('delete'), reverse('delete_post', kwargs={'id': post.id}),
-                    command=True))
+            if post.deleted:
+                controls.append(post_control(_('undelete'), reverse('delete_post', kwargs={'id': post.id}),
+                        command=True))
+            else:
+                controls.append(post_control(_('delete'), reverse('delete_post', kwargs={'id': post.id}),
+                        command=True, withprompt=True))
 
     return {'controls': controls}
 

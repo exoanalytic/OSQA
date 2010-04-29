@@ -49,6 +49,9 @@ class Action(models.Model):
     def repute_users(self):
         pass
 
+    def process_data(self, **data):
+        pass
+
     def process_action(self):
         pass
 
@@ -79,24 +82,21 @@ class Action(models.Model):
     def get_type(cls):
         return re.sub(r'action$', '', cls.__name__.lower())
 
-    def save(self, *args, **kwargs):
+    def save(self, data=None, *args, **kwargs):
         if not self.id:
             self.action_type = self.__class__.get_type()
+
+        if data:
+            self.process_data(**data)
 
         super(Action, self).save(*args, **kwargs)
 
         if self._is_new:
-            if not self.node.wiki:
+            if (self.node is None) or (not self.node.wiki):
                 self.repute_users()
             self.process_action()
 
-    def cancel_or_delete(self, user=None):
-        if self.action_date > (datetime.datetime.now() - datetime.timedelta(minutes=1)):
-            for repute in self.reputes.all():
-                repute.delete()
-            self.delete()
-        else:
-            self.cancel(user)
+        return self
 
     def delete(self):
         self.cancel_action()
@@ -122,19 +122,6 @@ class Action(models.Model):
             raise
         except cls.DoesNotExist:
             return None
-
-    @classmethod
-    def create_or_cancel(cls, issuer=None, **kwargs):
-        issuer = (issuer is not None) and issuer or kwargs.get('user', None)        
-        old = cls.get_current(**kwargs)
-
-        if old is not None:
-            old.cancel_or_delete(issuer)
-            return old
-        else:
-            new = cls(**kwargs)
-            new.save()
-            return new
 
     class Meta:
         app_label = 'forum'

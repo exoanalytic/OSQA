@@ -189,7 +189,7 @@ class User(BaseModel, DjangoUser):
         ) or self.is_superuser
 
     def can_delete_comment(self, comment):
-        return self == comment.user or self.reputation >= int(settings.REP_TO_DELETE_COMMENTS) or self.is_superuser
+        return self.is_superuser or self == comment.user or self.reputation >= int(settings.REP_TO_DELETE_COMMENTS)
 
     def can_accept_answer(self, answer):
         return self.is_superuser or self == answer.question.author
@@ -209,8 +209,11 @@ class User(BaseModel, DjangoUser):
         return self.is_superuser or (self == question.author and self.reputation >= settings.REP_TO_REOPEN_OWN)
 
     def can_delete_post(self, post):
+        if post.node_type == "comment":
+            return self.can_delete_comment(post)
+            
         return self.is_superuser or (self == post.author and (post.__class__.__name__ == "Answer" or
-        not post.answers.filter(~Q(author=self)).count()))
+            not post.answers.exclude(author=self).count()))
 
     def can_upload_files(self):
         return self.is_superuser or self.reputation >= int(settings.REP_TO_UPLOAD)

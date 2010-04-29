@@ -24,6 +24,13 @@ class Migration(DataMigration):
             else:
                 n.last_edited = None
 
+
+            if n.node_type == "answer" and n.marked:
+                n.extra_action_id = orm.Action.objects.get(node=n, action_type="acceptanswer", canceled=False).id
+
+            if n.node_type == "question" and n.marked:
+                n.extra_action_id = orm.Action.objects.get(node=n, action_type="close", canceled=False).id
+
             n.save()
 
             progress.update()

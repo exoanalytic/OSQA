@@ -151,7 +151,7 @@ class Migration(DataMigration):
 
                 action.save()
 
-            if n.marked:
+            if a.accepted:
                 action = orm.Action(
                     user = a.accepted_by,
                     node = n,
@@ -198,7 +198,7 @@ class Migration(DataMigration):
         print "\nConverting %d votes:" % v_count
         progress = ProgressBar(v_count)
 
-        for v in orm.Vote.objects.all():
+        for v in orm.Vote.objects.exclude(canceled=True):
             a = orm.Action(
                 action_type = (v.vote == 1) and ((v.node.node_type == "comment") and "voteupcomment" or "voteup") or "votedown",
                 user = v.user,
@@ -208,10 +208,6 @@ class Migration(DataMigration):
                 extra = ''
             )
 
-            if a.canceled:
-                a.canceled_at = v.voted_at
-                a.canceled_by = v.user
-
             a.save()
 
             def impl(node):
@@ -220,8 +216,7 @@ class Migration(DataMigration):
                 else:
                     return orm.Answer.objects.get(node_ptr=node)
 
-            if a.node.node_type in ("question", "answer") and ((not v.canceled) and (
-                        not a.node.wiki or impl(a.node).wikified_at > a.action_date)):
+            if a.node.node_type in ("question", "answer") and (not a.node.wiki or impl(a.node).wikified_at > a.action_date):
                 reptype, default = (v.vote == 1) and (GAIN_BY_UPVOTED, 10) or (LOST_BY_DOWNVOTED, 2)
                 rep = orm.ActionRepute(
                     action = a,
@@ -260,7 +255,7 @@ class Migration(DataMigration):
             rep = orm.ActionRepute(
                 action = a,
                 user = a.node.author,
-                value = repval_at(LOST_BY_FLAGGED, a.action_date, 2) or default
+                value = repval_at(LOST_BY_FLAGGED, a.action_date, 2) or 2
             )
             rep.save()
 

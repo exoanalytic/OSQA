@@ -49,8 +49,7 @@ class FlagAction(ActionProxy):
         if self.node.flag_count == int(settings.FLAG_COUNT_TO_DELETE_POST):
             self.repute(self.node.author, -int(settings.REP_LOST_BY_FLAGGED_5_TIMES))
             if not self.node.deleted:
-                delete = DeleteAction(node=self.node, user=self.user, extra="BYFLAGGED")
-                delete.save()
+                DeleteAction(node=self.node, user=self.user, extra="BYFLAGGED").save()
 
         def cancel_action(self):
             self.node.reset_flag_count_cache()
@@ -68,12 +67,14 @@ class AcceptAnswerAction(ActionProxy):
         self.node.parent.extra_ref = self.node
         self.node.parent.save()
         self.node.marked = True
+        self.node.extra_action = self
         self.node.save()
 
     def cancel_action(self):
         self.node.parent.extra_ref = None
         self.node.parent.save()
         self.node.marked = False
+        self.node.extra_action = None
         self.node.save()
 
 
@@ -87,10 +88,12 @@ class FavoriteAction(ActionProxy):
 
 class DeleteAction(ActionProxy):
     def process_action(self):
-        self.node.mark_deleted(self.user)
+        self.node.deleted = self
+        self.node.save()
 
     def cancel_action(self):
-        self.node.unmark_deleted()
+        self.node.deleted = None
+        self.node.save()
 
     def reason(self):
         if self.extra != "BYFLAGGED":

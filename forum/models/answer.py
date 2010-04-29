@@ -6,7 +6,7 @@ class Answer(Node):
 
     @property    
     def accepted(self):
-        return self.marked
+        return self.extra_action
 
     @property
     def headline(self):
