@@ -80,7 +80,7 @@ class NodeManager(CachedManager):
     use_for_related_fields = True
 
     def get_query_set(self):
-        qs = super(NodeManager, self).get_query_set().filter(deleted=False)
+        qs = super(NodeManager, self).get_query_set()
 
         if self.model is not Node:
             return qs.filter(node_type=self.model.get_type())
@@ -100,8 +100,6 @@ class NodeManager(CachedManager):
         return self.get(*args, **kwargs)
 
 
-from action import ActionField
-
 class Node(BaseModel, NodeContent):
     __metaclass__ = NodeMetaClass
 
@@ -112,8 +110,8 @@ class Node(BaseModel, NodeContent):
     added_at             = models.DateTimeField(default=datetime.datetime.now)
     score                 = models.IntegerField(default=0)
 
-    #deleted               = ActionField(null=True)
-    #last_edited           = ActionField(null=True)
+    deleted               = models.ForeignKey('Action', null=True, unique=True, related_name="deleted_node")
+    last_edited           = models.ForeignKey('Action', null=True, unique=True, related_name="edited_node")
 
     last_activity_by       = models.ForeignKey(User, null=True)
     last_activity_at       = models.DateTimeField(null=True, blank=True)
@@ -123,7 +121,7 @@ class Node(BaseModel, NodeContent):
 
     extra_ref = models.ForeignKey('Node', null=True)
     extra_count = models.IntegerField(default=0)
-    #extra_action = ActionField(null=True)
+    extra_action = models.ForeignKey('Action', null=True, related_name="extra_node")
     
     marked = models.BooleanField(default=False)
     wiki = models.BooleanField(default=False)

@@ -74,10 +74,7 @@ def tag(request, tag):
 
 @decorators.list('questions', QUESTIONS_PAGE_SIZE)
 def question_list(request, initial, list_description=_('questions'), sort=None, base_path=None):
-    pagesize = request.utils.page_size(QUESTIONS_PAGE_SIZE)
-    page = int(request.GET.get('page', 1))
-
-    questions = initial.filter(deleted=False)
+    questions = initial.filter(deleted=None)
 
     if request.user.is_authenticated():
         questions = questions.filter(
@@ -251,7 +248,6 @@ def question(request, id, slug):
         "question" : question,
         "answer" : answer_form,
         "answers" : page_objects.object_list,
-        "tags" : question.tags.all(),
         "tab_id" : view_id,
         "similar_questions" : question.get_related_questions(),
         "subscription": subscription,

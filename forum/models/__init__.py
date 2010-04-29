@@ -1,8 +1,8 @@
 from question import Question ,QuestionRevision, QuestionSubscription
 from answer import Answer, AnswerRevision
 from tag import Tag, MarkedTag
-from user import User, Activity, ValidationHash, AuthKeyUserAssociation, SubscriptionSettings
-from repute import Badge, Award, Repute
+from user import User, ValidationHash, AuthKeyUserAssociation, SubscriptionSettings
+from repute import Badge, Award
 from node import Node, NodeRevision, NodeMetaClass
 from comment import Comment
 from action import Action, ActionRepute
@@ -28,8 +28,8 @@ __all__ = [
         'Node', 'NodeRevision',  
         'Question', 'QuestionSubscription', 'QuestionRevision',
         'Answer', 'AnswerRevision',
-        'Tag', 'Comment', 'MarkedTag', 'Badge', 'Award', 'Repute',
-        'Activity', 'ValidationHash', 'AuthKeyUserAssociation', 'SubscriptionSettings', 'KeyValue', 'User',
+        'Tag', 'Comment', 'MarkedTag', 'Badge', 'Award',
+        'ValidationHash', 'AuthKeyUserAssociation', 'SubscriptionSettings', 'KeyValue', 'User',
         'Action', 'ActionRepute',
         ]
 

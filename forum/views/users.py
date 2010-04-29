@@ -150,8 +150,8 @@ def user_view(template, tab_name, tab_description, page_title):
 
 @user_view('users/stats.html', 'stats', _('user profile'), _('user profile overview'))
 def user_stats(request, user):
-    questions = Question.objects.filter(author=user, deleted=False).order_by('-added_at')
-    answers = Answer.objects.filter(author=user, deleted=False).order_by('-added_at')
+    questions = Question.objects.filter(author=user, deleted=None).order_by('-added_at')
+    answers = Answer.objects.filter(author=user, deleted=None).order_by('-added_at')
 
     up_votes = user.get_up_vote_count()
     down_votes = user.get_down_vote_count()
@@ -212,7 +212,7 @@ def user_reputation(request, user):
 
 @user_view('users/questions.html', 'favorites', _('favorite questions'),  _('profile - favorite questions'))
 def user_favorites(request, user):
-    questions = user.favorite_questions.filter(deleted=False)
+    questions = user.favorite_questions.filter(deleted=None)
 
     return {"questions" : questions, "view_user" : user}
 

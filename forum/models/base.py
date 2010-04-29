@@ -40,6 +40,7 @@ class CachedQuerySet(models.query.QuerySet):
         self._lazy = True        
         return LazyQueryList(self.model, list(self.values_list('id', flat=True)))
 
+from action import Action
 
 class CachedManager(models.Manager):
     use_for_related_fields = True
@@ -52,7 +53,8 @@ class CachedManager(models.Manager):
         int_cache_keys = [k for k in obj.__dict__.keys() if self.int_cache_re.match(k)]
 
         for k in int_cache_keys:
-            del obj.__dict__[k]
+            if not isinstance(obj.__dict__[k], Action):
+                del obj.__dict__[k]
 
         cache.set(self.model.cache_key(obj.id), obj, 60 * 60)
 

@@ -26,7 +26,7 @@ class UserManager(CachedManager):
 
 class AnonymousUser(DjangoAnonymousUser):
     def get_visible_answers(self, question):
-        return question.answers.filter(deleted=False)
+        return question.answers.filter(deleted=None)
 
     def can_view_deleted_post(self, post):
         return False
@@ -129,6 +129,9 @@ class User(BaseModel, DjangoUser):
         profile_link = u'<a href="%s">%s</a>' % (self.get_profile_url(),self.username)
         return mark_safe(profile_link)
 
+    def get_visible_answers(self, question):
+        return question.answers.filter(deleted=None)
+
     def get_vote_count_today(self):
         today = datetime.date.today()
         return self.actions.filter(canceled=False, action_type__in=("voteup", "votedown"),
@@ -154,12 +157,6 @@ class User(BaseModel, DjangoUser):
         today = datetime.date.today()
         return self.actions.filter(canceled=False, action_type="flag",
                 action_date__range=(today - datetime.timedelta(days=1), today)).count()
-
-    def get_visible_answers(self, question):
-        if self.is_superuser:
-            return question.answers
-        else:
-            return question.answers.filter(models.Q(deleted=False) | models.Q(deleted_by=self))
 
     def can_view_deleted_post(self, post):
         return self.is_superuser or post.author == self
@@ -220,62 +217,6 @@ class User(BaseModel, DjangoUser):
 
     class Meta:
         app_label = 'forum'
-
-class Activity(GenericContent):
-    """
-    We keep some history data for user activities
-    """
-    user = models.ForeignKey(User)
-    activity_type = models.SmallIntegerField(choices=TYPE_ACTIVITY)
-    active_at = models.DateTimeField(default=datetime.datetime.now)
-    is_auditted    = models.BooleanField(default=False)
-
-    class Meta:
-        app_label = 'forum'
-        db_table = u'activity'
-
-    def __unicode__(self):
-        return u'[%s] was active at %s' % (self.user.username, self.active_at)
-
-    def save(self, *args, **kwargs):
-        super(Activity, self).save(*args, **kwargs)
-        if self._is_new:
-            activity_record.send(sender=self.activity_type, instance=self)
-
-    @property
-    def node(self):
-        if self.activity_type in (const.TYPE_ACTIVITY_ANSWER, const.TYPE_ACTIVITY_ASK_QUESTION,
-                const.TYPE_ACTIVITY_MARK_ANSWER, const.TYPE_ACTIVITY_COMMENT_QUESTION, const.TYPE_ACTIVITY_COMMENT_ANSWER):
-            return self.content_object.leaf
-
-        if self.activity_type in (const.TYPE_ACTIVITY_UPDATE_ANSWER, const.TYPE_ACTIVITY_UPDATE_QUESTION):
-            return self.content_object.node.leaf            
-            
-        raise NotImplementedError()
-
-    @property
-    def type_as_string(self):
-        if self.activity_type == const.TYPE_ACTIVITY_ASK_QUESTION:
-            return _("asked")
-        elif self.activity_type  == const.TYPE_ACTIVITY_ANSWER:
-            return _("answered")
-        elif self.activity_type  == const.TYPE_ACTIVITY_MARK_ANSWER:
-            return _("marked an answer")
-        elif self.activity_type  == const.TYPE_ACTIVITY_UPDATE_QUESTION:
-            return _("edited a question")
-        elif self.activity_type == const.TYPE_ACTIVITY_COMMENT_QUESTION:
-            return _("commented a question")
-        elif self.activity_type == const.TYPE_ACTIVITY_COMMENT_ANSWER:
-            return _("commented an answer")
-        elif self.activity_type == const.TYPE_ACTIVITY_UPDATE_ANSWER:
-            return _("edited an answer")
-        elif self.activity_type == const.TYPE_ACTIVITY_PRIZE:
-            return _("received badge")
-        else:
-            raise NotImplementedError()
-
-
-activity_record = django.dispatch.Signal(providing_args=['instance'])
 
 class SubscriptionSettings(models.Model):
     user = models.OneToOneField(User, related_name='subscription_settings')

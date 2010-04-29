@@ -50,7 +50,7 @@ class Question(Node):
 
         if related_list is None:
             related_list = Question.objects.values('id').filter(tags__id__in=[t.id for t in self.tags.all()]
-            ).exclude(id=self.id).exclude(deleted=True).annotate(frequency=models.Count('id')).order_by('-frequency')[:count]
+            ).exclude(id=self.id).filter(deleted=None).annotate(frequency=models.Count('id')).order_by('-frequency')[:count]
             cache.set(cache_key, related_list, 60 * 60)
 
         return [Question.objects.get(id=r['id']) for r in related_list]

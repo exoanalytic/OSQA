@@ -1,388 +1,147 @@
 # encoding: utf-8
 import datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
-from forum.migrations import ProgressBar
 
-GAIN_BY_UPVOTED = 1
-GAIN_BY_ANSWER_ACCEPTED = 2
-GAIN_BY_ACCEPTING_ANSWER = 3
-GAIN_BY_DOWNVOTE_CANCELED = 4
-GAIN_BY_CANCELING_DOWNVOTE = 5
-LOST_BY_CANCELLING_ACCEPTED_ANSWER = -1
-LOST_BY_ACCEPTED_ANSWER_CANCELED = -2
-LOST_BY_DOWNVOTED = -3
-LOST_BY_FLAGGED = -4
-LOST_BY_DOWNVOTING = -5
-LOST_BY_FLAGGED_3_TIMES = -6
-LOST_BY_FLAGGED_5_TIMES = -7
-LOST_BY_UPVOTE_CANCELED = -8
-
-class Migration(DataMigration):
+class Migration(SchemaMigration):
     
     def forwards(self, orm):
-        rephist = dict([(t, []) for t in range(-8, 6) if t != 0])
+        
+        # Deleting model 'Repute'
+        db.delete_table(u'repute')
 
-        r_count = orm.Repute.objects.count()
-        print "\nCalculating rep gain/losses history through %d records:" % r_count
-        progress = ProgressBar(r_count)
+        # Deleting model 'Vote'
+        db.delete_table(u'vote')
 
-        for r in orm.Repute.objects.all():
-            l = rephist.get(r.reputation_type, None)
-            if l is None: continue
+        # Deleting model 'Answer'
+        db.delete_table(u'answer')
 
-            if (len(l) == 0) or (l[-1][1] != r.value):
-                l.append((r.reputed_at, r.value))
+        # Deleting model 'FlaggedItem'
+        db.delete_table(u'flagged_item')
 
-            progress.update()
+        # Deleting model 'AnonymousNode'
+        db.delete_table('forum_anonymousnode')
 
-        print "\n...done\n"
+        # Deleting model 'FavoriteQuestion'
+        db.delete_table(u'favorite_question')
 
+        # Deleting model 'Question'
+        db.delete_table(u'question')
 
-        def repval_at(reptype, repdate, default):
-            l = rephist.get(reptype, None)
+        # Deleting field 'Node.deleted_at'
+        db.delete_column('forum_node', 'deleted_at')
 
-            if l is None: return 0
-            if len(l) == 0: return default
+        # Deleting field 'Node.last_edited_by'
+        db.delete_column('forum_node', 'last_edited_by_id')
 
-            for r in l:
-                if r[0] <= repdate:
-                    return r[1] or default
+        # Deleting field 'Node.deleted'
+        db.delete_column('forum_node', 'deleted')
 
+        # Deleting field 'Node.deleted_by'
+        db.delete_column('forum_node', 'deleted_by_id')
 
-        q_count = orm.Question.objects.count()
-        print "\nConverting %d questions:" % q_count
-        progress = ProgressBar(q_count)
-
-        for q in orm.Question.objects.all():
-            n = q.node_ptr
-            n.last_activity_at = q.last_activity_at
-            n.last_activity_by = q.last_activity_by
-
-            if q.accepted_answer:
-                n.extra_ref = q.accepted_answer.node_ptr
-                
-            n.extra_count = q.view_count
-
-            n.marked = q.closed
-            n.wiki = q.wiki
-
-            n.save()
-
-            ask = orm.Action(
-                user = n.author,
-                action_date = n.added_at,
-                node = n,
-                action_type = "ask",
-                extra = ''
-            )
-
-            ask.save()
-
-            if n.deleted:
-                action = orm.Action(
-                    user = n.deleted_by,
-                    node = n,
-                    action_type = "delete",
-                    action_date = n.deleted_at or datetime.datetime.now(),
-                    extra = ''
-                )
-
-                action.save()
-
-
-            if n.marked:
-                action = orm.Action(
-                    user = q.closed_by,
-                    node = n,
-                    action_type = "close",
-                    extra = q.close_reason,
-                    action_date = q.closed_at or datetime.datetime.now(),
-                )
-
-                action.save()
-
-            if n.wiki:
-                action = orm.Action(
-                    user = n.author,
-                    node = n,
-                    action_type = "wikify",
-                    action_date = q.wikified_at or datetime.datetime.now(),
-                    extra = ''
-                )
-
-                action.save()
-
-            progress.update()
-
-        print "\n...done\n"
-
-        a_count = orm.Answer.objects.count()
-        print "\nConverting %d answers:" % a_count
-        progress = ProgressBar(a_count)
-
-        for a in orm.Answer.objects.all():
-            n = a.node_ptr
-
-            n.marked = a.accepted
-            n.wiki = a.wiki
-
-            n.save()
-
-            ans = orm.Action(
-                user = n.author,
-                action_date = n.added_at,
-                node = n,
-                action_type = "answer",
-                extra = ''
-            )
-
-            ans.save()
-
-            if n.deleted:
-                action = orm.Action(
-                    user = n.deleted_by,
-                    node = n,
-                    action_type = "delete",
-                    action_date = n.deleted_at or datetime.datetime.now(),
-                    extra = ''
-                )
-
-                action.save()
-
-            if n.marked:
-                action = orm.Action(
-                    user = a.accepted_by,
-                    node = n,
-                    action_type = "acceptanswer",
-                    action_date = a.accepted_at or datetime.datetime.now(),
-                    extra = ''
-                )
-
-                action.save()
-
-                if not a.wiki or a.wikified_at > action.action_date:
-                    if action.user == n.author:
-                        rep = orm.ActionRepute(
-                            action = action,
-                            user = action.user,
-                            value = repval_at(GAIN_BY_ACCEPTING_ANSWER, action.action_date, 2)
-                        )
-                        rep.save()
-
-                    if n.author != n.parent.author:
-                        rep = orm.ActionRepute(
-                            action = action,
-                            user = n.author,
-                            value = repval_at(GAIN_BY_ANSWER_ACCEPTED, action.action_date, 15)
-                        )
-                        rep.save()
-
-            if n.wiki:
-                action = orm.Action(
-                    user = n.author,
-                    node = n,
-                    action_type = "wikify",
-                    action_date = a.wikified_at or datetime.datetime.now(),
-                    extra = ''
-                )
-
-                action.save()
-
-            progress.update()
-
-        print "\n...done\n"
-
-        v_count = orm.Vote.objects.count()
-        print "\nConverting %d votes:" % v_count
-        progress = ProgressBar(v_count)
-
-        for v in orm.Vote.objects.all():
-            a = orm.Action(
-                action_type = (v.vote == 1) and ((v.node.node_type == "comment") and "voteupcomment" or "voteup") or "votedown",
-                user = v.user,
-                node = v.node,
-                action_date = v.voted_at,
-                canceled = v.canceled,
-                extra = ''
-            )
-
-            if a.canceled:
-                a.canceled_at = v.voted_at
-                a.canceled_by = v.user
-
-            a.save()
-
-            def impl(node):
-                if node.node_type == "question":
-                    return orm.Question.objects.get(node_ptr=node)
-                else:
-                    return orm.Answer.objects.get(node_ptr=node)
-
-            if a.node.node_type in ("question", "answer") and ((not v.canceled) and (
-                        not a.node.wiki or impl(a.node).wikified_at > a.action_date)):
-                reptype, default = (v.vote == 1) and (GAIN_BY_UPVOTED, 10) or (LOST_BY_DOWNVOTED, 2)
-                rep = orm.ActionRepute(
-                    action = a,
-                    user = a.node.author,
-                    value = repval_at(reptype, a.action_date, default) or default
-                )
-                rep.save()
-
-                if v.vote == -1:
-                    rep = orm.ActionRepute(
-                        action = a,
-                        user = a.node.author,
-                        value = repval_at(LOST_BY_DOWNVOTING, a.action_date, 1) or default
-                    )
-                    rep.save()
-
-            progress.update()
-
-        print "\n...done\n"
-
-        f_count = orm.FlaggedItem.objects.count()
-        print "\nConverting %d flags:" % f_count
-        progress = ProgressBar(f_count)
-
-        for f in orm.FlaggedItem.objects.all():
-            a = orm.Action(
-                action_type = "flag",
-                user = f.user,
-                node = f.node,
-                action_date = f.flagged_at,
-                extra = f.reason or ''
-            )
-
-            a.save()
-
-            rep = orm.ActionRepute(
-                action = a,
-                user = a.node.author,
-                value = repval_at(LOST_BY_FLAGGED, a.action_date, 2) or default
-            )
-            rep.save()
-
-            progress.update()
-
-        print "\n...done\n"
-
-        n_count = orm.Node.objects.all().count()
-        print "\nChecking flag count of %d nodes:" % n_count
-        progress = ProgressBar(n_count)
-
-        for n in orm.Node.objects.all():
-            flags = list(orm.Action.objects.filter(action_type="flag", node=n, canceled=False).order_by('-action_date'))
-
-            if len(flags) >= 3:
-                a = flags[2]
-                rep = orm.ActionRepute(
-                    action = a,
-                    user = n.author,
-                    value = repval_at(LOST_BY_FLAGGED_3_TIMES, a.action_date, 30)
-                )
-                rep.save()
-
-
-            if len(flags) >= 5:
-                a = flags[4]
-                rep = orm.ActionRepute(
-                    action = a,
-                    user = n.author,
-                    value = repval_at(LOST_BY_FLAGGED_5_TIMES, a.action_date, 100)
-                )
-                rep.save()
-
-            progress.update()
-
-        print "\n...done\n"
-
-        c_count = orm.Node.objects.filter(node_type="comment").count()
-        print "\nCreating %d comment actions:" % c_count
-        progress = ProgressBar(c_count)
-
-        for c in orm.Node.objects.filter(node_type="comment").all():
-            a = orm.Action(
-                action_type = "comment",
-                user = c.author,
-                node = c,
-                action_date = c.added_at,
-                extra = ''
-            )
-
-            a.save()
-
-            if c.deleted:
-                action = orm.Action(
-                    user = c.deleted_by,
-                    node = c,
-                    action_type = "delete",
-                    action_date = c.deleted_at or datetime.datetime.now(),
-                    extra = ''
-                )
-
-                action.save()
-
-            progress.update()
-
-        print "\n...done\n"
-
-
-        r_count = orm.NodeRevision.objects.exclude(revision=1).count()
-        print "\nCreating %d edit actions:" % r_count
-        progress = ProgressBar(r_count)
-
-        for r in orm.NodeRevision.objects.exclude(revision=1):
-            a = orm.Action(
-                action_type = "revise",
-                user = r.author,
-                node = r.node,
-                action_date = r.revised_at,
-                extra = r.revision
-            )
-
-            a.save()
-            progress.update()
-
-        print "\n...done\n"
-
-        u_count = orm.User.objects.all().count()
-        print "\nCreating %d user join actions and reputation recalculation:" % u_count
-        progress = ProgressBar(u_count)
-
-        for u in orm.User.objects.all():
-            a = orm.Action(
-                user = u,
-                action_date = u.date_joined,
-                action_type = "userjoins",
-            )
-
-            a.save()
-
-            rep = orm.ActionRepute(
-                action = a,
-                user = u,
-                value = 1
-            )
-            rep.save()
-
-            new_rep = orm.ActionRepute.objects.filter(user=u).aggregate(reputation=models.Sum('value'))['reputation']
-
-            if new_rep < 0:
-                new_rep = 1
-
-            u.reputation = new_rep
-            u.save()
-
-            progress.update()
-
-        print "\n...done\n"
-
+        # Deleting field 'Node.last_edited_at'
+        db.delete_column('forum_node', 'last_edited_at')
     
     
     def backwards(self, orm):
-        "Write your backwards methods here."
+        
+        # Adding model 'Repute'
+        db.create_table(u'repute', (
+            ('node', self.gf('django.db.models.fields.related.ForeignKey')(related_name='reputes', null=True, to=orm['forum.Node'])),
+            ('reputed_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('question', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.Question'])),
+            ('value', self.gf('django.db.models.fields.SmallIntegerField')(default=0)),
+            ('canceled', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
+            ('reputation_type', self.gf('django.db.models.fields.SmallIntegerField')()),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='reputes', to=orm['forum.User'])),
+            ('user_previous_rep', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        ))
+        db.send_create_signal('forum', ['Repute'])
+
+        # Adding model 'Vote'
+        db.create_table(u'vote', (
+            ('node', self.gf('django.db.models.fields.related.ForeignKey')(related_name='votes', null=True, to=orm['forum.Node'])),
+            ('vote', self.gf('django.db.models.fields.SmallIntegerField')()),
+            ('canceled', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='votes', to=orm['forum.User'])),
+            ('voted_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        ))
+        db.send_create_signal('forum', ['Vote'])
+
+        # Adding model 'Answer'
+        db.create_table(u'answer', (
+            ('wiki', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
+            ('accepted_by', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.User'], null=True)),
+            ('accepted_at', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
+            ('wikified_at', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
+            ('node_ptr', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.Node'], null=True, primary_key=True)),
+            ('accepted', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
+        ))
+        db.send_create_signal('forum', ['Answer'])
+
+        # Adding model 'FlaggedItem'
+        db.create_table(u'flagged_item', (
+            ('node', self.gf('django.db.models.fields.related.ForeignKey')(related_name='flaggeditems', null=True, to=orm['forum.Node'])),
+            ('flagged_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('canceled', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
+            ('reason', self.gf('django.db.models.fields.CharField')(max_length=300, null=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='flaggeditems', to=orm['forum.User'])),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        ))
+        db.send_create_signal('forum', ['FlaggedItem'])
+
+        # Adding model 'AnonymousNode'
+        db.create_table('forum_anonymousnode', (
+            ('convertible_to', self.gf('django.db.models.fields.CharField')(default='node', max_length=16)),
+            ('validation_hash', self.gf('django.db.models.fields.related.ForeignKey')(related_name='anonymous_content', to=orm['forum.Node'])),
+            ('node_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['forum.Node'], unique=True, primary_key=True)),
+        ))
+        db.send_create_signal('forum', ['AnonymousNode'])
+
+        # Adding model 'FavoriteQuestion'
+        db.create_table(u'favorite_question', (
+            ('question', self.gf('django.db.models.fields.related.ForeignKey')(related_name='favourites', to=orm['forum.Question'])),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('added_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(related_name='user_favorite_questions', to=orm['forum.User'])),
+        ))
+        db.send_create_signal('forum', ['FavoriteQuestion'])
+
+        # Adding model 'Question'
+        db.create_table(u'question', (
+            ('wiki', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
+            ('last_activity_by', self.gf('django.db.models.fields.related.ForeignKey')(related_name='last_active_in_questions', null=True, to=orm['forum.User'])),
+            ('close_reason', self.gf('django.db.models.fields.SmallIntegerField')(null=True, blank=True)),
+            ('last_activity_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+            ('view_count', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('node_ptr', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.Node'], null=True, primary_key=True)),
+            ('accepted_answer', self.gf('django.db.models.fields.related.OneToOneField')(related_name='question_accepting', unique=True, null=True, to=orm['forum.Answer'])),
+            ('closed', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
+            ('wikified_at', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
+            ('closed_at', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
+            ('closed_by', self.gf('django.db.models.fields.related.ForeignKey')(related_name='closed_questions', null=True, to=orm['forum.User'], blank=True)),
+        ))
+        db.send_create_signal('forum', ['Question'])
+
+        # Adding field 'Node.deleted_at'
+        db.add_column('forum_node', 'deleted_at', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True), keep_default=False)
+
+        # Adding field 'Node.last_edited_by'
+        db.add_column('forum_node', 'last_edited_by', self.gf('django.db.models.fields.related.ForeignKey')(related_name='last_edited_nodes', null=True, to=orm['forum.User'], blank=True), keep_default=False)
+
+        # Adding field 'Node.deleted'
+        db.add_column('forum_node', 'deleted', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True), keep_default=False)
+
+        # Adding field 'Node.deleted_by'
+        db.add_column('forum_node', 'deleted_by', self.gf('django.db.models.fields.related.ForeignKey')(related_name='deleted_nodes', null=True, to=orm['forum.User'], blank=True), keep_default=False)
+
+        # Adding field 'Node.last_edited_at'
+        db.add_column('forum_node', 'last_edited_at', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True), keep_default=False)
+    
     
     models = {
         'auth.group': {
@@ -431,7 +190,7 @@ class Migration(DataMigration):
             'extra': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'ip': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
-            'node': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']", 'null': 'True'}),
+            'node': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'actions'", 'null': 'True', 'to': "orm['forum.Node']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'actions'", 'to': "orm['forum.User']"})
         },
         'forum.actionrepute': {
@@ -451,21 +210,6 @@ class Migration(DataMigration):
             'is_auditted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.User']"})
-        },
-        'forum.anonymousnode': {
-            'Meta': {'object_name': 'AnonymousNode', '_ormbases': ['forum.Node']},
-            'convertible_to': ('django.db.models.fields.CharField', [], {'default': "'node'", 'max_length': '16'}),
-            'node_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['forum.Node']", 'unique': 'True', 'primary_key': 'True'}),
-            'validation_hash': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'anonymous_content'", 'to': "orm['forum.Node']"})
-        },
-        'forum.answer': {
-            'Meta': {'object_name': 'Answer', 'db_table': "u'answer'"},
-            'accepted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'accepted_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'accepted_by': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.User']", 'null': 'True'}),
-            'node_ptr': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']", 'null': 'True', 'primary_key': 'True'}),
-            'wiki': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'wikified_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'})
         },
         'forum.authkeyuserassociation': {
             'Meta': {'object_name': 'AuthKeyUserAssociation'},
@@ -496,22 +240,6 @@ class Migration(DataMigration):
             'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '50', 'blank': 'True'}),
             'type': ('django.db.models.fields.SmallIntegerField', [], {})
         },
-        'forum.favoritequestion': {
-            'Meta': {'unique_together': "(('question', 'user'),)", 'object_name': 'FavoriteQuestion', 'db_table': "u'favorite_question'"},
-            'added_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'question': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'favourites'", 'to': "orm['forum.Question']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'user_favorite_questions'", 'to': "orm['forum.User']"})
-        },
-        'forum.flaggeditem': {
-            'Meta': {'object_name': 'FlaggedItem', 'db_table': "u'flagged_item'"},
-            'canceled': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'flagged_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'node': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'flaggeditems'", 'null': 'True', 'to': "orm['forum.Node']"}),
-            'reason': ('django.db.models.fields.CharField', [], {'max_length': '300', 'null': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'flaggeditems'", 'to': "orm['forum.User']"})
-        },
         'forum.keyvalue': {
             'Meta': {'object_name': 'KeyValue'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -532,16 +260,11 @@ class Migration(DataMigration):
             'added_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'author': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'nodes'", 'to': "orm['forum.User']"}),
             'body': ('django.db.models.fields.TextField', [], {}),
-            'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'deleted_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'deleted_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'deleted_nodes'", 'null': 'True', 'to': "orm['forum.User']"}),
             'extra_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'extra_ref': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']", 'null': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'last_activity_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'last_activity_by': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.User']", 'null': 'True'}),
-            'last_edited_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'last_edited_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'last_edited_nodes'", 'null': 'True', 'to': "orm['forum.User']"}),
             'marked': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'node_type': ('django.db.models.fields.CharField', [], {'default': "'node'", 'max_length': '16'}),
             'parent': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'children'", 'null': 'True', 'to': "orm['forum.Node']"}),
@@ -580,40 +303,13 @@ class Migration(DataMigration):
             'server_url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
             'timestamp': ('django.db.models.fields.IntegerField', [], {})
         },
-        'forum.question': {
-            'Meta': {'object_name': 'Question', 'db_table': "u'question'"},
-            'accepted_answer': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'question_accepting'", 'unique': 'True', 'null': 'True', 'to': "orm['forum.Answer']"}),
-            'close_reason': ('django.db.models.fields.SmallIntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'closed': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'closed_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
-            'closed_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'closed_questions'", 'null': 'True', 'to': "orm['forum.User']"}),
-            'favorited_by': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'favorite_questions'", 'through': "'FavoriteQuestion'", 'to': "orm['forum.User']"}),
-            'last_activity_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_activity_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'last_active_in_questions'", 'null': 'True', 'to': "orm['forum.User']"}),
-            'node_ptr': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']", 'null': 'True', 'primary_key': 'True'}),
-            'view_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'wiki': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'wikified_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'})
-        },
         'forum.questionsubscription': {
             'Meta': {'object_name': 'QuestionSubscription'},
             'auto_subscription': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_view': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2010, 4, 27, 11, 40, 32, 68000)'}),
+            'last_view': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2010, 4, 28, 23, 43, 52, 301000)'}),
             'question': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.User']"})
-        },
-        'forum.repute': {
-            'Meta': {'object_name': 'Repute', 'db_table': "u'repute'"},
-            'canceled': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'node': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'reputes'", 'null': 'True', 'to': "orm['forum.Node']"}),
-            'question': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Question']"}),
-            'reputation_type': ('django.db.models.fields.SmallIntegerField', [], {}),
-            'reputed_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'reputes'", 'to': "orm['forum.User']"}),
-            'user_previous_rep': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'value': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'})
         },
         'forum.subscriptionsettings': {
             'Meta': {'object_name': 'SubscriptionSettings'},
@@ -669,21 +365,12 @@ class Migration(DataMigration):
         },
         'forum.validationhash': {
             'Meta': {'unique_together': "(('user', 'type'),)", 'object_name': 'ValidationHash'},
-            'expiration': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2010, 4, 28, 11, 40, 32, 153000)'}),
+            'expiration': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2010, 4, 29, 23, 43, 52, 512000)'}),
             'hash_code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'seed': ('django.db.models.fields.CharField', [], {'max_length': '12'}),
             'type': ('django.db.models.fields.CharField', [], {'max_length': '12'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.User']"})
-        },
-        'forum.vote': {
-            'Meta': {'object_name': 'Vote', 'db_table': "u'vote'"},
-            'canceled': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'node': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'votes'", 'null': 'True', 'to': "orm['forum.Node']"}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'votes'", 'to': "orm['forum.User']"}),
-            'vote': ('django.db.models.fields.SmallIntegerField', [], {}),
-            'voted_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'})
         }
     }
     

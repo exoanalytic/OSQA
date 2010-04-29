@@ -4,9 +4,8 @@ from string import lower
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save
 
-from forum.models.user import activity_record
 from forum.models.base import denorm_update
-from forum.models import Badge, Award, Activity, Node
+from forum.models import Badge, Award, Node
 
 import logging
 

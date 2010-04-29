@@ -1,35 +1,6 @@
 from base import *
 import re
 
-user_action = django.dispatch.Signal(providing_args=['instance'])
-
-
-class ActionField(models.ForeignKey):
-    __metaclass__ = models.SubfieldBase
-
-    def __init__(self, **kwargs):
-        super(ActionField, self).__init__('Node', **kwargs)
-
-
-    def contribute_to_class(self, cls, name):
-        super (ActionField, self).contribute_to_class(cls, name)
-
-        def at(inst):
-            action = getattr(inst, name)
-            if action is not None:
-                return action.action_date
-            return None
-
-        def by(inst):
-            action = getattr(inst, name)
-            if action is not None:
-                return action.user
-            return None
-
-        cls.add_to_class(name + '_at', property(at))
-        cls.add_to_class(name + '_by', property(by))
-
-
 class ActionManager(models.Manager):
     use_for_related_fields = True
 
@@ -53,7 +24,7 @@ class ActionManager(models.Manager):
         
 
 class Action(models.Model):
-    user = models.ForeignKey(User, related_name="actions")
+    user = models.ForeignKey('User', related_name="actions")
     ip   = models.CharField(max_length=16)
     node = models.ForeignKey('Node', null=True, related_name="actions")
     action_type = models.CharField(max_length=16)
@@ -62,10 +33,18 @@ class Action(models.Model):
     extra = models.CharField(max_length=255)
 
     canceled = models.BooleanField(default=False)
-    canceled_by = models.ForeignKey(User, null=True, related_name="canceled_actions")
+    canceled_by = models.ForeignKey('User', null=True, related_name="canceled_actions")
     canceled_at = models.DateTimeField(null=True)
 
     objects = ActionManager()
+
+    @property
+    def at(self):
+        return self.action_date
+
+    @property
+    def by(self):
+        return self.user
 
     def repute_users(self):
         pass
@@ -107,9 +86,9 @@ class Action(models.Model):
         super(Action, self).save(*args, **kwargs)
 
         if self._is_new:
-            self.repute_users()
+            if not self.node.wiki:
+                self.repute_users()
             self.process_action()
-            user_action.send(sender=self.__class__, instance=self)
 
     def cancel_or_delete(self, user=None):
         if self.action_date > (datetime.datetime.now() - datetime.timedelta(minutes=1)):
@@ -182,7 +161,7 @@ class ActionProxy(Action):
 
 class ActionRepute(models.Model):
     action = models.ForeignKey(Action, related_name='reputes')
-    user = models.ForeignKey(User)
+    user = models.ForeignKey('User', related_name='reputes')
     value = models.IntegerField(default=0)
     by_canceled = models.BooleanField(default=False)
 

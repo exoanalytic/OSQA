@@ -10,7 +10,7 @@ from django.db.models import Sum
 from forum.settings.base import Setting
 from forum.settings.forms import SettingsSetForm
 
-from forum.models import Activity, Question, Answer, User, Node
+from forum.models import Question, Answer, User, Node
 from forum import const
 from forum import settings
 
@@ -69,10 +69,10 @@ def get_statistics():
     return {
         'total_users': User.objects.all().count(),
         'users_last_24': User.objects.filter(date_joined__gt=(datetime.now() - timedelta(days=1))).count(),
-        'total_questions': Question.objects.filter(deleted=False).count(),
-        'questions_last_24': Question.objects.filter(deleted=False, added_at__gt=(datetime.now() - timedelta(days=1))).count(),
-        'total_answers': Answer.objects.filter(deleted=False).count(),
-        'answers_last_24': Answer.objects.filter(deleted=False, added_at__gt=(datetime.now() - timedelta(days=1))).count(),
+        'total_questions': Question.objects.filter(deleted=None).count(),
+        'questions_last_24': Question.objects.filter(deleted=None, added_at__gt=(datetime.now() - timedelta(days=1))).count(),
+        'total_answers': Answer.objects.filter(deleted=None).count(),
+        'answers_last_24': Answer.objects.filter(deleted=None, added_at__gt=(datetime.now() - timedelta(days=1))).count(),
     }
 
 @super_user_required      
