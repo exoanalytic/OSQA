@@ -16,6 +16,7 @@ from django.core.urlresolvers import reverse
 from forum.forms import *
 from forum.utils.html import sanitize_html
 from forum.authentication import user_updated
+from datetime import date
 import decorators
 
 import time
@@ -115,7 +116,7 @@ def edit_user(request, id):
             user.website = sanitize_html(form.cleaned_data['website'])
             user.location = sanitize_html(form.cleaned_data['city'])
             user.date_of_birth = sanitize_html(form.cleaned_data['birthday'])
-            if len(user.date_of_birth) == 0:
+            if user.date_of_birth == "None":
                 user.date_of_birth = '1900-01-01'
             user.about = sanitize_html(form.cleaned_data['about'])
 
@@ -134,10 +135,13 @@ def edit_user(request, id):
 
 
 
-def user_view(template, tab_name, tab_description, page_title):
+def user_view(template, tab_name, tab_description, page_title, private=False):
     def decorator(fn):
         def decorated(request, id, slug=None):
-            context = fn(request, get_object_or_404(User, id=id))
+            user = get_object_or_404(User, id=id)
+            if private and not user == request.user:
+                return HttpResponseForbidden()
+            context = fn(request, user)
             context.update({
                 "tab_name" : tab_name,
                 "tab_description" : tab_description,
@@ -192,7 +196,7 @@ def user_recent(request, user):
     return {"view_user" : user, "activities" : activities}
 
 
-@user_view('users/votes.html', 'votes', _('user vote record'), _('profile - votes'))
+@user_view('users/votes.html', 'votes', _('user vote record'), _('profile - votes'), True)
 def user_votes(request, user):
     votes = user.votes.exclude(node__deleted=True).order_by('-voted_at')[:USERS_PAGE_SIZE]
 
@@ -212,13 +216,13 @@ def user_reputation(request, user):
 
     return {"view_user": user, "reputation": reversed(rep), "graph_data": graph_data}
 
-@user_view('users/questions.html', 'favorites', _('favorite questions'),  _('profile - favorite questions'))
+@user_view('users/questions.html', 'favorites', _('favorite questions'),  _('profile - favorite questions'), True)
 def user_favorites(request, user):
     questions = user.favorite_questions.filter(deleted=None)
 
     return {"questions" : questions, "view_user" : user}
 
-@user_view('users/subscriptions.html', 'subscriptions', _('subscription settings'), _('profile - subscriptions'))
+@user_view('users/subscriptions.html', 'subscriptions', _('subscription settings'), _('profile - subscriptions'), True)
 def user_subscriptions(request, user):
     if request.method == 'POST':
         form = SubscriptionSettingsForm(request.POST)

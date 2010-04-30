@@ -18,7 +18,6 @@ from forum.forms import *
 from forum.models import *
 from forum.const import *
 from forum.utils.forms import get_next_url
-from forum.views.readers import _get_tags_cache_json
 
 
 def upload(request):#ajax upload file to a question or answer
@@ -81,10 +80,10 @@ def ask(request):
     else:
         form = AskForm()
 
-    tags = _get_tags_cache_json()
+    #tags = _get_tags_cache_json()
     return render_to_response('ask.html', {
         'form' : form,
-        'tags' : tags,
+        #'tags' : tags,
         'email_validation_faq_url':reverse('faq') + '#validate',
         }, context_instance=RequestContext(request))
 
@@ -113,7 +112,7 @@ def _retag_question(request, question):
     return render_to_response('question_retag.html', {
         'question': question,
         'form' : form,
-        'tags' : _get_tags_cache_json(),
+        #'tags' : _get_tags_cache_json(),
     }, context_instance=RequestContext(request))
 
 def _edit_question(request, question):
@@ -143,7 +142,7 @@ def _edit_question(request, question):
         'question': question,
         'revision_form': revision_form,
         'form' : form,
-        'tags' : _get_tags_cache_json()
+        #'tags' : _get_tags_cache_json()
     }, context_instance=RequestContext(request))
 
 @login_required

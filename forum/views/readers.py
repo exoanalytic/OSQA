@@ -41,19 +41,6 @@ QUESTIONS_PAGE_SIZE = 30
 # used in answers
 ANSWERS_PAGE_SIZE = 10
 
-#system to display main content
-def _get_tags_cache_json():#service routine used by views requiring tag list in the javascript space
-    """returns list of all tags in json format
-    no caching yet, actually
-    """
-    tags = Tag.objects.filter(deleted=False).all()
-    tags_list = []
-    for tag in tags:
-        dic = {'n': tag.name, 'c': tag.used_count}
-        tags_list.append(dic)
-    tags = simplejson.dumps(tags_list)
-    return tags
-
 @decorators.render('index.html')
 def index(request):
     return question_list(request, Question.objects.all(), sort='active', base_path=reverse('questions'))
@@ -93,7 +80,7 @@ def question_list(request, initial, list_description=_('questions'), sort=None, 
     return {
         "questions" : questions,
         "questions_count" : questions.count(),
-        "tags_autocomplete" : _get_tags_cache_json(),
+        #"tags_autocomplete" : _get_tags_cache_json(),
         "list_description": list_description,
         "base_path" : base_path,
         }

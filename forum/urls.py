@@ -1,6 +1,7 @@
 import startup
 
 import os.path
+from django.conf import settings
 from django.conf.urls.defaults import *
 from django.contrib import admin
 from forum import views as app
@@ -68,6 +69,7 @@ urlpatterns += patterns('',
     url(r'^%s(?P<id>\d+)/' % _('flag/'), app.commands.flag_post, name='flag_post'),
     url(r'^%s(?P<id>\d+)/' % _('delete/'), app.commands.delete_post, name='delete_post'),
     url(r'^%s(?P<id>\d+)/$' % _('subscribe/'), app.commands.subscribe, name="subscribe"),
+    url(r'^%s' % _('matching_tags/'), app.commands.matching_tags, name='matching_tags'),
 
     url(r'^%s(?P<id>\d+)/%s$' % (_('questions/'), _('revisions/')), app.readers.revisions, name='question_revisions'),
     url(r'^%s$' % _('command/'), app.commands.ajax_command, name='call_ajax'),
@@ -137,3 +139,7 @@ urlpatterns += patterns('',
     url(r'^feeds/rss/$', RssLastestQuestionsFeed, name="latest_questions_feed"),
 )
 
+if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+        url(r'^rosetta/', include('rosetta.urls')),
+    )

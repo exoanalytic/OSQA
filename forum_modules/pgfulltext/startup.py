@@ -24,7 +24,7 @@ if install:
 
         try:
             kv = KeyValue.objects.get(key=KEY)
-        except Exception, e:
+        except:
             kv = KeyValue(key=KEY)
 
         kv.value = VERSION
