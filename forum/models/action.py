@@ -153,10 +153,10 @@ class ActionProxy(Action):
     __metaclass__ = ActionProxyMetaClass
 
     def friendly_username(self, viewer, user):
-        return (viewer == user) and _('You') or viewer.username
+        return (viewer == user) and _('You') or user.username
 
     def friendly_ownername(self, owner, user):
-        return (owner == user) and _('your') or owner.username
+        return (owner == user) and _('your') or user.username
 
     def hyperlink(self, url, title, **attrs):
         return '<a href="%s" %s>%s</a>' % (url, " ".join('%s="%s"' % i for i in attrs.items()), title)

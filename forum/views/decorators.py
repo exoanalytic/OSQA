@@ -59,6 +59,10 @@ def command(func):
     def decorated(request, *args, **kwargs):
         try:
             response = func(request, *args, **kwargs)
+
+            if isinstance(response, HttpResponse):
+                return response
+
             response['success'] = True
         except Exception, e:
             #import sys, traceback

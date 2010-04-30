@@ -136,6 +136,18 @@ function show_message(object, msg, callback) {
     div.fadeIn("fast");
 }
 
+function load_prompt(object, url) {
+    var $box = $('<div class="vote-notification">' +
+            '<img src="/m/default/media/images/indicator.gif" />' +
+            '</div>');
+
+
+    object.parent().append($box);
+    $box.fadeIn("fast");
+
+    $box.load(url)
+}
+
 function show_prompt(object, msg, callback) {
     var div = $('<div class="vote-notification">' + msg + '<br />' +
             '<textarea class="command-prompt"></textarea><br />' +
@@ -203,12 +215,7 @@ $(function() {
         var el = $(this);
 
         if (el.is('.withprompt')) {
-            show_prompt(el, "Please provide a reason:", function(text) {
-                start_command();
-                $.post(el.attr('href'), {prompt: text}, function(data) {
-                    process_ajax_response(data, el);
-                }, "json")
-            });
+            load_prompt(el, el.attr('href'));
         } else {
             start_command();
             $.getJSON(el.attr('href'), function(data) {

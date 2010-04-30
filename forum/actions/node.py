@@ -49,7 +49,7 @@ class CommentAction(ActionProxy):
 
     def describe(self, viewer=None):
         return _("%(user)s commented on %(post_desc)s") % {
-            'user': self.hyperlink(self.user.get_profile_url(), self.friendly_username(viewer, self.user)),
+            'user': self.hyperlink(self.node.author.get_profile_url(), self.friendly_username(viewer, self.node.author)),
             'post_desc': self.describe_node(viewer, self.node.parent)
         }
 

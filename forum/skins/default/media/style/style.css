@@ -1324,3 +1324,15 @@ div.comment-tools a:hover {
 #command-loader.success {
     background: url('/m/default/media/images/vote-accepted-on.png')
 }
+
+.user-prompt {
+    width: 300px;
+}
+
+.user-prompt select, .user-prompt textarea {
+    width: 100%;
+}
+
+.user-prompt .prompt-buttons {
+    text-align: right;
+}

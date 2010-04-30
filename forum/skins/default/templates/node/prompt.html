@@ -1,0 +1,16 @@
+<div class="user-prompt">
+    <select class="prompt-examples">
+        <option value="Spam">Spam</option>
+        <option value="Advertising">Advertising</option>
+        <option value="Malicious Content">Malicious Content</option>
+    </select>
+    <textarea>Spam</textarea>
+    <div class="prompt-buttons">
+        <button>Cancel</button><button>Ok</button>
+    </div>
+</div>
+<script>
+$('.user-prompt .prompt-examples').change(function() {
+    $('.user-prompt textarea').val($(this).val())            
+})
+</script>

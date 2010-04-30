@@ -121,6 +121,10 @@ def vote_post(request, id, vote_type):
 
 @command
 def flag_post(request, id):
+    if not "prompt" in request.REQUEST:
+        return render_to_response('node/prompt.html')
+
+
     post = get_object_or_404(Node, id=id)
     user = request.user
 

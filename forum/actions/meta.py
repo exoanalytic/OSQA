@@ -139,7 +139,7 @@ class DeleteAction(ActionProxy):
         self.node.save()
 
     def describe(self, viewer=None):
-        return _("%(user)s delted %(post_desc)s: %(reason)s") % {
+        return _("%(user)s deleted %(post_desc)s: %(reason)s") % {
             'user': self.hyperlink(self.user.get_profile_url(), self.friendly_username(viewer, self.user)),
             'post_desc': self.describe_node(viewer, self.node), 'reason': self.reason(),
         }
