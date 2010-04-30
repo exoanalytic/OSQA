@@ -1,6 +1,9 @@
 from base import *
+from django.utils.translation import ugettext as _
 
 class Answer(Node):
+    friendly_name = _("answer")
+
     class Meta(Node.Meta):
         proxy = True
 

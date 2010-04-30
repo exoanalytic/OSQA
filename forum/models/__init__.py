@@ -16,14 +16,6 @@ except:
 
 from base import *
 
-def is_new(sender, instance, **kwargs):
-    try:
-        instance._is_new = not bool(instance.id)
-    except:
-        pass
-
-pre_save.connect(is_new)
-
 __all__ = [
         'Node', 'NodeRevision',  
         'Question', 'QuestionSubscription', 'QuestionRevision',

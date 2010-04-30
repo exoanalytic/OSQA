@@ -11,6 +11,8 @@ class Question(Node):
     answer_count = DenormalizedField("children", node_type="answer")
     favorite_count = DenormalizedField("actions", action_type="favorite", canceled=False)
 
+    friendly_name = _("question")
+
     @property   
     def closed(self):
         return self.marked

@@ -1,7 +1,10 @@
 from base import *
+from django.utils.translation import ugettext as _
 import re
 
 class Comment(Node):
+    friendly_name = _("comment")
+
     class Meta(Node.Meta):
         ordering = ('-added_at',)
         proxy = True
@@ -26,13 +29,8 @@ class Comment(Node):
     def save(self, *args, **kwargs):
         super(Comment,self).save(*args, **kwargs)
 
-        if self._is_new:
+        if not self.id:
             self.parent.reset_comment_count_cache()
-
-        try:
-            ping_google()
-        except Exception:
-            logging.debug('problem pinging google did you register your sitemap with google?')
 
     def mark_deleted(self, user):
         if super(Comment, self).mark_deleted(user):

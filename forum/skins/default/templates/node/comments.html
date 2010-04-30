@@ -52,7 +52,10 @@
     <form id="comment-{{ post.id }}-form" method="post" action="{% url comment id=post.id %}">
         <div class="comment-form-widgets-container">
             <textarea name="comment"></textarea>
-            <input type="submit" value="{% trans " add comment" %}" />
+            <div class="comment-form-buttons">
+                <input type="submit" class="comment-submit" value="{% trans " add comment" %}" />
+                <input type="submit" class="comment-cancel" value="{% trans " cancel" %}" />
+            </div>
         </div>
         <span id="comment-{{ post.id }}-chars-left" class="comment-chars-left">
             {% blocktrans %}

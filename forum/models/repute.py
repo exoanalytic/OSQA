@@ -69,7 +69,7 @@ class Award(GenericContent, UserContent):
     def save(self, *args, **kwargs):
         super(Award, self).save(*args, **kwargs)
 
-        if self._is_new:
+        if not self.id:
             self.badge.awarded_count += 1
             self.badge.save()
 

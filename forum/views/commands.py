@@ -81,25 +81,32 @@ def vote_post(request, id, vote_type):
     if user_vote_count_today >= int(settings.MAX_VOTES_PER_DAY):
         raise NotEnoughLeftException(_('votes'), str(settings.MAX_VOTES_PER_DAY))
 
-    try:
-        vote = Action.objects.get_for_types((VoteUpAction, VoteDownAction), node=post, user=user)
+    new_vote_cls = (vote_type == 'up') and VoteUpAction or VoteDownAction
+    score_inc = 0
 
-        if vote.action_date < datetime.datetime.now() - datetime.timedelta(days=int(settings.DENY_UNVOTE_DAYS)):
+    try:
+        old_vote = Action.objects.get_for_types((VoteUpAction, VoteDownAction), node=post, user=user)
+
+        if old_vote.action_date < datetime.datetime.now() - datetime.timedelta(days=int(settings.DENY_UNVOTE_DAYS)):
             raise Exception(
                     _("Sorry but you cannot cancel a vote after %(ndays)d %(tdays)s from the original vote") %
                     {'ndays': int(settings.DENY_UNVOTE_DAYS), 'tdays': ungettext('day', 'days', int(settings.DENY_UNVOTE_DAYS))}
             )
 
-        vote.cancel()
-        vote_update = (vote.__class__ == VoteDownAction) and 1 or -1
-        vote_type = "none"
+        old_vote.cancel(ip=request.META['REMOTE_ADDR'])
+        score_inc += (old_vote.__class__ == VoteDownAction) and 1 or -1
     except ObjectDoesNotExist:
-        vote_cls, vote_update = (vote_type == 'up') and (VoteUpAction, 1) or (VoteDownAction, -1)
-        vote_cls(user=user, node=post, ip=request.META['REMOTE_ADDR']).save()
+        old_vote = None
+
+    if old_vote.__class__ != new_vote_cls:
+        new_vote_cls(user=user, node=post, ip=request.META['REMOTE_ADDR']).save()
+        score_inc += (new_vote_cls == VoteUpAction) and 1 or -1
+    else:
+        vote_type = "none"
 
     response = {
         'commands': {
-            'update_post_score': [id, vote_update],
+            'update_post_score': [id, score_inc],
             'update_user_post_vote': [id, vote_type]
         }
     }
@@ -160,7 +167,7 @@ def like_comment(request, id):
 
     try:
         like = VoteUpCommentAction.objects.get(node=comment, user=user)
-        like.cancel()
+        like.cancel(ip=request.META['REMOTE_ADDR'])
         likes = False
     except ObjectDoesNotExist:
         VoteUpCommentAction(node=comment, user=user, ip=request.META['REMOTE_ADDR']).save()
@@ -207,7 +214,7 @@ def mark_favorite(request, id):
 
     try:
         favorite = FavoriteAction.objects.get(node=question, user=request.user)
-        favorite.cancel()
+        favorite.cancel(ip=request.META['REMOTE_ADDR'])
         added = False
     except ObjectDoesNotExist:
         FavoriteAction(node=question, user=request.user, ip=request.META['REMOTE_ADDR']).save()
@@ -281,12 +288,12 @@ def accept_answer(request, id):
     commands = {}
 
     if answer.accepted:
-        answer.accepted.cancel(user)
+        answer.accepted.cancel(user, ip=request.META['REMOTE_ADDR'])
         commands['unmark_accepted'] = [answer.id]
     else:
         if question.answer_accepted:
             accepted = question.accepted_answer
-            accepted.accepted.cancel(user)
+            accepted.accepted.cancel(user, ip=request.META['REMOTE_ADDR'])
             commands['unmark_accepted'] = [accepted.id]
 
         AcceptAnswerAction(node=answer, user=user, ip=request.META['REMOTE_ADDR']).save()
@@ -308,7 +315,7 @@ def delete_post(request, id):
     ret = {'commands': {}}
 
     if post.deleted:
-        post.deleted.cancel()
+        post.deleted.cancel(user, ip=request.META['REMOTE_ADDR'])
         ret['commands']['unmark_deleted'] = [post.node_type, id]
     else:
         reason = request.POST.get('prompt', '').strip()

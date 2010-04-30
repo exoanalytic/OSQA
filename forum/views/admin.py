@@ -10,7 +10,7 @@ from django.db.models import Sum
 from forum.settings.base import Setting
 from forum.settings.forms import SettingsSetForm
 
-from forum.models import Question, Answer, User, Node
+from forum.models import Question, Answer, User, Node, Action
 from forum import const
 from forum import settings
 
@@ -60,10 +60,7 @@ def get_all_sets():
     return sorted(Setting.sets.values(), lambda s1, s2: s1.weight - s2.weight)
 
 def get_recent_activity():
-    return Activity.objects.filter(activity_type__in=(
-            const.TYPE_ACTIVITY_ASK_QUESTION, const.TYPE_ACTIVITY_ANSWER,
-            const.TYPE_ACTIVITY_COMMENT_QUESTION, const.TYPE_ACTIVITY_COMMENT_ANSWER,
-            const.TYPE_ACTIVITY_MARK_ANSWER)).order_by('-active_at')[0:10]
+    return Action.objects.order_by('-action_date')[0:30]
 
 def get_statistics():
     return {

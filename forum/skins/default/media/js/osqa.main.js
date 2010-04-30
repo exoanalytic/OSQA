@@ -119,12 +119,17 @@ var response_commands = {
     }
 }
 
-function show_message(object, msg) {
+function show_message(object, msg, callback) {
     var div = $('<div class="vote-notification"><h3>' + msg + '</h3>(' +
     'click to close' + ')</div>');
 
     div.click(function(event) {
-        $(".vote-notification").fadeOut("fast", function() { $(this).remove(); });
+        $(".vote-notification").fadeOut("fast", function() {
+            $(this).remove();
+            if (callback) {
+                callback();
+            }
+        });
     });
 
     object.parent().append(div);
@@ -153,9 +158,9 @@ function show_prompt(object, msg, callback) {
     div.fadeIn("fast");    
 }
 
-function process_ajax_response(data, el) {
+function process_ajax_response(data, el, callback) {
     if (!data.success && data['error_message'] != undefined) {
-        show_message(el, data.error_message)
+        show_message(el, data.error_message, callback)
         end_command(false);
     } else if (typeof data['commands'] != undefined){
         for (var command in data.commands) {
@@ -163,7 +168,9 @@ function process_ajax_response(data, el) {
         }
 
         if (data['message'] != undefined) {
-            show_message(el, data.message)
+            show_message(el, data.message, callback)
+        } else {
+            if (callback) callback();
         }
         end_command(true);
     }
@@ -216,7 +223,8 @@ $(function() {
         var $container = $(this);
         var $form = $container.find('form');
         var $textarea = $container.find('textarea');
-        var $button = $container.find('input[type="submit"]');
+        var $button = $container.find('.comment-submit');
+        var $cancel = $container.find('.comment-cancel');
         var $chars_left_message = $('.comment-chars-left');
         var $chars_counter = $container.find('.comments-char-left-count');
 
@@ -241,13 +249,14 @@ $(function() {
             var allow = true;
 
             if (length < max_length) {
-                if (length < max_length * 0.75) {
+                if (length < (max_length - 30)) {
                     $chars_left_message.removeClass('warn');
                 } else {
                     $chars_left_message.addClass('warn');
                 }
             } else {
                 allow = false;
+                $textarea.val($textarea.val().substring(0, max_length))
             }
 
             $chars_counter.html(max_length - length);
@@ -291,7 +300,9 @@ $(function() {
             return false;
         });
 
-        $textarea.keyup(calculate_chars_left);
+        $textarea.keyup(function() {
+            return calculate_chars_left();
+        });
 
         $button.click(function() {
             if ($textarea.val().length > max_length) {
@@ -307,11 +318,18 @@ $(function() {
 
                 start_command();
                 $.post($form.attr('action'), post_data, function(data) {
-                    process_ajax_response(data, $button);
-                    cleanup_form();
+                    process_ajax_response(data, $button, function() {
+                        cleanup_form();
+                        hide_comment_form();
+                    });
+
                 }, "json")
             }
+            
+            return false;
+        });
 
+        $cancel.click(function() {
             hide_comment_form();
             return false;
         });

@@ -1,11 +1,18 @@
 from django.utils.translation import ugettext as _
+from django.db.models import F
 from forum.models.action import ActionProxy
 import settings
 
 class VoteAction(ActionProxy):
     def update_node_score(self, inc):
-        self.node.score += inc
+        self.node.score = F('score') + inc
         self.node.save()
+
+    def describe_vote(self, vote_desc, viewer=None):
+        return _("%(user)s %(vote_desc)s %(post_desc)s") % {
+            'user': self.hyperlink(self.user.get_profile_url(), self.friendly_username(viewer, self.user)),
+            'vote_desc': vote_desc, 'post_desc': self.describe_node(viewer, self.node)
+        }
 
 
 class VoteUpAction(VoteAction):
@@ -18,6 +25,8 @@ class VoteUpAction(VoteAction):
     def cancel_action(self):
         self.update_node_score(-1)
 
+    def describe(self, viewer=None):
+        return self.describe_vote(_("voted up"), viewer)
 
 class VoteDownAction(VoteAction):
     def repute_users(self):
@@ -30,10 +39,16 @@ class VoteDownAction(VoteAction):
     def cancel_action(self):
         self.update_node_score(+1)
 
+    def describe(self, viewer=None):
+        return self.describe_vote(_("voted down"), viewer)
+
 
 class VoteUpCommentAction(VoteUpAction):
     def repute_users(self):
         pass
+
+    def describe(self, viewer=None):
+        return self.describe_vote(_("liked"), viewer)
 
 
 class FlagAction(ActionProxy):
@@ -53,6 +68,12 @@ class FlagAction(ActionProxy):
 
         def cancel_action(self):
             self.node.reset_flag_count_cache()
+
+    def describe(self, viewer=None):
+        return _("%(user)s flagged %(post_desc)s: %(reason)s") % {
+            'user': self.hyperlink(self.user.get_profile_url(), self.friendly_username(viewer, self.user)),
+            'post_desc': self.describe_node(viewer, self.node), 'reason': self.extra
+        }
 
 
 class AcceptAnswerAction(ActionProxy):
@@ -77,6 +98,22 @@ class AcceptAnswerAction(ActionProxy):
         self.node.extra_action = None
         self.node.save()
 
+    def describe(self, viewer=None):
+        answer = self.node
+        question = answer.parent
+
+        if self.user == question.author:
+            asker = (self.user == viewer) and _("your") or _("his")
+        else:
+            asker = self.hyperlink(question.author.get_profile_url(), question.author.username)
+
+        return _("%(user)s accepted %(answerer)s answer on %(asker)s question %(question)s") % {
+            'user': self.hyperlink(self.user.get_profile_url(), self.friendly_username(viewer, self.user)),
+            'answerer': self.hyperlink(answer.author.get_profile_url(), self.friendly_username(viewer, answer.author.username)),
+            'asker': asker,
+            'question': self.hyperlink(question.get_absolute_url(), question.title)
+        }
+
 
 class FavoriteAction(ActionProxy):
     def process_action(self):
@@ -84,6 +121,12 @@ class FavoriteAction(ActionProxy):
 
     def cancel_action(self):
         self.proccess_action()
+
+    def describe(self, viewer=None):
+        return _("%(user)s marked %(post_desc)s as favorite") % {
+            'user': self.hyperlink(self.user.get_profile_url(), self.friendly_username(viewer, self.user)),
+            'post_desc': self.describe_node(viewer, self.node),
+        }
 
 
 class DeleteAction(ActionProxy):
@@ -95,10 +138,14 @@ class DeleteAction(ActionProxy):
         self.node.deleted = None
         self.node.save()
 
+    def describe(self, viewer=None):
+        return _("%(user)s delted %(post_desc)s: %(reason)s") % {
+            'user': self.hyperlink(self.user.get_profile_url(), self.friendly_username(viewer, self.user)),
+            'post_desc': self.describe_node(viewer, self.node), 'reason': self.reason(),
+        }
+
     def reason(self):
         if self.extra != "BYFLAGGED":
             return self.extra
         else:
-            return _("This post was deleted because it reached the number of flags necessary to delete a post: %(reasons)s") % {
-                'resons': "; ".join([f.extra for f in FlagAction.objects.filter(node=self.node)])
-            }
+            return _("flagged by multiple users: ") + "; ".join([f.extra for f in FlagAction.objects.filter(node=self.node)])

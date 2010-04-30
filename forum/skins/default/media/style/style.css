@@ -1255,7 +1255,7 @@ a.comment-edit:hover { background: url("../images/comment-edit-hover.png") no-re
 	padding-top: 12px;
 }
 
-.comment-form-widgets-container input { vertical-align: top; }
+.comment-form-widgets-container .comment-form-buttons { vertical-align: top; float: right; width: 18% }
 
 .comment-form-widgets-container textarea {
 	height: 6em;
@@ -1265,6 +1265,10 @@ a.comment-edit:hover { background: url("../images/comment-edit-hover.png") no-re
 span.comment-chars-left {
 	font-size: 11px;
 	margin-right: 20px;
+}
+
+span.comment-chars-left.warn {
+    color: #a52a2a;
 }
 
 div.comment-tools {

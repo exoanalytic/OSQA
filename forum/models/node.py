@@ -2,6 +2,7 @@ from base import *
 from tag import Tag
 
 import markdown
+from django.utils.translation import ugettext as _
 from django.utils.safestring import mark_safe
 from django.utils.html import strip_tags
 from forum.utils.html import sanitize_html
@@ -126,6 +127,8 @@ class Node(BaseModel, NodeContent):
     comment_count = DenormalizedField("children", node_type="comment", canceled=False)
     flag_count = DenormalizedField("actions", action_type="flag", canceled=False)
 
+    friendly_name = _("post")
+
     objects = NodeManager()
 
     @classmethod
@@ -165,32 +168,27 @@ class Node(BaseModel, NodeContent):
         if self.parent:
             self.parent.update_last_activity(user)
 
-    def create_revision(self, user, revise=None, **kwargs):
-        revision = NodeRevision(author=user, **kwargs)
-        
-        if not self.id:
-            self.author = user
-            self.save()
-            revision.revision = 1
-        else:
-            revision.revision = self.revisions.aggregate(last=models.Max('revision'))['last'] + 1
-
-        revision.node_id = self.id
+    def _create_revision(self, user, number, **kwargs):
+        revision = NodeRevision(author=user, revision=number, node=self, **kwargs)
         revision.save()
-        self.activate_revision(user, revision, revise)
         return revision
 
-    def activate_revision(self, user, revision, revise=None):
+    def create_revision(self, user, action=None, **kwargs):
+        number = self.revisions.aggregate(last=models.Max('revision'))['last'] + 1
+        revision = self._create_revision(user, number, **kwargs)
+        self.activate_revision(user, revision, action)
+        return revision
+
+    def activate_revision(self, user, revision, action=None):
         self.title = revision.title
         self.tagnames = revision.tagnames
         self.body = revision.body
 
         self.active_revision = revision
-
         self.update_last_activity(user)
 
-        if revise:
-            self.last_edited = revise
+        if action:
+            self.last_edited = action
 
         self.save()
 
@@ -237,13 +235,21 @@ class Node(BaseModel, NodeContent):
     def save(self, *args, **kwargs):
         if not self.id:
             self.node_type = self.get_type()
+            super(BaseModel, self).save(*args, **kwargs)
+            self.active_revision = self._create_revision(self.author, 1, title=self.title, tagnames=self.tagnames, body=self.body)
+            self.update_last_activity(self.author)
 
         if self.parent_id and not self.abs_parent_id:
             self.abs_parent = self.parent.absolute_parent
-            
+        
         tags = self.get_tag_list_if_changed()
         super(Node, self).save(*args, **kwargs)
         if tags is not None: self.tags = tags
+
+        try:
+            ping_google()
+        except:
+            logging.debug('problem pinging google did you register your sitemap with google?')
 
     def __unicode__(self):
         return self.title

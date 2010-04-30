@@ -1,3 +1,4 @@
+from django.utils.translation import ugettext as _
 from base import *
 import re
 
@@ -35,6 +36,7 @@ class Action(models.Model):
     canceled = models.BooleanField(default=False)
     canceled_by = models.ForeignKey('User', null=True, related_name="canceled_actions")
     canceled_at = models.DateTimeField(null=True)
+    canceled_ip = models.CharField(max_length=16)
 
     objects = ActionManager()
 
@@ -57,6 +59,9 @@ class Action(models.Model):
 
     def cancel_action(self):
         pass
+
+    def describe(self, viewer=None):
+        return ""
 
     def repute(self, user, value):
         repute = ActionRepute(action=self, user=user, value=value)
@@ -83,15 +88,18 @@ class Action(models.Model):
         return re.sub(r'action$', '', cls.__name__.lower())
 
     def save(self, data=None, *args, **kwargs):
+        isnew = False
+
         if not self.id:
             self.action_type = self.__class__.get_type()
+            isnew = True
 
         if data:
             self.process_data(**data)
 
         super(Action, self).save(*args, **kwargs)
 
-        if self._is_new:
+        if isnew:
             if (self.node is None) or (not self.node.wiki):
                 self.repute_users()
             self.process_action()
@@ -102,11 +110,13 @@ class Action(models.Model):
         self.cancel_action()
         super(Action, self).delete()
 
-    def cancel(self, user=None):
+    def cancel(self, user=None, ip=None):
         if not self.canceled:
             self.canceled = True
             self.canceled_at = datetime.datetime.now()
             self.canceled_by = (user is None) and self.user or user
+            if ip:
+                self.canceled_ip = ip
             self.save()
             self.cancel_reputes()
             self.cancel_action()
@@ -141,6 +151,28 @@ class ActionProxyMetaClass(models.Model.__metaclass__):
 
 class ActionProxy(Action):
     __metaclass__ = ActionProxyMetaClass
+
+    def friendly_username(self, viewer, user):
+        return (viewer == user) and _('You') or viewer.username
+
+    def friendly_ownername(self, owner, user):
+        return (owner == user) and _('your') or owner.username
+
+    def hyperlink(self, url, title, **attrs):
+        return '<a href="%s" %s>%s</a>' % (url, " ".join('%s="%s"' % i for i in attrs.items()), title)
+
+    def describe_node(self, viewer, node):
+        node_link = self.hyperlink(node.get_absolute_url(), node.headline)
+
+        if node.parent:
+            node_desc = _("on %(link)s") % {'link': node_link}
+        else:
+            node_desc = node_link
+
+        return _("%(user)s %(node_name)s %(node_desc)s") % {
+            'user': self.hyperlink(node.author.get_profile_url(), self.friendly_ownername(viewer, node.author)),
+            'node_name': node.friendly_name, 'node_desc': node_desc,
+        }
     
     class Meta:
         proxy = True
@@ -148,13 +180,10 @@ class ActionProxy(Action):
 
 class ActionRepute(models.Model):
     action = models.ForeignKey(Action, related_name='reputes')
+    date = models.DateTimeField(default=datetime.datetime.now)
     user = models.ForeignKey('User', related_name='reputes')
     value = models.IntegerField(default=0)
     by_canceled = models.BooleanField(default=False)
-
-    @property
-    def reputed_at(self):
-        return self.by_canceled and self.action.canceled_at or self.action.action_date
 
     @property
     def positive(self):
@@ -168,11 +197,11 @@ class ActionRepute(models.Model):
 
     def save(self, *args, **kwargs):
         super(ActionRepute, self).save(*args, **kwargs)
-        self.user.reputation += self.value
+        self.user.reputation = models.F('reputation') + self.value
         self.user.save()
 
     def delete(self):
-        self.user.reputation -= self.value
+        self.user.reputation = models.F('reputation') - self.value
         self.user.save()
         super(ActionRepute, self).delete()
 
