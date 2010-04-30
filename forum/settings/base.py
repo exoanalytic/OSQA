@@ -33,15 +33,11 @@ class BaseSetting(object):
 
         try:
             kv = KeyValue.objects.get(key=self.name)
-            old_value = kv.value
         except:
             kv = KeyValue(key=self.name)
-            old_value = self.default
 
         kv.value = new_value
         kv.save()
-
-        setting_update.send(sender=self, old_value=old_value, new_value=new_value)
 
     def to_default(self):
         self.set_value(self.default)
@@ -62,12 +58,12 @@ class BaseSetting(object):
 class StringSetting(BaseSetting):
     def _parse(self, value):
         if isinstance(value, unicode):
-            return value.encode('utf8')
+            return value
         else:
             return str(value)
 
     def __unicode__(self):
-        return unicode(self.value.decode('utf8'))
+        return unicode(self.value)
 
     def __add__(self, other):
         return "%s%s" % (unicode(self), other)
@@ -137,4 +133,3 @@ class Setting(object):
 
         return instance
 
-setting_update = django.dispatch.Signal(providing_args=['old_value', 'new_value'])

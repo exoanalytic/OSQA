@@ -1,4 +1,5 @@
 from django.utils.translation import ugettext as _
+from utils import PickledObjectField
 from base import *
 import re
 
@@ -31,7 +32,7 @@ class Action(models.Model):
     action_type = models.CharField(max_length=16)
     action_date = models.DateTimeField(default=datetime.datetime.now)
 
-    extra = models.CharField(max_length=255)
+    extra = PickledObjectField()
 
     canceled = models.BooleanField(default=False)
     canceled_by = models.ForeignKey('User', null=True, related_name="canceled_actions")
