@@ -42,8 +42,9 @@ class ActivityNode(template.Node):
             describe = mark_safe(action.describe(viewer))
             return self.template.render(template.Context(dict(action=action, describe=describe)))
         except Exception, e:
-            import sys, traceback
-            traceback.print_exc(file=sys.stdout)
+            #import sys, traceback
+            #traceback.print_exc(file=sys.stdout)
+            pass
 
 @register.tag
 def activity_item(parser, token):
