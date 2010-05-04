@@ -49,5 +49,5 @@ class AwardAction(ActionProxy):
     def describe(self, viewer=None):
         return _("%(user)s was awarded the %(badge_name)s badge") % {
             'user': self.hyperlink(self.user.get_profile_url(), self.friendly_username(viewer, self.user)),
-            'badge_name': self.award.badge.name,
+            'badge_name': self.award.all()[0].badge.name,
         }

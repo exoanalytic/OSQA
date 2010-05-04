@@ -130,7 +130,7 @@ def answer_accepted(action, new):
     send_email(settings.EMAIL_SUBJECT_PREFIX + _("An answer to '%(question_title)s' was accepted") % dict(question_title=question.title),
                recipients, "notifications/answeraccepted.html", {
         'question': question,
-        'answer': instance
+        'answer': action.node
     }, threaded=False)
 
 AcceptAnswerAction.hook(answer_accepted)
@@ -146,7 +146,7 @@ def member_joined(action, new):
 
     send_email(settings.EMAIL_SUBJECT_PREFIX + _("%(username)s is a new member on %(app_name)s") % dict(username=instance.username, app_name=settings.APP_SHORT_NAME),
                recipients, "notifications/newmember.html", {
-        'newmember': instance,
+        'newmember': action.user,
     }, threaded=False)
 
     sub_settings = SubscriptionSettings(user=instance)
