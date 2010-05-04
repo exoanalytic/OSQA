@@ -95,3 +95,12 @@ class RollbackAction(ActionProxy):
             'initial': revisions[0].revision, 'initial_sum': revisions[0].summary,
             'final': revisions[1].revision, 'final_sum': revisions[1].summary,
         }
+
+class CloseAction(ActionProxy):
+    def process_action(self):
+        self.node.extra_action = self
+        self.node.save()
+
+    def cancel_action(self):
+        self.node.extra_action = None
+        self.node.save()

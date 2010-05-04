@@ -13,6 +13,13 @@ class EditProfileAction(ActionProxy):
 
 class AwardAction(ActionProxy):
     def process_data(self, badge, trigger):
+        self.__dict__['_badge'] = badge
+        self.__dict__['_trigger'] = trigger
+
+    def process_action(self):
+        badge = self.__dict__['_badge']
+        trigger = self.__dict__['_trigger']
+
         award = Award(user=self.user, badge=badge, trigger=trigger, action=self)
         if self.node:
             award.node = self.node

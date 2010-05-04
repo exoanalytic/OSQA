@@ -374,14 +374,24 @@ def matching_tags(request):
         
     return HttpResponse(tag_output, mimetype="text/plain")
 
-@login_required
-def close(request, id):#close question
-    """view to initiate and process 
-    question close
-    """
+@command
+def close(request, id):
+    if not request.POST:
+        return render_to_response('node/report.html', {'types': settings.CLOSE_TYPES})
+
     question = get_object_or_404(Question, id=id)
-    if not request.user.can_close_question(question):
-        return HttpResponseForbidden()
+
+    if not user.is_authenticated():
+        raise AnonymousNotAllowedException(_('close questions'))
+
+    if question.extra_action:
+        pass
+    else:
+        if not request.user.can_close_question(question):
+            raise NotEnoughRepPointsException(_('close questions'))
+
+
+
     if request.method == 'POST':
         form = CloseForm(request.POST)
         if form.is_valid():

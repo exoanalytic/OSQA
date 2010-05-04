@@ -99,8 +99,6 @@ class Action(models.Model):
             self.action_type = self.__class__.get_type()
             isnew = True
 
-        super(Action, self).save(*args, **kwargs)
-
         if data:
             self.process_data(**data)
 
