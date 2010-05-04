@@ -99,8 +99,17 @@ class RollbackAction(ActionProxy):
 class CloseAction(ActionProxy):
     def process_action(self):
         self.node.extra_action = self
+        self.node.marked = True
         self.node.save()
 
     def cancel_action(self):
         self.node.extra_action = None
+        self.node.marked = False
         self.node.save()
+
+    def describe(self, viewer=None):
+        return _("%(user)s closed %(post_desc)s: %(reason)s") % {
+            'user': self.hyperlink(self.user.get_profile_url(), self.friendly_username(viewer, self.user)),
+            'post_desc': self.describe_node(viewer, self.node),
+            'reason': self.extra
+        }

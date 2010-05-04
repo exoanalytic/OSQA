@@ -1,4 +1,8 @@
 var response_commands = {
+    refresh_page: function() {
+        window.location.reload(true)
+    },
+    
     update_post_score: function(id, inc) {
         var $score_board = $('#post-' + id + '-score');
         var current = parseInt($score_board.html())
@@ -271,21 +275,15 @@ $(function() {
 
         function calculate_chars_left() {
             var length = $textarea.val().length;
-            var allow = true;
 
-            if (length < max_length) {
-                if (length < (max_length - 30)) {
-                    $chars_left_message.removeClass('warn');
-                } else {
-                    $chars_left_message.addClass('warn');
-                }
+            if (length < (max_length - 30)) {
+                $chars_counter.removeClass('warn');
             } else {
-                allow = false;
-                $textarea.val($textarea.val().substring(0, max_length))
+                $chars_counter.addClass('warn');
             }
 
             $chars_counter.html(max_length - length);
-            return allow;
+            return true;
         }
 
         function show_comment_form() {
@@ -325,9 +323,7 @@ $(function() {
             return false;
         });
 
-        $textarea.keyup(function() {
-            return calculate_chars_left();
-        });
+        $textarea.keyup(calculate_chars_left);
 
         $button.click(function() {
             if ($textarea.val().length > max_length) {

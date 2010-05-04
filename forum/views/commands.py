@@ -323,6 +323,39 @@ def delete_post(request, id):
     return ret
 
 @command
+def close(request, id, close):
+    if close and not request.POST:
+        return render_to_response('node/report.html', {'types': settings.CLOSE_TYPES})
+
+    question = get_object_or_404(Question, id=id)
+    user = request.user
+
+    if not user.is_authenticated():
+        raise AnonymousNotAllowedException(_('close questions'))
+
+    if question.extra_action:
+        if not user.can_reopen_question(question):
+            raise NotEnoughRepPointsException(_('reopen questions'))
+
+        question.extra_action.cancel(user, ip=request.META['REMOTE_ADDR'])
+    else:
+        if not request.user.can_close_question(question):
+            raise NotEnoughRepPointsException(_('close questions'))
+
+        reason = request.POST.get('prompt', '').strip()
+
+        if not len(reason):
+            raise CommandException(_("Reason is empty"))
+
+        CloseAction(node=question, user=user, extra=reason, ip=request.META['REMOTE_ADDR']).save()
+
+    return {
+        'commands': {
+            'refresh_page': []
+        }
+    }
+
+@command
 def subscribe(request, id):
     question = get_object_or_404(Question, id=id)
 
@@ -374,58 +407,9 @@ def matching_tags(request):
         
     return HttpResponse(tag_output, mimetype="text/plain")
 
-@command
-def close(request, id):
-    if not request.POST:
-        return render_to_response('node/report.html', {'types': settings.CLOSE_TYPES})
-
-    question = get_object_or_404(Question, id=id)
-
-    if not user.is_authenticated():
-        raise AnonymousNotAllowedException(_('close questions'))
-
-    if question.extra_action:
-        pass
-    else:
-        if not request.user.can_close_question(question):
-            raise NotEnoughRepPointsException(_('close questions'))
 
 
 
-    if request.method == 'POST':
-        form = CloseForm(request.POST)
-        if form.is_valid():
-            reason = form.cleaned_data['reason']
-            question.closed = True
-            question.closed_by = request.user
-            question.closed_at = datetime.datetime.now()
-            question.close_reason = reason
-            question.save()
-        return HttpResponseRedirect(question.get_absolute_url())
-    else:
-        form = CloseForm()
-        return render_to_response('close.html', {
-            'form' : form,
-            'question' : question,
-            }, context_instance=RequestContext(request))
-
-@login_required
-def reopen(request, id):#re-open question
-    """view to initiate and process 
-    question close
-    """
-    question = get_object_or_404(Question, id=id)
-    # open question
-    if not request.user.can_reopen_question(question):
-        return HttpResponseForbidden()
-    if request.method == 'POST' :
-        Question.objects.filter(id=question.id).update(closed=False,
-            closed_by=None, closed_at=None, close_reason=None)
-        return HttpResponseRedirect(question.get_absolute_url())
-    else:
-        return render_to_response('reopen.html', {
-            'question' : question,
-            }, context_instance=RequestContext(request))
 
 
 

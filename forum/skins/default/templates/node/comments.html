@@ -53,15 +53,15 @@
         <div class="comment-form-widgets-container">
             <textarea name="comment"></textarea>
             <div class="comment-form-buttons">
-                <input type="submit" class="comment-submit" value="{% trans " add comment" %}" />
+                <span id="comment-{{ post.id }}-chars-left" class="comment-chars-left">
+                    {% blocktrans %}
+                        <span class="comments-char-left-count">{{ max_length }}</span> characters left
+                    {% endblocktrans %}
+                </span>
+                <input type="submit" class="comment-submit" value="{% trans " comment" %}" />
                 <input type="submit" class="comment-cancel" value="{% trans " cancel" %}" />
             </div>
         </div>
-        <span id="comment-{{ post.id }}-chars-left" class="comment-chars-left">
-            {% blocktrans %}
-                have <span class="comments-char-left-count">{{ max_length }}</span> characters left
-            {% endblocktrans %}
-        </span>
         <script type="text/html" class="new-comment-skeleton" id="new-comment-skeleton-{{ post.id }}">
             <table class="comment" id="comment-%ID%" style="display: none">
                 <tr>

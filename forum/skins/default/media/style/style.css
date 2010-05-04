@@ -1179,7 +1179,7 @@ a.post-vote.down.on,a.post-vote.down:hover { background: url("../images/vote-arr
 a.accept-answer { background: url("../images/vote-accepted.png") no-repeat scroll center center transparent; }
 a.accept-answer.on,a.accept-answer:hover { background: url("../images/vote-accepted-on.png") no-repeat scroll center center transparent; }
 
-.post-score {
+.post-score, .comments-char-left-count {
 	color: #777777;
 	font-family: Arial;
 	font-size: 140%;
@@ -1254,6 +1254,7 @@ a.comment-edit:hover { background: url("../images/comment-edit-hover.png") no-re
 .comment-form-widgets-container textarea {
 	height: 6em;
 	width: 80%;
+    float: left;
 }
 
 span.comment-chars-left {
@@ -1329,11 +1330,28 @@ div.comment-tools a:hover {
     text-align: right;
 }
 
+.comment-form-buttons {
+    width: 18%;
+    height: 100%;
+    float: right;
+}
+
 .comment-form-buttons input, .user-prompt .prompt-buttons button {
     height: 16px;
     line-height: 12px;
     font-size: 110%;
     border: 1px solid #999;
+}
+
+.comment-form-buttons input {
+    width: 100%;
+    height: 22px;
+    vertical-align: center;
+    margin-top: 6px;
+}
+
+.comments-char-left-count.warn {
+    color: darkred;;    
 }
 
 .moderation {

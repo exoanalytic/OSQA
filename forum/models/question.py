@@ -15,7 +15,7 @@ class Question(Node):
 
     @property   
     def closed(self):
-        return self.marked
+        return self.extra_action
 
     @property    
     def view_count(self):
