@@ -149,7 +149,7 @@ def member_joined(action, new):
         'newmember': action.user,
     }, threaded=False)
 
-    sub_settings = SubscriptionSettings(user=instance)
+    sub_settings = SubscriptionSettings(user=action.user)
     sub_settings.save()
 
 UserJoinsAction.hook(member_joined)
