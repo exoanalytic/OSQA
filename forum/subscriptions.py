@@ -163,8 +163,8 @@ def question_viewed(action, new):
         subscription.last_view = datetime.datetime.now()
         subscription.save()
     except:
-        if action.user.subscription_settings.questions_viewed:
-            subscription = QuestionSubscription(question=action.question, user=action.user)
+        if action.viewuser.subscription_settings.questions_viewed:
+            subscription = QuestionSubscription(question=action.question, user=action.viewuser)
             subscription.save()
 
 QuestionViewAction.hook(question_viewed)
