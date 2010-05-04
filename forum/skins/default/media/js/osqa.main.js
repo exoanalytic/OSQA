@@ -252,6 +252,7 @@ $(function() {
         var $container = $(this);
         var $form = $container.find('form');
         var $textarea = $container.find('textarea');
+        var textarea = $textarea.get(0);
         var $button = $container.find('.comment-submit');
         var $cancel = $container.find('.comment-cancel');
         var $chars_left_message = $('.comment-chars-left');
@@ -262,38 +263,60 @@ $(function() {
         var $comments_container = $container.parent().find('.comments-container');
 
         var max_length = parseInt($chars_counter.html());
+        var warn_length = max_length - 30;
+        var current_length = 0;
         var comment_in_form = false;
+        var interval = null;
+
+        var hcheck = !($.browser.msie || $.browser.opera);
+
+        $textarea.css("padding-top", 0).css("padding-bottom", 0);
+        textarea.style.overflow = 'hidden';
+        
 
         function cleanup_form() {
             $textarea.val('');
             $chars_counter.html(max_length);
             $chars_left_message.removeClass('warn');
             comment_in_form = false;
+            current_length = 0;
+            $chars_counter.removeClass('warn');
+            interval = null;
         }
 
         cleanup_form();
 
-        function calculate_chars_left() {
+        function process_form_changes() {
             var length = $textarea.val().length;
 
-            if (length < (max_length - 30)) {
+            if (current_length == length)
+                return;
+
+            if (length < warn_length && current_length >= warn_length) {
                 $chars_counter.removeClass('warn');
-            } else {
+            } else if (current_length < warn_length && length >= warn_length){
                 $chars_counter.addClass('warn');
             }
 
             $chars_counter.html(max_length - length);
-            return true;
-        }
 
-        var interval = null;
+            var current_height = textarea.style.height;
+            if (hcheck)
+                textarea.style.height = "0px";
+
+            var h = Math.max(80, textarea.scrollHeight);
+            textarea.style.height = current_height;
+            $textarea.animate({height: h + 'px'}, 200);
+
+            current_length = length;
+        }
 
         function show_comment_form() {
             $container.slideDown('slow');
             $add_comment_link.fadeOut('slow');
             window.setInterval(function() {
-                calculate_chars_left();
-            }, 50);
+                process_form_changes();
+            }, 200);
         }
 
         function hide_comment_form() {
@@ -326,13 +349,11 @@ $(function() {
 
             comment_in_form = comment_id;
             $textarea.val(comment_text);
-            calculate_chars_left();
+            process_form_changes();
             $comment.slideUp('slow');
             show_comment_form();
             return false;
         });
-
-        var interval = null;
 
         $button.click(function() {
             if ($textarea.val().length > max_length) {
