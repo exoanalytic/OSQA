@@ -104,6 +104,8 @@ class Action(models.Model):
         if data:
             self.process_data(**data)
 
+        super(Action, self).save(*args, **kwargs)
+
         if isnew:
             if (self.node is None) or (not self.node.wiki):
                 self.repute_users()
