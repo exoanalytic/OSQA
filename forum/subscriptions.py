@@ -149,9 +149,6 @@ def member_joined(action, new):
         'newmember': action.user,
     }, threaded=False)
 
-    sub_settings = SubscriptionSettings(user=action.user)
-    sub_settings.save()
-
 UserJoinsAction.hook(member_joined)
 
 def question_viewed(action, new):

@@ -86,7 +86,7 @@ class User(BaseModel, DjangoUser):
     is_approved = models.BooleanField(default=False)
     email_isvalid = models.BooleanField(default=False)
 
-    reputation = models.PositiveIntegerField(default=1)
+    reputation = models.PositiveIntegerField(default=0)
     gold = models.PositiveIntegerField(default=0)
     silver = models.PositiveIntegerField(default=0)
     bronze = models.PositiveIntegerField(default=0)
@@ -111,9 +111,15 @@ class User(BaseModel, DjangoUser):
 
     def save(self, *args, **kwargs):
         if self.reputation < 0:
-            self.reputation = 1
+            self.reputation = 0
+
+        new = not bool(self.id)
 
         super(User, self).save(*args, **kwargs)
+
+        if new:
+            sub_settings = SubscriptionSettings(user=self)
+            sub_settings.save()
 
     def get_absolute_url(self):
         return self.get_profile_url()
