@@ -1351,7 +1351,7 @@ div.comment-tools a:hover {
 }
 
 .comments-char-left-count.warn {
-    color: darkred;;    
+    color: orange;    
 }
 
 .moderation {

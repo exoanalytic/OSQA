@@ -286,12 +286,21 @@ $(function() {
             return true;
         }
 
+        var interval = null;
+
         function show_comment_form() {
             $container.slideDown('slow');
             $add_comment_link.fadeOut('slow');
+            window.setInterval(function() {
+                calculate_chars_left();
+            }, 50);
         }
 
         function hide_comment_form() {
+            if (interval != null) {
+                window.clearInterval(interval);
+                interval = null;
+            }
             $container.slideUp('slow');
             $add_comment_link.fadeIn('slow');
         }
@@ -323,7 +332,7 @@ $(function() {
             return false;
         });
 
-        $textarea.keyup(calculate_chars_left);
+        var interval = null;
 
         $button.click(function() {
             if ($textarea.val().length > max_length) {
