@@ -33,6 +33,9 @@ class AnswerAction(NodeEditAction):
         answer.save()
         self.node = answer
 
+    def process_action(self):
+        self.node.question.reset_answer_count_cache()
+
     def describe(self, viewer=None):
         question = self.node.parent
         return _("%(user)s answered %(asker)s %(question)s") % {

@@ -1,49 +1,40 @@
 # encoding: utf-8
 import datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
-from forum.migrations import ProgressBar
-from forum.models.utils import dbsafe_encode
 
-try:
-    from cPickle import loads, dumps
-except ImportError:
-    from pickle import loads, dumps
-
-class Migration(DataMigration):
+class Migration(SchemaMigration):
     
     def forwards(self, orm):
-        k_count = orm.KeyValue.objects.count()
-        print "\nConverting %d keyvalue objects:" % k_count
-        progress = ProgressBar(k_count)
+        
+        # Deleting field 'User.hide_ignored_questions'
+        db.delete_column('forum_user', 'hide_ignored_questions')
 
-        for kv in orm.KeyValue.objects.all():
-            try:
-                o = loads(kv.value.encode('utf-8'))
-            except:
-                o = kv.value
+        # Deleting field 'User.questions_per_page'
+        db.delete_column('forum_user', 'questions_per_page')
 
-            kv.value = dbsafe_encode(o, compress_object=True)
-            kv.save()
-            progress.update()
+        # Deleting field 'User.email_key'
+        db.delete_column('forum_user', 'email_key')
 
-        print "\n...done\n"
-
-        a_count = orm.Action.objects.count()
-        print "\nConverting %d actions extra fields:" % a_count
-        progress = ProgressBar(a_count)
-
-        for a in orm.Action.objects.all():
-            a.extra = dbsafe_encode(a.extra, compress_object=True)
-            a.save()
-            progress.update()
-
-        print "\n...done\n"
+        # Adding field 'Node.in_moderation'
+        db.add_column('forum_node', 'in_moderation', self.gf('django.db.models.fields.related.ForeignKey')(related_name='moderated_node', unique=True, null=True, to=orm['forum.Action']), keep_default=False)
     
     
     def backwards(self, orm):
-        "Write your backwards methods here."
+        
+        # Adding field 'User.hide_ignored_questions'
+        db.add_column('forum_user', 'hide_ignored_questions', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True), keep_default=False)
+
+        # Adding field 'User.questions_per_page'
+        db.add_column('forum_user', 'questions_per_page', self.gf('django.db.models.fields.SmallIntegerField')(default=10), keep_default=False)
+
+        # Adding field 'User.email_key'
+        db.add_column('forum_user', 'email_key', self.gf('django.db.models.fields.CharField')(max_length=32, null=True), keep_default=False)
+
+        # Deleting field 'Node.in_moderation'
+        db.delete_column('forum_node', 'in_moderation_id')
+    
     
     models = {
         'auth.group': {
@@ -159,6 +150,7 @@ class Migration(DataMigration):
             'extra_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'extra_ref': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']", 'null': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'in_moderation': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'moderated_node'", 'unique': 'True', 'null': 'True', 'to': "orm['forum.Action']"}),
             'last_activity_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'last_activity_by': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.User']", 'null': 'True'}),
             'last_edited': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'edited_node'", 'unique': 'True', 'null': 'True', 'to': "orm['forum.Action']"}),
@@ -204,7 +196,7 @@ class Migration(DataMigration):
             'Meta': {'object_name': 'QuestionSubscription'},
             'auto_subscription': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_view': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2010, 5, 1, 0, 0, 32, 37000)'}),
+            'last_view': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2010, 5, 2, 4, 54, 13, 72000)'}),
             'question': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.User']"})
         },
@@ -246,13 +238,10 @@ class Migration(DataMigration):
             'bronze': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
             'date_of_birth': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'email_isvalid': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'email_key': ('django.db.models.fields.CharField', [], {'max_length': '32', 'null': 'True'}),
             'gold': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
-            'hide_ignored_questions': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'is_approved': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'last_seen': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'location': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'questions_per_page': ('django.db.models.fields.SmallIntegerField', [], {'default': '10'}),
             'real_name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'reputation': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1'}),
             'silver': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
@@ -262,7 +251,7 @@ class Migration(DataMigration):
         },
         'forum.validationhash': {
             'Meta': {'unique_together': "(('user', 'type'),)", 'object_name': 'ValidationHash'},
-            'expiration': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2010, 5, 2, 0, 0, 32, 86000)'}),
+            'expiration': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2010, 5, 3, 4, 54, 13, 256000)'}),
             'hash_code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'seed': ('django.db.models.fields.CharField', [], {'max_length': '12'}),

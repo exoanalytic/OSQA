@@ -8,7 +8,7 @@ class Question(Node):
     class Meta(Node.Meta):
         proxy = True
 
-    answer_count = DenormalizedField("children", node_type="answer")
+    answer_count = DenormalizedField("children", node_type="answer", deleted=None)
     favorite_count = DenormalizedField("actions", action_type="favorite", canceled=False)
 
     friendly_name = _("question")

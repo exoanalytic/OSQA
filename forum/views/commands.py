@@ -12,10 +12,10 @@ from forum.actions import *
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from forum.utils.decorators import ajax_method, ajax_login_required
-from decorators import command
+from decorators import command, CommandException
 import logging
 
-class NotEnoughRepPointsException(Exception):
+class NotEnoughRepPointsException(CommandException):
     def __init__(self, action):
         super(NotEnoughRepPointsException, self).__init__(
             _("""
@@ -24,7 +24,7 @@ class NotEnoughRepPointsException(Exception):
             """ % {'action': action, 'faq_url': reverse('faq')})
         )
 
-class CannotDoOnOwnException(Exception):
+class CannotDoOnOwnException(CommandException):
     def __init__(self, action):
         super(CannotDoOnOwnException, self).__init__(
             _("""
@@ -33,7 +33,7 @@ class CannotDoOnOwnException(Exception):
             """ % {'action': action, 'faq_url': reverse('faq')})
         )
 
-class AnonymousNotAllowedException(Exception):
+class AnonymousNotAllowedException(CommandException):
     def __init__(self, action):
         super(AnonymousNotAllowedException, self).__init__(
             _("""
@@ -42,7 +42,7 @@ class AnonymousNotAllowedException(Exception):
             """ % {'action': action, 'signin_url': reverse('auth_signin')})
         )
 
-class NotEnoughLeftException(Exception):
+class NotEnoughLeftException(CommandException):
     def __init__(self, action, limit):
         super(NotEnoughLeftException, self).__init__(
             _("""
@@ -52,7 +52,7 @@ class NotEnoughLeftException(Exception):
             """ % {'action': action, 'limit': limit, 'faq_url': reverse('faq')})
         )
 
-class CannotDoubleActionException(Exception):
+class CannotDoubleActionException(CommandException):
     def __init__(self, action):
         super(CannotDoubleActionException, self).__init__(
             _("""
@@ -88,7 +88,7 @@ def vote_post(request, id, vote_type):
         old_vote = Action.objects.get_for_types((VoteUpAction, VoteDownAction), node=post, user=user)
 
         if old_vote.action_date < datetime.datetime.now() - datetime.timedelta(days=int(settings.DENY_UNVOTE_DAYS)):
-            raise Exception(
+            raise CommandException(
                     _("Sorry but you cannot cancel a vote after %(ndays)d %(tdays)s from the original vote") %
                     {'ndays': int(settings.DENY_UNVOTE_DAYS), 'tdays': ungettext('day', 'days', int(settings.DENY_UNVOTE_DAYS))}
             )
@@ -121,9 +121,8 @@ def vote_post(request, id, vote_type):
 
 @command
 def flag_post(request, id):
-    if not "prompt" in request.REQUEST:
-        return render_to_response('node/prompt.html')
-
+    if not request.POST:
+        return render_to_response('node/report.html', {'types': settings.FLAG_TYPES})
 
     post = get_object_or_404(Node, id=id)
     user = request.user
@@ -144,16 +143,16 @@ def flag_post(request, id):
 
     try:
         current = FlagAction.objects.get(user=user, node=post)
-        raise Exception(_("You already flagged this post with the following reason: %(reason)s") % {'reason': current.extra})
+        raise CommandException(_("You already flagged this post with the following reason: %(reason)s") % {'reason': current.extra})
     except ObjectDoesNotExist:
         reason = request.POST.get('prompt', '').strip()
 
         if not len(reason):
-            raise Exception(_("Reason is empty"))
+            raise CommandException(_("Reason is empty"))
 
         FlagAction(user=user, node=post, extra=reason, ip=request.META['REMOTE_ADDR']).save()
 
-    return {}
+    return {'message': _("Thank you for your report. A moderator will review your submission shortly.")}
         
 @command
 def like_comment(request, id):
@@ -195,13 +194,8 @@ def delete_comment(request, id):
     if not user.can_delete_comment(comment):
         raise NotEnoughRepPointsException( _('delete comments'))
 
-    reason = request.POST.get('prompt', '').strip()
-
-    if not len(reason):
-        raise Exception(_("Reason is empty"))
-
     if not comment.deleted:
-        DeleteAction(node=comment, user=user, extra=reason, ip=request.META['REMOTE_ADDR']).save()
+        DeleteAction(node=comment, user=user, ip=request.META['REMOTE_ADDR']).save()
 
     return {
         'commands': {
@@ -240,12 +234,12 @@ def comment(request, id):
         raise AnonymousNotAllowedException(_('comment'))
 
     if not request.method == 'POST':
-        raise Exception(_("Invalid request"))
+        raise CommandException(_("Invalid request"))
 
     comment_text = request.POST.get('comment', '').strip()
 
     if not len(comment_text):
-        raise Exception(_("Comment is empty"))
+        raise CommandException(_("Comment is empty"))
 
     if 'id' in request.POST:
         comment = get_object_or_404(Comment, id=request.POST['id'])
@@ -287,7 +281,7 @@ def accept_answer(request, id):
     question = answer.question
 
     if not user.can_accept_answer(answer):
-        raise Exception(_("Sorry but only the question author can accept an answer"))
+        raise CommandException(_("Sorry but only the question author can accept an answer"))
 
     commands = {}
 
@@ -322,12 +316,7 @@ def delete_post(request, id):
         post.deleted.cancel(user, ip=request.META['REMOTE_ADDR'])
         ret['commands']['unmark_deleted'] = [post.node_type, id]
     else:
-        reason = request.POST.get('prompt', '').strip()
-
-        if not len(reason):
-            raise Exception(_("Reason is empty"))
-
-        DeleteAction(node=post, user=user, extra=reason, ip=request.META['REMOTE_ADDR']).save()
+        DeleteAction(node=post, user=user, ip=request.META['REMOTE_ADDR']).save()
 
         ret['commands']['mark_deleted'] = [post.node_type, id]
 
@@ -376,7 +365,7 @@ def mark_tag(request, tag=None, **kwargs):#tagging system
 
 def matching_tags(request):
     if len(request.GET['q']) == 0:
-       raise Exception(_("Invalid request"))
+       raise CommandException(_("Invalid request"))
 
     possible_tags = Tag.objects.filter(name__istartswith = request.GET['q'])
     tag_output = ''
@@ -384,22 +373,6 @@ def matching_tags(request):
         tag_output += (tag.name + "|" + tag.name + "." + tag.used_count.__str__() + "\n")
         
     return HttpResponse(tag_output, mimetype="text/plain")
-
-@ajax_login_required
-def ajax_toggle_ignored_questions(request):#ajax tagging and tag-filtering system
-    if request.user.hide_ignored_questions:
-        new_hide_setting = False
-    else:
-        new_hide_setting = True
-    request.user.hide_ignored_questions = new_hide_setting
-    request.user.save()
-
-@ajax_method
-def ajax_command(request):#refactor? view processing ajax commands - note "vote" and view others do it too
-    if 'command' not in request.POST:
-        return HttpResponseForbidden(mimetype="application/json")
-    if request.POST['command'] == 'toggle-ignored-questions':
-        return ajax_toggle_ignored_questions(request)
 
 @login_required
 def close(request, id):#close question
@@ -444,13 +417,5 @@ def reopen(request, id):#re-open question
             'question' : question,
             }, context_instance=RequestContext(request))
 
-#osqa-user communication system
-def read_message(request):#marks message a read
-    if request.method == "POST":
-        if request.POST['formdata'] == 'required':
-            request.session['message_silent'] = 1
-            if request.user.is_authenticated():
-                request.user.delete_messages()
-    return HttpResponse('')
 
 

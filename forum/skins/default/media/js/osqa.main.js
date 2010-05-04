@@ -145,7 +145,25 @@ function load_prompt(object, url) {
     object.parent().append($box);
     $box.fadeIn("fast");
 
-    $box.load(url)
+    $box.load(url, function() {
+        $box.find('.prompt-cancel').click(function() {
+            $box.fadeOut('fast', function() {
+                $box.remove();
+            });
+            return false;
+        });
+
+        $box.find('.prompt-submit').click(function() {
+            start_command();
+            $.post(url, {prompt: $box.find('textarea').val()}, function(data) {
+                $box.fadeOut('fast', function() {
+                    $box.remove();
+                });
+                process_ajax_response(data, object);
+            }, 'json');
+            return false;
+        });
+    });
 }
 
 function show_prompt(object, msg, callback) {

@@ -1,49 +1,89 @@
 # encoding: utf-8
 import datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
-from forum.migrations import ProgressBar
-from forum.models.utils import dbsafe_encode
 
-try:
-    from cPickle import loads, dumps
-except ImportError:
-    from pickle import loads, dumps
-
-class Migration(DataMigration):
+class Migration(SchemaMigration):
     
     def forwards(self, orm):
-        k_count = orm.KeyValue.objects.count()
-        print "\nConverting %d keyvalue objects:" % k_count
-        progress = ProgressBar(k_count)
+        db.rename_table('award', 'forum_award')
+        db.rename_table('badge', 'forum_badge')
+        db.rename_table('tag', 'forum_tag')
+        
+        # Adding model 'Flag'
+        db.create_table('forum_flag', (
+            ('node', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.Node'])),
+            ('action', self.gf('django.db.models.fields.related.ForeignKey')(related_name='flag', unique=True, to=orm['forum.Action'])),
+            ('reason', self.gf('django.db.models.fields.CharField')(max_length=300)),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.User'])),
+            ('flagged_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+        ))
+        #db.send_create_signal('forum', ['Flag'])
 
-        for kv in orm.KeyValue.objects.all():
-            try:
-                o = loads(kv.value.encode('utf-8'))
-            except:
-                o = kv.value
+        # Adding model 'Vote'
+        db.create_table('forum_vote', (
+            ('node', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.Node'])),
+            ('action', self.gf('django.db.models.fields.related.ForeignKey')(related_name='vote', unique=True, to=orm['forum.Action'])),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('value', self.gf('django.db.models.fields.SmallIntegerField')()),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.User'])),
+            ('voted_at', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
+        ))
+        #db.send_create_signal('forum', ['Vote'])
 
-            kv.value = dbsafe_encode(o, compress_object=True)
-            kv.save()
-            progress.update()
+        # Adding field 'Badge.cls'
+        db.add_column('forum_badge', 'cls', self.gf('django.db.models.fields.CharField')(max_length=50, null=True), keep_default=False)
 
-        print "\n...done\n"
+        # Removing unique constraint on 'Badge', fields ['type', 'name']
+        db.delete_unique(u'forum_badge', ['type', 'name'])
 
-        a_count = orm.Action.objects.count()
-        print "\nConverting %d actions extra fields:" % a_count
-        progress = ProgressBar(a_count)
+        # Deleting field 'Award.notified'
+        db.delete_column(u'forum_award', 'notified')
 
-        for a in orm.Action.objects.all():
-            a.extra = dbsafe_encode(a.extra, compress_object=True)
-            a.save()
-            progress.update()
+        # Adding field 'Award.node'
+        db.add_column('forum_award', 'node', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['forum.Node'], null=True), keep_default=False)
 
-        print "\n...done\n"
+        # Adding field 'Award.trigger'
+        db.add_column('forum_award', 'trigger', self.gf('django.db.models.fields.related.ForeignKey')(related_name='awards', null=True, to=orm['forum.Action']), keep_default=False)
+
+        # Adding field 'Award.action'
+        db.add_column('forum_award', 'action', self.gf('django.db.models.fields.related.ForeignKey')(default=1, related_name='award', to=orm['forum.Action']), keep_default=False)
+
+        # Adding unique constraint on 'Award', fields ['node', 'badge', 'user']
+        #db.create_unique('forum_award', ['node_id', 'badge_id', 'user_id'])
     
     
     def backwards(self, orm):
-        "Write your backwards methods here."
+        
+        # Deleting model 'Flag'
+        db.delete_table('forum_flag')
+
+        # Deleting model 'Vote'
+        db.delete_table('forum_vote')
+
+        # Deleting field 'Badge.cls'
+        db.delete_column('forum_badge', 'cls')
+
+        # Adding unique constraint on 'Badge', fields ['type', 'name']
+        db.create_unique(u'badge', ['type', 'name'])
+
+        # Adding field 'Award.notified'
+        db.add_column(u'award', 'notified', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True), keep_default=False)
+
+        # Deleting field 'Award.node'
+        db.delete_column('forum_award', 'node_id')
+
+        # Deleting field 'Award.trigger'
+        db.delete_column('forum_award', 'trigger_id')
+
+        # Deleting field 'Award.action'
+        db.delete_column('forum_award', 'action_id')
+
+        # Removing unique constraint on 'Award', fields ['node', 'badge', 'user']
+        db.delete_unique('forum_award', ['node_id', 'badge_id', 'user_id'])
+    
     
     models = {
         'auth.group': {
@@ -114,25 +154,37 @@ class Migration(DataMigration):
             'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'auth_keys'", 'to': "orm['forum.User']"})
         },
         'forum.award': {
-            'Meta': {'object_name': 'Award', 'db_table': "u'award'"},
+            'Meta': {'unique_together': "(('user', 'badge', 'node'),)", 'object_name': 'Award'},
+            'action': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'award'", 'to': "orm['forum.Action']"}),
             'awarded_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'badge': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'award_badge'", 'to': "orm['forum.Badge']"}),
+            'badge': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Badge']"}),
             'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'notified': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'node': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']", 'null': 'True'}),
             'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'awards'", 'to': "orm['forum.User']"})
+            'trigger': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'awards'", 'null': 'True', 'to': "orm['forum.Action']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.User']"})
         },
         'forum.badge': {
-            'Meta': {'unique_together': "(('name', 'type'),)", 'object_name': 'Badge', 'db_table': "u'badge'"},
+            'Meta': {'object_name': 'Badge'},
             'awarded_count': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
             'awarded_to': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'badges'", 'through': "'Award'", 'to': "orm['forum.User']"}),
+            'cls': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
             'description': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'multiple': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
             'slug': ('django.db.models.fields.SlugField', [], {'db_index': 'True', 'max_length': '50', 'blank': 'True'}),
             'type': ('django.db.models.fields.SmallIntegerField', [], {})
+        },
+        'forum.flag': {
+            'Meta': {'unique_together': "(('user', 'node'),)", 'object_name': 'Flag'},
+            'action': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'flag'", 'unique': 'True', 'to': "orm['forum.Action']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'node': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']"}),
+            'reason': ('django.db.models.fields.CharField', [], {'max_length': '300'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.User']"}),
+            'flagged_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
         },
         'forum.keyvalue': {
             'Meta': {'object_name': 'KeyValue'},
@@ -159,6 +211,7 @@ class Migration(DataMigration):
             'extra_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'extra_ref': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']", 'null': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'in_moderation': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'moderated_node'", 'unique': 'True', 'null': 'True', 'to': "orm['forum.Action']"}),
             'last_activity_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'last_activity_by': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.User']", 'null': 'True'}),
             'last_edited': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'edited_node'", 'unique': 'True', 'null': 'True', 'to': "orm['forum.Action']"}),
@@ -204,7 +257,7 @@ class Migration(DataMigration):
             'Meta': {'object_name': 'QuestionSubscription'},
             'auto_subscription': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_view': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2010, 5, 1, 0, 0, 32, 37000)'}),
+            'last_view': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2010, 5, 3, 11, 41, 55, 831000)'}),
             'question': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.User']"})
         },
@@ -230,7 +283,7 @@ class Migration(DataMigration):
             'user': ('django.db.models.fields.related.OneToOneField', [], {'related_name': "'subscription_settings'", 'unique': 'True', 'to': "orm['forum.User']"})
         },
         'forum.tag': {
-            'Meta': {'object_name': 'Tag', 'db_table': "u'tag'"},
+            'Meta': {'object_name': 'Tag'},
             'created_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'created_tags'", 'to': "orm['forum.User']"}),
             'deleted': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'deleted_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
@@ -246,13 +299,10 @@ class Migration(DataMigration):
             'bronze': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
             'date_of_birth': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'email_isvalid': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
-            'email_key': ('django.db.models.fields.CharField', [], {'max_length': '32', 'null': 'True'}),
             'gold': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
-            'hide_ignored_questions': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'is_approved': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'last_seen': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'location': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
-            'questions_per_page': ('django.db.models.fields.SmallIntegerField', [], {'default': '10'}),
             'real_name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'reputation': ('django.db.models.fields.PositiveIntegerField', [], {'default': '1'}),
             'silver': ('django.db.models.fields.PositiveIntegerField', [], {'default': '0'}),
@@ -262,12 +312,21 @@ class Migration(DataMigration):
         },
         'forum.validationhash': {
             'Meta': {'unique_together': "(('user', 'type'),)", 'object_name': 'ValidationHash'},
-            'expiration': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2010, 5, 2, 0, 0, 32, 86000)'}),
+            'expiration': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2010, 5, 4, 11, 41, 59, 140000)'}),
             'hash_code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'seed': ('django.db.models.fields.CharField', [], {'max_length': '12'}),
             'type': ('django.db.models.fields.CharField', [], {'max_length': '12'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.User']"})
+        },
+        'forum.vote': {
+            'Meta': {'unique_together': "(('user', 'node'),)", 'object_name': 'Vote'},
+            'action': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'vote'", 'unique': 'True', 'to': "orm['forum.Action']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'node': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.Node']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['forum.User']"}),
+            'value': ('django.db.models.fields.SmallIntegerField', [], {}),
+            'voted_at': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
         }
     }
     

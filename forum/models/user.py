@@ -6,7 +6,8 @@ from django.db.models import Q
 try:
     from hashlib import md5
 except:
-    import md5
+    from md5 import new as md5
+
 import string
 from random import Random
 
@@ -76,18 +77,19 @@ class AnonymousUser(DjangoAnonymousUser):
     def can_upload_files(self):
         return False
 
+def true_if_is_super_or_staff(fn):
+    def decorated(self, *args, **kwargs):
+        return self.is_superuser or self.is_staff or fn(self, *args, **kwargs)
+    return decorated
+
 class User(BaseModel, DjangoUser):
     is_approved = models.BooleanField(default=False)
     email_isvalid = models.BooleanField(default=False)
-    email_key = models.CharField(max_length=32, null=True)
-    reputation = models.PositiveIntegerField(default=1)
 
+    reputation = models.PositiveIntegerField(default=1)
     gold = models.PositiveIntegerField(default=0)
     silver = models.PositiveIntegerField(default=0)
     bronze = models.PositiveIntegerField(default=0)
-
-    questions_per_page = models.SmallIntegerField(choices=QUESTIONS_PER_PAGE_CHOICES, default=10)
-    hide_ignored_questions = models.BooleanField(default=False)
     
     last_seen = models.DateTimeField(default=datetime.datetime.now)
     real_name = models.CharField(max_length=100, blank=True)
@@ -97,7 +99,10 @@ class User(BaseModel, DjangoUser):
     about = models.TextField(blank=True)
 
     subscriptions = models.ManyToManyField('Node', related_name='subscribers', through='QuestionSubscription')
-    
+
+    vote_up_count = DenormalizedField("actions", canceled=False, action_type="voteup")
+    vote_down_count = DenormalizedField("actions", canceled=False, action_type="votedown")
+   
     objects = UserManager()
 
     @property
@@ -130,18 +135,12 @@ class User(BaseModel, DjangoUser):
         return mark_safe(profile_link)
 
     def get_visible_answers(self, question):
-        return question.answers.filter(deleted=None)
+        return question.answers.filter(deleted=None, in_moderation=None)
 
     def get_vote_count_today(self):
         today = datetime.date.today()
         return self.actions.filter(canceled=False, action_type__in=("voteup", "votedown"),
                 action_date__range=(today - datetime.timedelta(days=1), today)).count()
-
-    def get_up_vote_count(self):
-        return self.actions.filter(canceled=False, action_type="voteup").count()
-
-    def get_down_vote_count(self):
-        return self.actions.filter(canceled=False, action_type="votedown").count()
 
     def get_reputation_by_upvoted_today(self):
         today = datetime.datetime.now()
@@ -158,65 +157,80 @@ class User(BaseModel, DjangoUser):
         return self.actions.filter(canceled=False, action_type="flag",
                 action_date__range=(today - datetime.timedelta(days=1), today)).count()
 
+    @true_if_is_super_or_staff
     def can_view_deleted_post(self, post):
-        return self.is_superuser or post.author == self
+        return post.author == self
 
+    @true_if_is_super_or_staff
     def can_vote_up(self):
-        return self.reputation >= int(settings.REP_TO_VOTE_UP) or self.is_superuser
+        return self.reputation >= int(settings.REP_TO_VOTE_UP)
 
+    @true_if_is_super_or_staff
     def can_vote_down(self):
-        return self.reputation >= int(settings.REP_TO_VOTE_DOWN) or self.is_superuser
+        return self.reputation >= int(settings.REP_TO_VOTE_DOWN)
 
     def can_flag_offensive(self, post=None):
         if post is not None and post.author == self:
             return False
-        return self.is_superuser or self.reputation >= int(settings.REP_TO_FLAG)
+        return self.is_superuser or self.is_staff or self.reputation >= int(settings.REP_TO_FLAG)
 
+    @true_if_is_super_or_staff
     def can_view_offensive_flags(self, post=None):
         if post is not None and post.author == self:
             return True
-        return self.is_superuser or self.reputation >= int(settings.REP_TO_VIEW_FLAGS)
+        return self.reputation >= int(settings.REP_TO_VIEW_FLAGS)
 
+    @true_if_is_super_or_staff
     def can_comment(self, post):
         return self == post.author or self.reputation >= int(settings.REP_TO_COMMENT
-        ) or self.is_superuser or (post.__class__.__name__ == "Answer" and self == post.question.author)
+        ) or (post.__class__.__name__ == "Answer" and self == post.question.author)
 
+    @true_if_is_super_or_staff
     def can_like_comment(self, comment):
-        return self != comment.user and (self.reputation >= int(settings.REP_TO_LIKE_COMMENT) or self.is_superuser)
+        return self != comment.author and (self.reputation >= int(settings.REP_TO_LIKE_COMMENT))
 
+    @true_if_is_super_or_staff
     def can_edit_comment(self, comment):
-        return (comment.user == self and comment.added_at >= datetime.datetime.now() - datetime.timedelta(minutes=60)
+        return (comment.author == self and comment.added_at >= datetime.datetime.now() - datetime.timedelta(minutes=60)
         ) or self.is_superuser
 
+    @true_if_is_super_or_staff
     def can_delete_comment(self, comment):
-        return self.is_superuser or self == comment.user or self.reputation >= int(settings.REP_TO_DELETE_COMMENTS)
+        return self == comment.author or self.reputation >= int(settings.REP_TO_DELETE_COMMENTS)
 
+    @true_if_is_super_or_staff
     def can_accept_answer(self, answer):
-        return self.is_superuser or self == answer.question.author
+        return self == answer.question.author
 
+    @true_if_is_super_or_staff
     def can_edit_post(self, post):
-        return self.is_superuser or self == post.author or self.reputation >= int(settings.REP_TO_EDIT_OTHERS
+        return self == post.author or self.reputation >= int(settings.REP_TO_EDIT_OTHERS
         ) or (post.wiki and self.reputation >= int(settings.REP_TO_EDIT_WIKI))
 
+    @true_if_is_super_or_staff
     def can_retag_questions(self):
         return self.reputation >= int(settings.REP_TO_RETAG)
 
+    @true_if_is_super_or_staff
     def can_close_question(self, question):
-        return self.is_superuser or (self == question.author and self.reputation >= int(settings.REP_TO_CLOSE_OWN)
+        return (self == question.author and self.reputation >= int(settings.REP_TO_CLOSE_OWN)
         ) or self.reputation >= int(settings.REP_TO_CLOSE_OTHERS)
 
+    @true_if_is_super_or_staff
     def can_reopen_question(self, question):
-        return self.is_superuser or (self == question.author and self.reputation >= settings.REP_TO_REOPEN_OWN)
+        return self == question.author and self.reputation >= settings.REP_TO_REOPEN_OWN
 
+    @true_if_is_super_or_staff
     def can_delete_post(self, post):
         if post.node_type == "comment":
             return self.can_delete_comment(post)
             
-        return self.is_superuser or (self == post.author and (post.__class__.__name__ == "Answer" or
+        return (self == post.author and (post.__class__.__name__ == "Answer" or
             not post.answers.exclude(author=self).count()))
 
+    @true_if_is_super_or_staff
     def can_upload_files(self):
-        return self.is_superuser or self.reputation >= int(settings.REP_TO_UPLOAD)
+        return self.reputation >= int(settings.REP_TO_UPLOAD)
 
     class Meta:
         app_label = 'forum'

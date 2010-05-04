@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext as _
 from utils import PickledObjectField
+from threading import Thread
 from base import *
 import re
 
@@ -23,6 +24,7 @@ class ActionManager(models.Manager):
     def get_for_types(self, types, *args, **kwargs):
         kwargs['action_type__in'] = [t.get_type() for t in types]
         return self.get(*args, **kwargs)
+
         
 
 class Action(models.Model):
@@ -38,6 +40,8 @@ class Action(models.Model):
     canceled_by = models.ForeignKey('User', null=True, related_name="canceled_actions")
     canceled_at = models.DateTimeField(null=True)
     canceled_ip = models.CharField(max_length=16)
+
+    hooks = {}
 
     objects = ActionManager()
 
@@ -95,15 +99,16 @@ class Action(models.Model):
             self.action_type = self.__class__.get_type()
             isnew = True
 
+        super(Action, self).save(*args, **kwargs)
+
         if data:
             self.process_data(**data)
-
-        super(Action, self).save(*args, **kwargs)
 
         if isnew:
             if (self.node is None) or (not self.node.wiki):
                 self.repute_users()
             self.process_action()
+            self.trigger_hooks(True)
 
         return self
 
@@ -121,6 +126,7 @@ class Action(models.Model):
             self.save()
             self.cancel_reputes()
             self.cancel_action()
+            #self.trigger_hooks(False)
 
     @classmethod
     def get_current(cls, **kwargs):
@@ -129,13 +135,35 @@ class Action(models.Model):
         try:
             return cls.objects.get(**kwargs)
         except cls.MultipleObjectsReturned:
-            #todo: log this stuff
+            logging.error("Got multiple values for action %s with args %s", cls.__name__,
+                          ", ".join(["%s='%s'" % i for i in kwargs.items()]))
             raise
         except cls.DoesNotExist:
             return None
 
+    @classmethod
+    def hook(cls, fn):
+        if not Action.hooks.get(cls, None):
+            Action.hooks[cls] = []
+
+        Action.hooks[cls].append(fn)
+
+    def trigger_hooks(self, new=True):
+        thread = Thread(target=trigger_hooks_threaded,  args=[self, Action.hooks, new])
+        thread.setDaemon(True)
+        thread.start()
+
     class Meta:
         app_label = 'forum'
+
+def trigger_hooks_threaded(action, hooks, new):
+    for cls, hooklist in hooks.items():
+        if isinstance(action, cls):
+            for hook in hooklist:
+                try:
+                    hook(action=action, new=new)
+                except Exception, e:
+                    logging.error("Error in %s hook: %s" % (cls.__name__, str(e)))
 
 class ActionProxyMetaClass(models.Model.__metaclass__):
     types = {}
@@ -175,6 +203,37 @@ class ActionProxy(Action):
             'node_name': node.friendly_name, 'node_desc': node_desc,
         }
     
+    class Meta:
+        proxy = True
+
+class DummyActionProxy(Action):
+    __metaclass__ = ActionProxyMetaClass
+
+    hooks = []
+
+    def process_data(self, **data):
+        pass
+
+    def process_action(self):
+        pass
+
+    def save(self, data=None):
+        self.process_action()
+
+        if data:
+            self.process_data(**data)
+
+        for hook in self.__class__.hooks:
+            hook(self, True)
+
+    @classmethod
+    def get_type(cls):
+        return re.sub(r'action$', '', cls.__name__.lower())
+
+    @classmethod
+    def hook(cls, fn):
+        cls.hooks.append(fn)
+
     class Meta:
         proxy = True
 

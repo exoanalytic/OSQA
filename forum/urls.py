@@ -72,7 +72,6 @@ urlpatterns += patterns('',
     url(r'^%s' % _('matching_tags/'), app.commands.matching_tags, name='matching_tags'),
 
     url(r'^%s(?P<id>\d+)/%s$' % (_('questions/'), _('revisions/')), app.readers.revisions, name='question_revisions'),
-    url(r'^%s$' % _('command/'), app.commands.ajax_command, name='call_ajax'),
 
     #place general question item in the end of other operations
     url(r'^%s(?P<id>\d+)/(?P<slug>[\w-]*)$' % _('question/'), app.readers.question, name='question'),
@@ -94,7 +93,6 @@ urlpatterns += patterns('',
 
 
     url(r'^%s$' % _('users/'),app.users.users, name='users'),
-    url(r'^%s(?P<id>\d+)/$' % _('moderate-user/'), app.users.moderate_user, name='moderate_user'),
     url(r'^%s(?P<id>\d+)/%s$' % (_('users/'), _('edit/')), app.users.edit_user, name='edit_user'),
 
     url(r'^%s(?P<id>\d+)/(?P<slug>.+)/%s$' % (_('users/'), _('subscriptions/')), app.users.user_subscriptions, name='user_subscriptions'),
@@ -105,8 +103,7 @@ urlpatterns += patterns('',
     url(r'^%s(?P<id>\d+)/(?P<slug>.+)/$' % _('users/'), app.users.user_stats, name='user_profile'),
     
     url(r'^%s$' % _('badges/'),app.meta.badges, name='badges'),
-    url(r'^%s(?P<id>\d+)//*' % _('badges/'), app.meta.badge, name='badge'),
-    url(r'^%s%s$' % (_('messages/'), _('markread/')),app.commands.read_message, name='read_message'),
+    url(r'^%s(?P<id>\d+)/(?P<slug>.+)/$' % _('badges/'), app.meta.badge, name='badge'),
     # (r'^admin/doc/' % _('admin/doc'), include('django.contrib.admindocs.urls')),
     url(r'^%s(.*)' % _('nimda/'), admin.site.root, name='osqa_admin'),
     url(r'^feeds/(?P<url>.*)/$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name='feeds'),

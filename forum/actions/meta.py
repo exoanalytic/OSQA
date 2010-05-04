@@ -1,12 +1,31 @@
 from django.utils.translation import ugettext as _
 from django.db.models import F
-from forum.models.action import ActionProxy
+from forum.models.action import ActionProxy, DummyActionProxy
+from forum.models import Vote, Flag
 import settings
 
 class VoteAction(ActionProxy):
     def update_node_score(self, inc):
         self.node.score = F('score') + inc
         self.node.save()
+
+    def process_vote_action(self, value):
+        self.update_node_score(value)
+        vote = Vote(node=self.node, user=self.user, action=self, value=value)
+        vote.save()
+
+    def cancel_action(self):
+        vote = self.vote.all()[0]
+        self.update_node_score(-vote.value)
+        vote.delete()
+
+    @classmethod
+    def get_for(cls, user, node):
+        try:
+            vote = Vote.objects.get(user=user, node=node)
+            return vote.value
+        except:
+            return None
 
     def describe_vote(self, vote_desc, viewer=None):
         return _("%(user)s %(vote_desc)s %(post_desc)s") % {
@@ -20,10 +39,12 @@ class VoteUpAction(VoteAction):
         self.repute(self.node.author, int(settings.REP_GAIN_BY_UPVOTED))
 
     def process_action(self):
-        self.update_node_score(1)
+        self.process_vote_action(1)
+        self.user.reset_vote_up_count_cache()
 
     def cancel_action(self):
-        self.update_node_score(-1)
+        super(VoteUpAction, self).cancel_action()
+        self.user.reset_vote_up_count_cache()
 
     def describe(self, viewer=None):
         return self.describe_vote(_("voted up"), viewer)
@@ -34,10 +55,12 @@ class VoteDownAction(VoteAction):
         self.repute(self.user, -int(settings.REP_LOST_BY_DOWNVOTING))
 
     def process_action(self):
-        self.update_node_score(-1)
+        self.process_vote_action(-1)
+        self.user.reset_vote_down_count_cache()
 
     def cancel_action(self):
-        self.update_node_score(+1)
+        super(VoteDownAction, self).cancel_action()
+        self.user.reset_vote_down_count_cache()
 
     def describe(self, viewer=None):
         return self.describe_vote(_("voted down"), viewer)
@@ -46,6 +69,12 @@ class VoteDownAction(VoteAction):
 class VoteUpCommentAction(VoteUpAction):
     def repute_users(self):
         pass
+
+    def process_action(self):
+        self.process_vote_action(1)
+
+    def cancel_action(self):
+        super(VoteUpAction, self).cancel_action()
 
     def describe(self, viewer=None):
         return self.describe_vote(_("liked"), viewer)
@@ -56,6 +85,8 @@ class FlagAction(ActionProxy):
         self.repute(self.node.author, -int(settings.REP_LOST_BY_FLAGGED))
 
     def process_action(self):
+        flag = Flag(user=self.user, node=self.node, action=self, reason=self.extra)
+        flag.save()
         self.node.reset_flag_count_cache()
 
         if self.node.flag_count == int(settings.FLAG_COUNT_TO_HIDE_POST):
@@ -66,8 +97,17 @@ class FlagAction(ActionProxy):
             if not self.node.deleted:
                 DeleteAction(node=self.node, user=self.user, extra="BYFLAGGED").save()
 
-        def cancel_action(self):
-            self.node.reset_flag_count_cache()
+    def cancel_action(self):
+        self.flag.all()[0].delete()
+        self.node.reset_flag_count_cache()
+
+    @classmethod
+    def get_for(cls, user, node):
+        try:
+            flag = Flag.objects.get(user=user, node=node)
+            return flag.reason or _("No reason given")
+        except:
+            return None
 
     def describe(self, viewer=None):
         return _("%(user)s flagged %(post_desc)s: %(reason)s") % {
@@ -109,7 +149,7 @@ class AcceptAnswerAction(ActionProxy):
 
         return _("%(user)s accepted %(answerer)s answer on %(asker)s question %(question)s") % {
             'user': self.hyperlink(self.user.get_profile_url(), self.friendly_username(viewer, self.user)),
-            'answerer': self.hyperlink(answer.author.get_profile_url(), self.friendly_username(viewer, answer.author.username)),
+            'answerer': self.hyperlink(answer.author.get_profile_url(), self.friendly_username(viewer, answer.author)),
             'asker': asker,
             'question': self.hyperlink(question.get_absolute_url(), question.title)
         }
@@ -120,7 +160,7 @@ class FavoriteAction(ActionProxy):
         self.node.reset_favorite_count_cache()
 
     def cancel_action(self):
-        self.proccess_action()
+        self.process_action()
 
     def describe(self, viewer=None):
         return _("%(user)s marked %(post_desc)s as favorite") % {
@@ -133,10 +173,16 @@ class DeleteAction(ActionProxy):
     def process_action(self):
         self.node.deleted = self
         self.node.save()
+        
+        if self.node.node_type == "answer":
+            self.node.question.reset_answer_count_cache()
 
     def cancel_action(self):
         self.node.deleted = None
         self.node.save()
+
+        if self.node.node_type == "answer":
+            self.node.question.reset_answer_count_cache()
 
     def describe(self, viewer=None):
         return _("%(user)s deleted %(post_desc)s: %(reason)s") % {
@@ -149,3 +195,13 @@ class DeleteAction(ActionProxy):
             return self.extra
         else:
             return _("flagged by multiple users: ") + "; ".join([f.extra for f in FlagAction.objects.filter(node=self.node)])
+
+
+class QuestionViewAction(DummyActionProxy):
+    def __init__(self, question, user):
+        self.user = user
+        self.question = question
+
+    def process_action(self):
+        self.question.extra_count = F('extra_count') + 1
+        self.question.save()

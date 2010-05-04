@@ -1147,19 +1147,6 @@ ul.form-horizontal-rows li input {
 
 .comments-container { clear: both; }
 
-.admin {
-	background-color: #FFF380;
-	border: 1px solid darkred;
-	padding: 0 5px;
-}
-
-.admin p { margin-bottom: 3px; }
-
-.admin #action_status {
-	font-weight: bold;
-	text-align: center;
-}
-
 #tagSelector { padding-bottom: 2px; }
 #hideIgnoredTagsControl { margin: 5px 0 0; }
 #hideIgnoredTagsCb { margin: 0 2px 0 1px; }
@@ -1334,8 +1321,30 @@ div.comment-tools a:hover {
 
 .user-prompt select, .user-prompt textarea {
     width: 100%;
+    padding: 0;
+    border: 0;
 }
 
 .user-prompt .prompt-buttons {
     text-align: right;
+}
+
+.comment-form-buttons input, .user-prompt .prompt-buttons button {
+    height: 16px;
+    line-height: 12px;
+    font-size: 110%;
+    border: 1px solid #999;
+}
+
+.moderation {
+	background-color: #FFF380;
+	border: 1px solid darkred;
+	padding: 0 5px;
+}
+
+.moderation p { margin-bottom: 3px; }
+
+.moderation #action_status {
+	font-weight: bold;
+	text-align: center;
 }

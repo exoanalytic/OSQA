@@ -26,7 +26,7 @@ from forum.forms import *
 from forum.models import *
 from forum.const import *
 from forum.utils.forms import get_next_url
-from forum.models.question import question_view
+from forum.actions import QuestionViewAction
 import decorators
 
 # used in index page
@@ -47,7 +47,7 @@ def index(request):
 
 @decorators.render('questions.html', 'unanswered')
 def unanswered(request):
-    return question_list(request, Question.objects.filter(accepted_answer=None),
+    return question_list(request, Question.objects.filter(extra_ref=None),
                          _('Open questions without an accepted answer'))
 
 @decorators.render('questions.html', 'questions')
@@ -61,7 +61,7 @@ def tag(request, tag):
 
 @decorators.list('questions', QUESTIONS_PAGE_SIZE)
 def question_list(request, initial, list_description=_('questions'), sort=None, base_path=None):
-    questions = initial.filter(deleted=None)
+    questions = initial.filter(deleted=None, in_moderation=None)
 
     if request.user.is_authenticated():
         questions = questions.filter(
@@ -177,7 +177,7 @@ def update_question_view_times(request, question):
     last_seen = request.session['last_seen_in_question'].get(question.id,None)
 
     if (not last_seen) or last_seen < question.last_activity_at:
-        question_view.send(sender=update_question_view_times, instance=question, user=request.user)
+        QuestionViewAction(question, request.user).save()
         request.session['last_seen_in_question'][question.id] = datetime.datetime.now()
 
     request.session['last_seen_in_question'][question.id] = datetime.datetime.now()

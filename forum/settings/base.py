@@ -1,5 +1,6 @@
 import django.dispatch
 from django.utils.encoding import force_unicode
+from copy import deepcopy
 
 class SettingSet(list):
     def __init__(self, name, title, description, weight=1000, markdown=False):
@@ -8,12 +9,53 @@ class SettingSet(list):
         self.description = description
         self.weight = weight
         self.markdown = markdown
+        
 
-class BaseSetting(object):
-    def __init__(self, name, default, field_context):
+class Setting(object):
+    emulators = {}
+    sets = {}
+
+    def __new__(cls, name, default, set=None, field_context=None):
+        if cls.__name__ != "Setting":
+            return super(Setting, cls).__new__(cls, name, default, set, field_context)
+        deftype = type(default)
+
+        if deftype in Setting.emulators:
+            emul = Setting.emulators[deftype]
+        else:
+            emul = type(deftype.__name__ + cls.__name__, (cls,), {})
+            fns = [n for n, f in [(p, getattr(deftype, p)) for p in dir(deftype) if not p in dir(cls)] if callable(f)]
+
+            for n in fns:
+               emul.add_to_class(n)
+
+            Setting.emulators[deftype] = emul
+
+        return emul(name, default, set, field_context)
+
+    @classmethod
+    def add_to_class(cls, name):
+        def wrapper(self, *args, **kwargs):
+            return self.value.__getattribute__(name)(*args, **kwargs)
+
+        setattr(cls, name, wrapper)
+
+    def __init__(self, name, default, set=None, field_context=None):
         self.name = name
         self.default = default
-        self.field_context = field_context
+        self.field_context = field_context or {}
+
+        if set is not None:
+            if not set.name in Setting.sets:
+                Setting.sets[set.name] = set
+
+            Setting.sets[set.name].append(self)
+
+    def __str__(self):
+        return str(self.value)
+
+    def __unicode__(self):
+        return unicode(self.value)
 
     @property
     def value(self):
@@ -29,6 +71,9 @@ class BaseSetting(object):
 
     def set_value(self, new_value):
         new_value = self._parse(new_value)
+        self.save(new_value)
+
+    def save(self, value):
         from forum.models import KeyValue
 
         try:
@@ -36,7 +81,7 @@ class BaseSetting(object):
         except:
             kv = KeyValue(key=self.name)
 
-        kv.value = new_value
+        kv.value = value
         kv.save()
 
     def to_default(self):
@@ -45,91 +90,5 @@ class BaseSetting(object):
     def _parse(self, value):
         return value
 
-    def __str__(self):
-        return str(self.value)
 
-    def __unicode__(self):
-        return unicode(self.value)
-
-    def __nonzero__(self):
-        return bool(self.value)
-
-
-class StringSetting(BaseSetting):
-    def _parse(self, value):
-        if isinstance(value, unicode):
-            return value
-        else:
-            return str(value)
-
-    def __unicode__(self):
-        return unicode(self.value)
-
-    def __add__(self, other):
-        return "%s%s" % (unicode(self), other)
-
-    def __cmp__(self, other):
-        return cmp(str(self), str(other))
-
-class IntegerSetting(BaseSetting):
-    def _parse(self, value):
-        return int(value)
-
-    def __int__(self):
-        return int(self.value)
-
-    def __add__(self, other):
-        return int(self) + int(other)
-
-    def __sub__(self, other):
-        return int(self) - int(other)
-
-    def __cmp__(self, other):
-        return int(self) - int(other)
-
-class FloatSetting(BaseSetting):
-    def _parse(self, value):
-        return float(value)
-
-    def __int__(self):
-        return int(self.value)
-
-    def __float__(self):
-        return float(self.value)
-
-    def __add__(self, other):
-        return float(self) + float(other)
-
-    def __sub__(self, other):
-        return float(self) - float(other)
-
-    def __cmp__(self, other):
-        return float(self) - float(other)
-
-class BoolSetting(BaseSetting):
-    def _parse(self, value):
-        return bool(value)
-
-class Setting(object):
-    sets = {}
-
-    def __new__(cls, name, default, set=None, field_context={}):
-        if isinstance(default, bool):
-            instance = BoolSetting(name, default, field_context)
-        elif isinstance(default, str):
-            instance = StringSetting(name, default, field_context)
-        elif isinstance(default, float):
-            instance = FloatSetting(name, default, field_context)
-        elif isinstance(default, int):
-            instance = IntegerSetting(name, default, field_context)
-        else:
-            instance = BaseSetting(name, default, field_context)
-
-        if set is not None:
-            if not set.name in cls.sets:
-                cls.sets[set.name] = set
-
-            cls.sets[set.name].append(instance)
-
-        return instance
 

@@ -16,14 +16,14 @@ from zlib import compress, decompress
 class PickledObject(str):
     pass
 
-def dbsafe_encode(value, compress_object=False):
+def dbsafe_encode(value, compress_object=True):
     if not compress_object:
         value = b64encode(dumps(deepcopy(value)))
     else:
         value = b64encode(compress(dumps(deepcopy(value))))
     return PickledObject(value)
 
-def dbsafe_decode(value, compress_object=False):
+def dbsafe_decode(value, compress_object=True):
     if not compress_object:
         value = loads(b64decode(value))
     else:

@@ -109,6 +109,7 @@ class Node(BaseModel, NodeContent):
     score                 = models.IntegerField(default=0)
 
     deleted               = models.ForeignKey('Action', null=True, unique=True, related_name="deleted_node")
+    in_moderation         = models.ForeignKey('Action', null=True, unique=True, related_name="moderated_node")
     last_edited           = models.ForeignKey('Action', null=True, unique=True, related_name="edited_node")
 
     last_activity_by       = models.ForeignKey(User, null=True)
@@ -125,7 +126,7 @@ class Node(BaseModel, NodeContent):
     wiki = models.BooleanField(default=False)
 
     comment_count = DenormalizedField("children", node_type="comment", canceled=False)
-    flag_count = DenormalizedField("actions", action_type="flag", canceled=False)
+    flag_count = DenormalizedField("flags")
 
     friendly_name = _("post")
 

@@ -11,17 +11,10 @@ register = template.Library()
 
 @register.inclusion_tag('node/vote_buttons.html')
 def vote_buttons(post, user):
-    context = {
-        'post': post,
-        'user_vote': 'none'
-    }
+    context = dict(post=post, user_vote='none')
 
     if user.is_authenticated():
-        try:
-            user_vote = Action.objects.get_for_types((VoteUpAction, VoteDownAction), node=post, user=user)
-            context['user_vote'] = isinstance(user_vote, VoteUpAction) and 'up' or 'down'
-        except:
-            pass
+        context['user_vote'] = {1: 'up', -1: 'down', None: 'none'}[VoteAction.get_for(user, post)]
 
     return context
 
@@ -69,7 +62,7 @@ def post_controls(post, user):
                 controls.append(post_control(_('close'), reverse('close', kwargs={'id': post.id})))
 
         if user.can_flag_offensive(post):
-            label = _('flag')
+            label = _('report')
             
             if user.can_view_offensive_flags(post):
                 label =  "%s (%d)" % (label, post.flag_count)
@@ -83,7 +76,7 @@ def post_controls(post, user):
                         command=True))
             else:
                 controls.append(post_control(_('delete'), reverse('delete_post', kwargs={'id': post.id}),
-                        command=True, withprompt=True))
+                        command=True))
 
     return {'controls': controls}
 
@@ -110,11 +103,7 @@ def comments(post, user):
             showing += 1
         
         if context['can_like']:
-            try:
-                VoteUpCommentAction.objects.get(node=c, user=user)
-                context['likes'] = True
-            except Exception, e:
-                context['likes'] = False
+            context['likes'] = VoteAction.get_for(user, c) == 1
 
         context['user'] = c.user
         context.update(dict(c.__dict__))
@@ -124,7 +113,7 @@ def comments(post, user):
         'comments': comments,
         'post': post,
         'can_comment': user.can_comment(post),
-        'max_length': settings.COMMENT_MAX_LENGTH,
+        'max_length': settings.FORM_MAX_COMMENT_BODY,
         'showing': showing,
         'total': len(all_comments),
     }

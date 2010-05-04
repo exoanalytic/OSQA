@@ -53,3 +53,9 @@ def activity_item(parser, token):
         raise template.TemplateSyntaxError, "%r tag requires exactly two arguments" % token.contents.split()[0]
 
     return ActivityNode(activity, viewer)
+
+
+@register.inclusion_tag('users/moderation.html')
+def user_moderation(moderator, user):
+    
+    return dict(user=user)

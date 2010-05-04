@@ -154,6 +154,7 @@ class BaseModel(models.Model):
 
     def save(self, *args, **kwargs):
         put_back = [k for k, v in self.__dict__.items() if isinstance(v, models.expressions.ExpressionNode)]
+        super(BaseModel, self).save()
 
         if put_back:
             try:
@@ -161,12 +162,11 @@ class BaseModel(models.Model):
                     self.__class__.objects.filter(id=self.id).values(*put_back)[0]
                 )
             except:
-                #todo: log this properly
+                logging.error("Unable to read %s from %s" % (", ".join(put_back), self.__class__.__name__))
                 self.uncache()
 
         self._original_state = dict(self.__dict__)
         self.cache()
-        super(BaseModel, self).save()
 
     def cache(self):
         self.__class__.objects.cache_obj(self)
