@@ -155,8 +155,11 @@ def member_joined(action, new):
 UserJoinsAction.hook(member_joined)
 
 def question_viewed(action, new):
+    if not action.viewuser.is_authenticated():
+        return
+
     try:
-        subscription = QuestionSubscription.objects.get(question=action.question, user=action.user)
+        subscription = QuestionSubscription.objects.get(question=action.question, user=action.viewuser)
         subscription.last_view = datetime.datetime.now()
         subscription.save()
     except:

@@ -234,8 +234,6 @@ class DummyActionProxy(Action):
     def hook(cls, fn):
         cls.hooks.append(fn)
 
-    class Meta:
-        proxy = True
 
 
 class ActionRepute(models.Model):

@@ -199,7 +199,7 @@ class DeleteAction(ActionProxy):
 
 class QuestionViewAction(DummyActionProxy):
     def __init__(self, question, user):
-        self.user = user
+        self.viewuser = user
         self.question = question
 
     def process_action(self):
