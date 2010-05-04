@@ -1182,7 +1182,7 @@ a.accept-answer.on,a.accept-answer:hover { background: url("../images/vote-accep
 .post-score, .comments-char-left-count {
 	color: #777777;
 	font-family: Arial;
-	font-size: 140%;
+	font-size: 165%;
 	font-weight: bold;
 	padding: 0 0 3px;
 }
@@ -1218,9 +1218,13 @@ a.accept-answer.on,a.accept-answer:hover { background: url("../images/vote-accep
 
 .comment-text {
 	color: #444444;
-	font-size: 11px;
+	font-size: 12px;
 	margin: 0 0 0 22px;
 	padding: 0;
+}
+
+.comment-text p {
+    font-size: 12px;
 }
 
 .comment-info {

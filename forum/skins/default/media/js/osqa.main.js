@@ -359,6 +359,8 @@ $(function() {
             if ($textarea.val().length > max_length) {
                 show_message($button, "Your comment exceeds the max number of characters allowed.");
             } else {
+                if (running) return false;
+
                 var post_data = {
                     comment: $textarea.val()
                 }

@@ -1,5 +1,6 @@
 {% load extra_tags %}
 {% load i18n %}
+{% load markup %}
 
 <div class="comments-container" id="comments-container-{{ post.id }}">
     {% for comment in comments %}
@@ -10,7 +11,7 @@
                     {% if comment.score %}{{ comment.score }}{% endif %}
                 </td>
                 <td class="comment-text" id="comment-{{comment.id}}-text">
-                    {{ comment.body }}
+                    {{ comment.comment }}
                 </td>
             </tr>
             <tr>

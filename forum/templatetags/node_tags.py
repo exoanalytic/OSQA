@@ -106,6 +106,7 @@ def comments(post, user):
             context['likes'] = VoteAction.get_for(user, c) == 1
 
         context['user'] = c.user
+        context['comment'] = c.comment
         context.update(dict(c.__dict__))
         comments.append(context)
 

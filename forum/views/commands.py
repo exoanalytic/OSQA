@@ -13,6 +13,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from forum.utils.decorators import ajax_method, ajax_login_required
 from decorators import command, CommandException
+from forum import settings
 import logging
 
 class NotEnoughRepPointsException(CommandException):
@@ -258,7 +259,7 @@ def comment(request, id):
         return {
             'commands': {
                 'insert_comment': [
-                    id, comment.id, comment_text, user.username, user.get_profile_url(), reverse('delete_comment', kwargs={'id': comment.id})
+                    id, comment.id, comment.comment, user.username, user.get_profile_url(), reverse('delete_comment', kwargs={'id': comment.id})
                 ]
             }
         }

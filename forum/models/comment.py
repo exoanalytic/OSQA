@@ -16,7 +16,10 @@ class Comment(Node):
 
     @property
     def comment(self):
-        return self.body
+        if settings.FORM_ALLOW_MARKDOWN_IN_COMMENTS:
+            return self.html
+        else:
+            return self.body
 
     @property
     def headline(self):

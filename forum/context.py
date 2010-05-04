@@ -18,6 +18,7 @@ def application_settings(context):
         'RESOURCE_REVISION':settings.RESOURCE_REVISION,
         'OSQA_SKIN':settings.OSQA_DEFAULT_SKIN,
         'APP_FAVICON':settings.APP_FAVICON,
+        'FORM_ALLOW_MARKDOWN_IN_COMMENTS': settings.FORM_ALLOW_MARKDOWN_IN_COMMENTS,
         }
     return {'settings':my_settings}
 
