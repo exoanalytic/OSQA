@@ -8,7 +8,7 @@ class Migration(SchemaMigration):
     
     def forwards(self, orm):
         
-        # Adding model 'ActionRepute'
+        print "# Adding model 'ActionRepute'"
         db.create_table('forum_actionrepute', (
             ('action', self.gf('django.db.models.fields.related.ForeignKey')(related_name='reputes', to=orm['forum.Action'])),
             ('by_canceled', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True)),
@@ -18,7 +18,7 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('forum', ['ActionRepute'])
 
-        # Adding model 'Action'
+        print "# Adding model 'Action'"
         db.create_table('forum_action', (
             ('node', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.Node'], null=True)),
             ('extra', self.gf('django.db.models.fields.CharField')(max_length=255)),
@@ -33,58 +33,58 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('forum', ['Action'])
 
-        # Deleting field 'Node.vote_up_count'
+        print "# Deleting field 'Node.vote_up_count'"
         db.delete_column('forum_node', 'vote_up_count')
 
-        # Deleting field 'Node.comment_count'
+        print "# Deleting field 'Node.comment_count'"
         db.delete_column('forum_node', 'comment_count')
 
-        # Deleting field 'Node.offensive_flag_count'
+        print "# Deleting field 'Node.offensive_flag_count'"
         db.delete_column('forum_node', 'offensive_flag_count')
 
-        # Deleting field 'Node.vote_down_count'
+        print "# Deleting field 'Node.vote_down_count'"
         db.delete_column('forum_node', 'vote_down_count')
 
-        # Adding field 'Node.wiki'
+        print "# Adding field 'Node.wiki'"
         db.add_column('forum_node', 'wiki', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True), keep_default=False)
 
-        # Adding field 'Node.marked'
+        print "# Adding field 'Node.marked'"
         db.add_column('forum_node', 'marked', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True), keep_default=False)
 
-        # Adding field 'Node.extra_count'
+        print "# Adding field 'Node.extra_count'"
         db.add_column('forum_node', 'extra_count', self.gf('django.db.models.fields.IntegerField')(default=0), keep_default=False)
 
-        # Adding field 'Node.last_activity_by'
+        print "# Adding field 'Node.last_activity_by'"
         db.add_column('forum_node', 'last_activity_by', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.User'], null=True), keep_default=False)
 
-        # Adding field 'Node.extra_ref'
+        print "# Adding field 'Node.extra_ref'"
         db.add_column('forum_node', 'extra_ref', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.Node'], null=True), keep_default=False)
 
-        # Adding field 'Node.last_activity_at'
+        print "# Adding field 'Node.last_activity_at'"
         db.add_column('forum_node', 'last_activity_at', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True), keep_default=False)
 
         # Changing field 'Answer.node_ptr'
         #db.alter_column(u'answer', 'node_ptr_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.Node'], null=True, primary_key=True))
 
-        # Changing field 'QuestionSubscription.question'
-        db.alter_column('forum_questionsubscription', 'question_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.Node']))
+        print "# Changing field 'QuestionSubscription.question'"
+        db.alter_column('forum_questionsubscription', 'question_id', self.gf('django.db.models.fields.IntegerField')())
 
         # Removing unique constraint on 'Award', fields ['badge', 'object_id', 'content_type', 'user']
         #db.delete_unique(u'award', ['badge_id', 'object_id', 'content_type_id', 'user_id'])
 
-        # Changing field 'User.gold'
+        print "# Changing field 'User.gold'"
         db.alter_column('forum_user', 'gold', self.gf('django.db.models.fields.PositiveIntegerField')())
 
-        # Changing field 'User.silver'
+        print "# Changing field 'User.silver'"
         db.alter_column('forum_user', 'silver', self.gf('django.db.models.fields.PositiveIntegerField')())
 
-        # Changing field 'User.bronze'
+        print "# Changing field 'User.bronze'"
         db.alter_column('forum_user', 'bronze', self.gf('django.db.models.fields.PositiveIntegerField')())
 
-        # Deleting field 'Question.answer_count'
+        print "# Deleting field 'Question.answer_count'"
         db.delete_column(u'question', 'answer_count')
 
-        # Deleting field 'Question.favourite_count'
+        print "# Deleting field 'Question.favourite_count'"
         db.delete_column(u'question', 'favourite_count')
 
         # Changing field 'Question.node_ptr'
@@ -134,9 +134,6 @@ class Migration(SchemaMigration):
 
         # Changing field 'Answer.node_ptr'
         db.alter_column(u'answer', 'node_ptr_id', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['forum.Node'], unique=True, primary_key=True))
-
-        # Changing field 'QuestionSubscription.question'
-        db.alter_column('forum_questionsubscription', 'question_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['forum.Question']))
 
         # Adding unique constraint on 'Award', fields ['badge', 'object_id', 'content_type', 'user']
         db.create_unique(u'award', ['badge_id', 'object_id', 'content_type_id', 'user_id'])
