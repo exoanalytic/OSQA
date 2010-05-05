@@ -75,7 +75,7 @@ def ask(request):
                 data = {
                     "user_ip":request.META["REMOTE_ADDR"],
                     "user_agent":request.environ['HTTP_USER_AGENT'],
-                    "comment_author":request.user.real_name,
+                    "comment_author":request.user.username,
                     "comment_author_email":request.user.email,
                     "comment_author_url":request.user.website,
                     "comment":request.POST['text']
@@ -202,7 +202,7 @@ def answer(request, id):
                 data = {
                     "user_ip":request.META["REMOTE_ADDR"],
                     "user_agent":request.environ['HTTP_USER_AGENT'],
-                    "comment_author":request.user.real_name,
+                    "comment_author":request.user.username,
                     "comment_author_email":request.user.email,
                     "comment_author_url":request.user.website,
                     "comment":request.POST['text']

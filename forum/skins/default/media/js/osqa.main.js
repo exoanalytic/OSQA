@@ -291,6 +291,7 @@ $(function() {
             
             $chars_counter.removeClass('warn');
             $chars_counter.html(min_length);
+            $button.attr("disabled","disabled");
             
             interval = null;
         }

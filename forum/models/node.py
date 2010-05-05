@@ -254,8 +254,9 @@ class Node(BaseModel, NodeContent):
     @staticmethod
     def isSpam(comment, data):
         api = Akismet()
-        if api.key is None:
-            print "problem" # raise APIKeyError
+
+        if not api.key:
+            return False
         else:
             if api.comment_check(comment, data):
                 return True
