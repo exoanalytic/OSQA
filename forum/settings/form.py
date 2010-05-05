@@ -43,3 +43,8 @@ FORM_ALLOW_MARKDOWN_IN_COMMENTS = Setting('FORM_ALLOW_MARKDOWN_IN_COMMENTS', Tru
 label = _("Allow markdown in comments"),
 help_text = _("Allow users to use markdown in comments."),
 required=False))
+
+FORM_GRAVATAR_IN_COMMENTS = Setting('FORM_GRAVATAR_IN_COMMENTS', True, FORUM_SET, dict(
+label = _("Show author gravatar in comments"),
+help_text = _("Show the gravatar image of a comment author."),
+required=False))

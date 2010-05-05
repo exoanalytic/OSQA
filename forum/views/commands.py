@@ -242,6 +242,12 @@ def comment(request, id):
     if not len(comment_text):
         raise CommandException(_("Comment is empty"))
 
+    if len(comment_text) < settings.FORM_MIN_COMMENT_BODY:
+        raise CommandException(_("At least %d characters required on comment body.") % settings.FORM_MIN_COMMENT_BODY)
+
+    if len(comment_text) > settings.FORM_MAX_COMMENT_BODY:
+        raise CommandException(_("No more than %d characters on comment body.") % settings.FORM_MAX_COMMENT_BODY)
+
     if 'id' in request.POST:
         comment = get_object_or_404(Comment, id=request.POST['id'])
 

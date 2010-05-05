@@ -255,14 +255,19 @@ $(function() {
         var textarea = $textarea.get(0);
         var $button = $container.find('.comment-submit');
         var $cancel = $container.find('.comment-cancel');
-        var $chars_left_message = $('.comment-chars-left');
+        var $chars_left_message = $container.find('.comments-chars-left-msg');
+        var $chars_togo_message = $container.find('.comments-chars-togo-msg');
         var $chars_counter = $container.find('.comments-char-left-count');
 
         var $comment_tools = $container.parent().find('.comment-tools');
         var $add_comment_link = $comment_tools.find('.add-comment-link');
         var $comments_container = $container.parent().find('.comments-container');
 
-        var max_length = parseInt($chars_counter.html());
+        var chars_limits = $chars_counter.html().split('|');
+
+        var min_length = parseInt(chars_limits[0]);
+        var max_length = parseInt(chars_limits[1]);
+        
         var warn_length = max_length - 30;
         var current_length = 0;
         var comment_in_form = false;
@@ -280,7 +285,13 @@ $(function() {
             $chars_left_message.removeClass('warn');
             comment_in_form = false;
             current_length = 0;
+
+            $chars_left_message.hide();
+            $chars_togo_message.show();
+            
             $chars_counter.removeClass('warn');
+            $chars_counter.html(min_length);
+            
             interval = null;
         }
 
@@ -298,13 +309,21 @@ $(function() {
                 $chars_counter.addClass('warn');
             }
 
-            if (length > max_length) {
+            if (length < min_length) {
+                $chars_left_message.hide();
+                $chars_togo_message.show();
+                $chars_counter.html(min_length - length);
+            } else {
+                $chars_togo_message.hide();
+                $chars_left_message.show();
+                $chars_counter.html(max_length - length);
+            }
+
+            if (length > max_length || length < min_length) {
                 $button.attr("disabled","disabled");
             } else {
                 $button.removeAttr("disabled");
             }
-
-            $chars_counter.html(max_length - length);
 
             var current_height = textarea.style.height;
             if (hcheck)
@@ -362,30 +381,26 @@ $(function() {
         });
 
         $button.click(function() {
-            if ($textarea.val().length > max_length) {
-                show_message($button, "Your comment exceeds the max number of characters allowed.");
-            } else {
-                if (running) return false;
+            if (running) return false;
 
-                var post_data = {
-                    comment: $textarea.val()
-                }
-
-                if (comment_in_form) {
-                    post_data['id'] = comment_in_form;
-                }
-
-                start_command();
-                $.post($form.attr('action'), post_data, function(data) {
-                    process_ajax_response(data, $button, function(error) {
-                        if (!error) {
-                            cleanup_form();
-                            hide_comment_form();
-                        }
-                    });
-
-                }, "json")
+            var post_data = {
+                comment: $textarea.val()
             }
+
+            if (comment_in_form) {
+                post_data['id'] = comment_in_form;
+            }
+
+            start_command();
+            $.post($form.attr('action'), post_data, function(data) {
+                process_ajax_response(data, $button, function(error) {
+                    if (!error) {
+                        cleanup_form();
+                        hide_comment_form();
+                    }
+                });
+
+            }, "json");
             
             return false;
         });
