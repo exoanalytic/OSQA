@@ -4,8 +4,8 @@ from forum.models import Question, Action
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django import template
-from django.conf import settings
 from forum.actions import *
+from forum import settings
 
 register = template.Library()
 

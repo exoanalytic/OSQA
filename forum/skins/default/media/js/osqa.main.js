@@ -194,7 +194,7 @@ function show_prompt(object, msg, callback) {
 
 function process_ajax_response(data, el, callback) {
     if (!data.success && data['error_message'] != undefined) {
-        show_message(el, data.error_message, callback)
+        show_message(el, data.error_message, function() {if (callback) callback(true);});
         end_command(false);
     } else if (typeof data['commands'] != undefined){
         for (var command in data.commands) {
@@ -202,9 +202,9 @@ function process_ajax_response(data, el, callback) {
         }
 
         if (data['message'] != undefined) {
-            show_message(el, data.message, callback)
+            show_message(el, data.message, function() {if (callback) callback(false);})
         } else {
-            if (callback) callback();
+            if (callback) callback(false);
         }
         end_command(true);
     }
@@ -270,7 +270,7 @@ $(function() {
 
         var hcheck = !($.browser.msie || $.browser.opera);
 
-        $textarea.css("padding-top", 0).css("padding-bottom", 0);
+        $textarea.css("padding-top", 0).css("padding-bottom", 0).css("resize", "none");
         textarea.style.overflow = 'hidden';
         
 
@@ -298,6 +298,12 @@ $(function() {
                 $chars_counter.addClass('warn');
             }
 
+            if (length > max_length) {
+                $button.attr("disabled","disabled");
+            } else {
+                $button.removeAttr("disabled");
+            }
+
             $chars_counter.html(max_length - length);
 
             var current_height = textarea.style.height;
@@ -306,7 +312,7 @@ $(function() {
 
             var h = Math.max(80, textarea.scrollHeight);
             textarea.style.height = current_height;
-            $textarea.animate({height: h + 'px'}, 200);
+            $textarea.animate({height: h + 'px'}, 50);
 
             current_length = length;
         }
@@ -371,9 +377,11 @@ $(function() {
 
                 start_command();
                 $.post($form.attr('action'), post_data, function(data) {
-                    process_ajax_response(data, $button, function() {
-                        cleanup_form();
-                        hide_comment_form();
+                    process_ajax_response(data, $button, function(error) {
+                        if (!error) {
+                            cleanup_form();
+                            hide_comment_form();
+                        }
                     });
 
                 }, "json")

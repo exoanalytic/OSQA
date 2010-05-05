@@ -17,7 +17,7 @@ class Comment(Node):
     @property
     def comment(self):
         if settings.FORM_ALLOW_MARKDOWN_IN_COMMENTS:
-            return self.html
+            return self.as_markdown('limitedsyntax')
         else:
             return self.body
 

@@ -180,7 +180,7 @@ def like_comment(request, id):
     return {
         'commands': {
             'update_post_score': [comment.id, likes and 1 or -1],
-            'update_user_post_vote': [comment.id, likes and 'on' or 'off']
+            'update_user_post_vote': [comment.id, likes and 'up' or 'none']
         }
     }
 
