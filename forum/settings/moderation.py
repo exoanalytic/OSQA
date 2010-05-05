@@ -4,7 +4,7 @@ from forms import StringListWidget
 from django.utils.translation import ugettext_lazy as _
 from django.forms.widgets import Textarea
 
-MODERATION_SET = SettingSet('moderation', _('Moderation Settings'), _("Define the moderation workflow of your site"), 100)
+MODERATION_SET = SettingSet('moderation', _('Moderation settings'), _("Define the moderation workflow of your site"), 100)
 
 FLAG_TYPES = Setting('FLAG_TYPES',
 ["Spam", "Advertising", "Offensive, Abusive, or Inappropriate", "Content violates terms of use", "Copyright Violation",
