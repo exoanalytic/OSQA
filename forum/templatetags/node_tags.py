@@ -119,5 +119,5 @@ def comments(post, user):
         'show_gravatar': settings.FORM_GRAVATAR_IN_COMMENTS,
         'showing': showing,
         'total': len(all_comments),
-        'requser': user,
+        'user': user,
     }
