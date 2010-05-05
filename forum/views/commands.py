@@ -43,6 +43,12 @@ class AnonymousNotAllowedException(CommandException):
             """ % {'action': action, 'signin_url': reverse('auth_signin')})
         )
 
+class SpamNotAllowedException(CommandException):
+    def __init__(self, action = "comment"):
+        super(SpamNotAllowedException, self).__init__(
+            _("""Your %s has been marked as spam.""" % action)
+        )
+
 class NotEnoughLeftException(CommandException):
     def __init__(self, action, limit):
         super(NotEnoughLeftException, self).__init__(
@@ -247,6 +253,17 @@ def comment(request, id):
 
     if len(comment_text) > settings.FORM_MAX_COMMENT_BODY:
         raise CommandException(_("No more than %d characters on comment body.") % settings.FORM_MAX_COMMENT_BODY)
+
+    data = {
+        "user_ip":request.META["REMOTE_ADDR"],
+        "user_agent":request.environ['HTTP_USER_AGENT'],
+        "comment_author":request.user.real_name,
+        "comment_author_email":request.user.email,
+        "comment_author_url":request.user.website,
+        "comment":comment_text
+    }
+    if Node.isSpam(comment_text, data):
+        raise SpamNotAllowedException()
 
     if 'id' in request.POST:
         comment = get_object_or_404(Comment, id=request.POST['id'])

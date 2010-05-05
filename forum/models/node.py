@@ -1,3 +1,4 @@
+from akismet import *
 from base import *
 from tag import Tag
 
@@ -250,13 +251,17 @@ class Node(BaseModel, NodeContent):
         super(Node, self).save(*args, **kwargs)
         if tags is not None: self.tags = tags
 
-        try:
-            ping_google()
-        except:
-            logging.debug('problem pinging google did you register your sitemap with google?')
-
-    def __unicode__(self):
-        return self.title
+    @staticmethod
+    def isSpam(comment, data):
+        api = Akismet()
+        if api.key is None:
+            print "problem" # raise APIKeyError
+        else:
+            if api.comment_check(comment, data):
+                return True
+            else:
+                return False
+        return data
 
     class Meta:
         app_label = 'forum'
