@@ -1,4 +1,4 @@
-from akismet import *
+from forum.akismet import *
 from base import *
 from tag import Tag
 
