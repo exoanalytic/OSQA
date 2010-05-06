@@ -73,7 +73,7 @@ def question_list(request, initial, list_description=_('questions'), sort=None, 
         else:
             request.utils.set_sort_method(sort)
 
-        view_dic = {"latest":"-added_at", "active":"-last_activity_at", "hottest":"-answer_count", "mostvoted":"-score" }
+        view_dic = {"latest":"-added_at", "active":"-last_activity_at", "hottest":"-extra_count", "mostvoted":"-score" }
 
         questions=questions.order_by(view_dic.get(sort, '-added_at'))
 

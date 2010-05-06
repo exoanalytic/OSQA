@@ -410,6 +410,9 @@ $(function() {
         });
 
         $cancel.click(function() {
+            if (comment_in_form) {
+                $comment = $('#comment-' + comment_in_form).slideDown('slow');
+            }
             hide_comment_form();
             return false;
         });
