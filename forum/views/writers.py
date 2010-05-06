@@ -78,7 +78,7 @@ def ask(request):
                     "comment_author":request.user.username,
                     "comment_author_email":request.user.email,
                     "comment_author_url":request.user.website,
-                    "comment":request.POST['text']
+                    "comment":request.POST['text'].decode('utf-8')
                 }
                 if Node.isSpam(request.POST['text'], data):
                     raise SpamNotAllowedException("question")
@@ -205,7 +205,7 @@ def answer(request, id):
                     "comment_author":request.user.username,
                     "comment_author_email":request.user.email,
                     "comment_author_url":request.user.website,
-                    "comment":request.POST['text']
+                    "comment":request.POST['text'].decode('utf-8')
                 }
                 if Node.isSpam(request.POST['text'], data):
                     raise SpamNotAllowedException("answer")
