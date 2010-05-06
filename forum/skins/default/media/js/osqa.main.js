@@ -370,7 +370,7 @@ $(function() {
         $('#' + $comments_container.attr('id') + ' .comment-edit').live('click', function() {
             var $link = $(this);
             var comment_id = /comment-(\d+)-edit/.exec($link.attr('id'))[1];
-            var $comment = $link.parents('.comment');
+            var $comment = $('#comment-' + comment_id);
             var comment_text = $comment.find('.comment-text').text().trim();
 
             comment_in_form = comment_id;
