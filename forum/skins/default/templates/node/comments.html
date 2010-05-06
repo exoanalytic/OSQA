@@ -43,7 +43,7 @@
 </div>
 {% if can_comment %}
 <div id="comment-{{ post.id }}-form-container" class="comment-form-container">
-    <form id="comment-{{ post.id }}-form" method="post" action="{% url comment id=post.id %}">
+    <form id="comment-{{ post.id }}-form" method="post" action="{% url comment id=post.id %}" accept-charset="utf-8">
         <div class="comment-form-widgets-container">
             <textarea name="comment"></textarea>
             <div class="comment-form-buttons">

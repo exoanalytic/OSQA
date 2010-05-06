@@ -37,8 +37,10 @@ class LazyQueryList(object):
 
 class CachedQuerySet(models.query.QuerySet):
     def lazy(self):
-        self._lazy = True        
-        return LazyQueryList(self.model, list(self.values_list('id', flat=True)))
+        if len(self.query.extra) == 0:
+            return LazyQueryList(self.model, list(self.values_list('id', flat=True)))
+        else:
+            return self
 
 from action import Action
 

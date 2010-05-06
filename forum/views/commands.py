@@ -260,7 +260,7 @@ def comment(request, id):
         "comment_author":request.user.username,
         "comment_author_email":request.user.email,
         "comment_author_url":request.user.website,
-        "comment":comment_text.decode('utf-8')
+        "comment":comment_text
     }
     if Node.isSpam(comment_text, data):
         raise SpamNotAllowedException()

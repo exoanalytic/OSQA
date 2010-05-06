@@ -1,6 +1,5 @@
 import django.dispatch
 from django.utils.encoding import force_unicode
-from copy import deepcopy
 
 class SettingSet(list):
     def __init__(self, name, title, description, weight=1000, markdown=False):
@@ -11,28 +10,7 @@ class SettingSet(list):
         self.markdown = markdown
         
 
-class Setting(object):
-    emulators = {}
-    sets = {}
-
-    def __new__(cls, name, default, set=None, field_context=None):
-        if cls.__name__ != "Setting":
-            return super(Setting, cls).__new__(cls, name, default, set, field_context)
-        deftype = type(default)
-
-        if deftype in Setting.emulators:
-            emul = Setting.emulators[deftype]
-        else:
-            emul = type(deftype.__name__ + cls.__name__, (cls,), {})
-            fns = [n for n, f in [(p, getattr(deftype, p)) for p in dir(deftype) if not p in dir(cls)] if callable(f)]
-
-            for n in fns:
-               emul.add_to_class(n)
-
-            Setting.emulators[deftype] = emul
-
-        return emul(name, default, set, field_context)
-
+class BaseSetting(object):
     @classmethod
     def add_to_class(cls, name):
         def wrapper(self, *args, **kwargs):
@@ -90,5 +68,25 @@ class Setting(object):
     def _parse(self, value):
         return value
 
+
+class Setting(object):
+    emulators = {}
+    sets = {}
+
+    def __new__(cls, name, default, set=None, field_context=None):
+        deftype = type(default)
+
+        if deftype in Setting.emulators:
+            emul = Setting.emulators[deftype]
+        else:
+            emul = type(deftype.__name__ + cls.__name__, (BaseSetting,), {})
+            fns = [n for n, f in [(p, getattr(deftype, p)) for p in dir(deftype) if not p in dir(cls)] if callable(f)]
+
+            for n in fns:
+               emul.add_to_class(n)
+
+            Setting.emulators[deftype] = emul
+
+        return emul(name, default, set, field_context)
 
 

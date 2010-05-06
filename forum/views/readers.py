@@ -27,6 +27,7 @@ from forum.models import *
 from forum.const import *
 from forum.utils.forms import get_next_url
 from forum.actions import QuestionViewAction
+from forum.modules.decorators import decoratable
 import decorators
 
 # used in index page
@@ -102,15 +103,13 @@ def search(request):
     else:
         return render_to_response("search.html", context_instance=RequestContext(request))
 
+@decoratable
+def do_question_search(keywords):
+    return Question.objects.filter(Q(title__icontains=keywords) | Q(body__icontains=keywords))
+
 @decorators.render('questions.html')
 def question_search(request, keywords):
-    def question_search(keywords):
-        return Question.objects.filter(Q(title__icontains=keywords) | Q(body__icontains=keywords))
-
-    from forum.modules import get_handler
-
-    question_search = get_handler('question_search', question_search)
-    initial = question_search(keywords)
+    initial = do_question_search(keywords)
 
     return question_list(request, initial, _("questions matching '%(keywords)s'") % {'keywords': keywords},
             base_path="%s?t=question&q=%s" % (reverse('search'), django_urlquote(keywords)), sort=False)
