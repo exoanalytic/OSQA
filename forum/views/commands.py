@@ -282,7 +282,8 @@ def comment(request, id):
         return {
             'commands': {
                 'insert_comment': [
-                    id, comment.id, comment.comment, user.username, user.get_profile_url(), reverse('delete_comment', kwargs={'id': comment.id})
+                    id, comment.id, comment.comment, user.username, user.get_profile_url(),
+                        reverse('delete_comment', kwargs={'id': comment.id}), reverse('node_markdown', kwargs={'id': comment.id})
                 ]
             }
         }
@@ -292,6 +293,16 @@ def comment(request, id):
                 'update_comment': [comment.id, comment.comment]
             }
         }
+
+@command
+def node_markdown(request, id):
+    user = request.user
+
+    if not user.is_authenticated():
+        raise AnonymousNotAllowedException(_('accept answers'))
+
+    node = get_object_or_404(Node, id=id)
+    return HttpResponse(node.body, mimetype="text/plain")
 
 
 @command

@@ -10,23 +10,23 @@
                 <span id="post-{{ comment.id }}-score" class="comment-score">{% if comment.score %}{{ comment.score }}{% endif %}</span>
             </div>
             <div class="comment-text">{{ comment.comment }}</div>
-        </div>
-        <div class="comment-info" id="comment-{{comment.id}}-info">
-            <a class="comment-user userinfo" href="{{comment.user.get_profile_url}}">{{comment.user}}</a>
-            <span class="comment-age">({% diff_date comment.added_at %})</span>
-            {% if comment.can_like %}
-                <a id="post-{{ comment.id }}-upvote" href="{% url like_comment id=comment.id %}"
-                 title="{% trans "I like this comment (click again to cancel)" %}" class="ajax-command comment-like{% if comment.likes %} on{% endif %}"
-                rel="nofollow"> </a>
-            {% endif %}
-            {% if comment.can_edit %}
-                <a id="comment-{{ comment.id }}-edit" href="#" title="{% trans "Edit comment" %}"
-                    class="comment-edit" rel="nofollow"> </a>
-            {% endif %}
-            {% if comment.can_delete %}
-                <a id="comment-{{ comment.id }}-delete" href="{% url delete_comment id=comment.id %}" title="{% trans "Delete comment" %}"
-                    class="ajax-command comment-delete" rel="nofollow"> </a>
-            {% endif %}
+            <div class="comment-info" id="comment-{{comment.id}}-info">
+                <a class="comment-user userinfo" href="{{comment.user.get_profile_url}}">{{comment.user}}</a>
+                <span class="comment-age">({% diff_date comment.added_at %})</span>
+                {% if comment.can_like %}
+                    <a id="post-{{ comment.id }}-upvote" href="{% url like_comment id=comment.id %}"
+                     title="{% trans "I like this comment (click again to cancel)" %}" class="ajax-command comment-like{% if comment.likes %} on{% endif %}"
+                    rel="nofollow"> </a>
+                {% endif %}
+                {% if comment.can_edit %}
+                    <a id="comment-{{ comment.id }}-edit" href="{% url node_markdown id=comment.id %}" title="{% trans "Edit comment" %}"
+                        class="comment-edit" rel="nofollow"> </a>
+                {% endif %}
+                {% if comment.can_delete %}
+                    <a id="comment-{{ comment.id }}-delete" href="{% url delete_comment id=comment.id %}" title="{% trans "Delete comment" %}"
+                        class="ajax-command comment-delete" rel="nofollow"> </a>
+                {% endif %}
+            </div>
         </div>
     {% endfor %}
 </div>
@@ -65,15 +65,15 @@
                     <span id="post-%ID%-score" class="comment-score"></span>
                 </div>
                 <div class="comment-text">%COMMENT%</div>
-            </div>
-            <div class="comment-info" id="comment-{{comment.id}}-info">
-                <a class="comment-user" href="%PROFILE_URL%">%USERNAME%</a>
-                <span class="comment-age">({% trans "just now" %})</span>
-                <a id="comment-%ID%-edit" href="#"
-                    class="comment-edit" rel="nofollow"> </a>
-                <a id="comment-%ID%-delete" href="%DELETE_URL%"
-                    class="ajax-command comment-delete" rel="nofollow"> </a>
-            </div>
+                <div class="comment-info" id="comment-{{comment.id}}-info">
+                    <a class="comment-user" href="%PROFILE_URL%">%USERNAME%</a>
+                    <span class="comment-age">({% trans "just now" %})</span>
+                    <a id="comment-%ID%-edit" href="%EDIT_URL%"
+                        class="comment-edit" rel="nofollow"> </a>
+                    <a id="comment-%ID%-delete" href="%DELETE_URL%"
+                        class="ajax-command comment-delete" rel="nofollow"> </a>
+                </div>
+             </div>
         </script>
     </form>
 </div>

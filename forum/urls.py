@@ -70,6 +70,7 @@ urlpatterns += patterns('',
     url(r'^%s(?P<id>\d+)/' % _('delete/'), app.commands.delete_post, name='delete_post'),
     url(r'^%s(?P<id>\d+)/$' % _('subscribe/'), app.commands.subscribe, name="subscribe"),
     url(r'^%s' % _('matching_tags/'), app.commands.matching_tags, name='matching_tags'),
+    url(r'^%s(?P<id>\d+)/' % _('node_markdown/'), app.commands.node_markdown, name='node_markdown'),
 
     url(r'^%s(?P<id>\d+)/%s$' % (_('questions/'), _('revisions/')), app.readers.revisions, name='question_revisions'),
 
