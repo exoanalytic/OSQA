@@ -12,6 +12,7 @@ from forum.models import Badge, Award, User
 from forum.badges.base import BadgesMeta
 from forum import settings
 from forum.utils.mail import send_email
+from forum.settings.settingsmarkdown import SettingsExtension
 import re
 
 def favicon(request):
@@ -21,11 +22,10 @@ def about(request):
     return render_to_response('about.html', {'text': settings.ABOUT_PAGE_TEXT.value }, context_instance=RequestContext(request))
 
 def faq(request):
-    data = {
-        'gravatar_faq_url': reverse('faq') + '#gravatar',
-        'ask_question_url': reverse('ask'),
-    }
-    return render_to_response('faq.html', data, context_instance=RequestContext(request))
+    md = markdown.Markdown([SettingsExtension({})])
+    text = md.convert(settings.FAQ_PAGE_TEXT.value)
+
+    return render_to_response('faq.html', {'text' : text}, context_instance=RequestContext(request))
 
 def feedback(request):
     if request.method == "POST":
