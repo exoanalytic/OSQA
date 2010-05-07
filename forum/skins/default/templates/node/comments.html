@@ -5,14 +5,9 @@
     {% for comment in comments %}
         <a name="{{ comment.id }}"></a>
         <div class="comment{% if not comment.top_scorer %} not_top_scorer{% endif %}" id="comment-{{comment.id}}">
-            <div class="comment-score">
-                {% if show_gravatar %}{% gravatar comment.user 18 %}{% endif %}
-                <span id="post-{{ comment.id }}-score" class="comment-score">{% if comment.score %}{{ comment.score }}{% endif %}</span>
-            </div>
+            <div id="post-{{ comment.id }}-score" class="comment-score">{% if comment.score %}{{ comment.score }}{% endif %}</div>
             <div class="comment-text">{{ comment.comment }}</div>
             <div class="comment-info" id="comment-{{comment.id}}-info">
-                <a class="comment-user userinfo" href="{{comment.user.get_profile_url}}">{{comment.user}}</a>
-                <span class="comment-age">({% diff_date comment.added_at %})</span>
                 {% if comment.can_like %}
                     <a id="post-{{ comment.id }}-upvote" href="{% url like_comment id=comment.id %}"
                      title="{% trans "I like this comment (click again to cancel)" %}" class="ajax-command comment-like{% if comment.likes %} on{% endif %}"
@@ -26,6 +21,9 @@
                     <a id="comment-{{ comment.id }}-delete" href="{% url delete_comment id=comment.id %}" title="{% trans "Delete comment" %}"
                         class="ajax-command comment-delete" rel="nofollow"> </a>
                 {% endif %}
+                <span class="comment-age">({% diff_date comment.added_at %})</span>
+                <a class="comment-user userinfo" href="{{comment.user.get_profile_url}}">{{comment.user}}</a>
+                {% if show_gravatar %}{% gravatar comment.user 18 %}{% endif %}
             </div>
         </div>
     {% endfor %}
@@ -58,20 +56,18 @@
         </div>
         <script type="text/html" class="new-comment-skeleton" id="new-comment-skeleton-{{ post.id }}">
             <div class="comment{% if not comment.top_scorer %} not_top_scorer{% endif %}" id="comment-%ID%">
-                <div class="comment-score">
-                    {% if user.is_authenticated %}
-                        {% if show_gravatar %}{% gravatar user 18 %}{% endif %}
-                    {% endif %}
-                    <span id="post-%ID%-score" class="comment-score"></span>
-                </div>
+                <div id="post-%ID%-score" class="comment-score"></div>
                 <div class="comment-text">%COMMENT%</div>
                 <div class="comment-info" id="comment-{{comment.id}}-info">
-                    <a class="comment-user" href="%PROFILE_URL%">%USERNAME%</a>
-                    <span class="comment-age">({% trans "just now" %})</span>
                     <a id="comment-%ID%-edit" href="%EDIT_URL%"
                         class="comment-edit" rel="nofollow"> </a>
                     <a id="comment-%ID%-delete" href="%DELETE_URL%"
                         class="ajax-command comment-delete" rel="nofollow"> </a>
+                    <span class="comment-age">({% trans "just now" %})</span>
+                    <a class="comment-user" href="%PROFILE_URL%">%USERNAME%</a>
+                    {% if user.is_authenticated %}
+                        {% if show_gravatar %}{% gravatar user 18 %}{% endif %}
+                    {% endif %}
                 </div>
              </div>
         </script>

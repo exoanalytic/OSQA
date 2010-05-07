@@ -663,8 +663,6 @@ ul.errorlist li {
     margin-top: 5px;
 }
 
-div.comments-container { padding: 0; }
-
 .answer {
 	border-bottom: 1px solid #CCCCCE;
 	padding-top: 10px;
@@ -678,14 +676,11 @@ div.comments-container { padding: 0; }
 }
 
 .answered-by-owner { background: none repeat scroll 0 0 #E9E9FF; }
-.answered-by-owner .comments-container { background-color: #E6ECFF; }
 
 .accepted-answer {
 	background-color: #EBFFE6;
 	border-bottom-color: #9BD59B;
 }
-
-.accepted-answer .comments-container { background-color: #CCFFBF; }
 
 .answered {
 	background: none repeat scroll 0 0 #E5EBF8;
@@ -1111,7 +1106,6 @@ ul.form-horizontal-rows li input {
 }
 
 .post-controls {
-	float: left;
 	font-size: 11px;
 	line-height: 12px;
 	margin-bottom: 5px;
@@ -1119,11 +1113,6 @@ ul.form-horizontal-rows li input {
 }
 
 #question-controls .tags { margin: 0 0 3px; }
-
-.post-update-info-container {
-	float: right;
-	min-width: 190px;
-}
 
 .post-update-info {
 	display: inline-block;
@@ -1144,8 +1133,6 @@ ul.form-horizontal-rows li input {
 	margin: 4px 8px 0 0;
 	width: 32px;
 }
-
-.comments-container { clear: both; }
 
 #tagSelector { padding-bottom: 2px; }
 #hideIgnoredTagsControl { margin: 5px 0 0; }
@@ -1198,10 +1185,15 @@ a.accept-answer.on,a.accept-answer:hover { background: url("../images/vote-accep
 	padding: 0;
 }
 
+.comments-container { clear: both; }
+.comments-container { padding: 0; }
+.answered-by-owner .comments-container { background-color: #E6ECFF; }
+.accepted-answer .comments-container { background-color: #CCFFBF; }
+
 .comment {
 	border-top: 1px dotted #CCCCCE;
 	margin: 0;
-	width: 100%;
+    position: relative;
 }
 
 .comment.not_top_scorer { display: none; }
@@ -1213,10 +1205,9 @@ a.accept-answer.on,a.accept-answer:hover { background: url("../images/vote-accep
 	font-weight: bold;
 	padding-top: 3px;
 	vertical-align: top;
+    float: left;
 	width: 22px;
     height: 100%;
-    float: left;
-    margin-right: 6px;
     text-align: center;
 }
 
@@ -1225,7 +1216,6 @@ a.accept-answer.on,a.accept-answer:hover { background: url("../images/vote-accep
 	font-size: 12px;
 	margin: 0 0 0 22px;
 	padding: 0;
-    min-height: 40px;
 }
 
 .comment-text p {
@@ -1234,15 +1224,20 @@ a.accept-answer.on,a.accept-answer:hover { background: url("../images/vote-accep
 
 .comment-info {
 	font-size: 11px;
-	margin: 0;
-	text-align: right;
+	margin: 0 0 4px 0;
+    text-align: right;
+    height: 18px;
+    vertical-align: middle;
+}
+
+.comment-info * {
+    float: right;
+	height: 18px;
+	margin-left: 4px;
 }
 
 a.comment-like,a.comment-delete,a.comment-edit {
-	float: right;
-	height: 18px;
 	margin-left: 2px;
-	position: relative;
 	width: 18px;
 }
 

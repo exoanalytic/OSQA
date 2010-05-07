@@ -282,6 +282,7 @@ $(function() {
 
         function cleanup_form() {
             $textarea.val('');
+            $textarea.css('height', 80);
             $chars_counter.html(max_length);
             $chars_left_message.removeClass('warn');
             comment_in_form = false;
