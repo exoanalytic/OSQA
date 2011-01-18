@@ -90,17 +90,22 @@
     <table class="form-as-table check-table">
         <tr>
             <td>
-                <strong>{% trans "More:" %}</strong>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                {{ form.notify_reply_to_comments }}{% trans "Notify me when someone replies to one of my comments on any post using the <pre>@username</pre> notation" %}
+                <strong>{% trans "Daily Digest:" %}</strong>
             </td>
         </tr>
         <tr>
             <td>
                 {{ form.send_digest }}{% trans "Send me the daily digest with information about the site activity" %}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong>{% trans "Notify When I'm Discussed:" %}</strong>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form.notify_reply_to_comments }}{% trans "Notify me when someone replies to one of my comments on any post using the <pre>@username</pre> notation" %}
             </td>
         </tr>
     </table>
