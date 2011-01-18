@@ -67,7 +67,6 @@
                 {{ form1.recaptcha }}
                 </div>
             {% endif %}
-            <p class='space-above'>{% trans "Tag filter tool will be your right panel, once you log in." %}</p>
             <div class="submit-row"><input type="submit" class="submit" name="bnewaccount" id="bnewaccount" value="{% trans "create account" %}"/></div>
 		</form>
 	</div>
@@ -80,7 +79,7 @@
 				<legend class="big">{% trans "Existing account" %}</legend>
 				<div class="form-row"><label for="id_username">{% trans "user name" %}</label><br/>{{ form2.username }}</div>
 				<div class="form-row"><label for="id_passwordl">{% trans "password" %}</label><br/>{{ form2.password }}</div>
-                <p><span class='big strong'>(Optional) receive updates by email</span> - only sent when there are any.</p>
+                <p><span class='big strong'>(Optional) receive updates by email</span> - only sent when there are any.</p>t
 				<!--todo double check translation from chinese 确认 = "Register" -->
 				<div class="submit-row">
 					<input type="submit" class="submit" name="bverify" value="{% trans "Register" %}"/> 
