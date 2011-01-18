@@ -10,13 +10,6 @@ EMAIL_SUBSCRIBE_CHOICES = (
     ('n', _('Users are not subscribed by default')),
 )
 
-INITIAL_EMAIL_SUBSCRIBE_OPTION = Setting('INITIAL_EMAIL_SUBSCRIBE_OPTION', 'y', EMAIL_SET, dict(
-label = _("Default email subscription"),
-widget=RadioSelect,
-choices=EMAIL_SUBSCRIBE_CHOICES,
-help_text = _("Choose what should be the default email subscription status while registering."),
-required=False))
-
 EMAIL_HOST = Setting('EMAIL_HOST', '', EMAIL_SET, dict(
 label = _("Email Server"),
 help_text = _("The SMTP server through which your application will be sending emails."),
