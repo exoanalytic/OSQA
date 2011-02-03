@@ -2,6 +2,7 @@ from base import Setting, SettingSet
 from django.utils.translation import ugettext_lazy as _
 from django.forms.widgets import PasswordInput
 from django.forms.widgets import RadioSelect
+from forms import TestEmailSettingsWidget
 
 EMAIL_SET = SettingSet('email', _('Email settings'), _("Email server and other email related settings."), 50)
 
@@ -9,6 +10,12 @@ EMAIL_SUBSCRIBE_CHOICES = (
     ('y', _('Users are subscribed by default')),
     ('n', _('Users are not subscribed by default')),
 )
+
+TEST_EMAIL_SETTINGS = Setting('TEST_EMAIL_SETTINGS', '', EMAIL_SET, dict(
+label = _("E-Mail settings test"),
+help_text = _("Test the current E-Mail configuration."),
+required=False,
+widget=TestEmailSettingsWidget))
 
 EMAIL_HOST = Setting('EMAIL_HOST', '', EMAIL_SET, dict(
 label = _("Email Server"),

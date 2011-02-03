@@ -120,7 +120,11 @@ class CommaStringListWidget(forms.Textarea):
         else:
             return ', '.join(data[name])    
 
+class TestEmailSettingsWidget(forms.TextInput):
+    def render(self, name, value, attrs=None):
+        if not value:
+            value = ''
 
-
-
-
+        return """
+                <a href="javascript:void(0);">Test</a>
+            """
