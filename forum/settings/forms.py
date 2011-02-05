@@ -125,6 +125,4 @@ class TestEmailSettingsWidget(forms.TextInput):
         if not value:
             value = ''
 
-        return """
-                <a href="javascript:void(0);">Test</a>
-            """
+        return "<a href=\"javascript:void(0);\" class=\"ajax-command withprompt\" href=\"/\" id=\"test_email_settings\">Test</a>"
