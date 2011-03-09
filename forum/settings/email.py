@@ -17,6 +17,12 @@ help_text = _("Test the current E-Mail configuration."),
 required=False,
 widget=TestEmailSettingsWidget))
 
+TEST_EMAIL_SETTINGS = Setting('TEST_EMAIL_SETTINGS', '', EMAIL_SET, dict(
+label = _("E-Mail settings test"),
+help_text = _("Test the current E-Mail configuration."),
+required=False,
+widget=TestEmailSettingsWidget))
+
 EMAIL_HOST = Setting('EMAIL_HOST', '', EMAIL_SET, dict(
 label = _("Email Server"),
 help_text = _("The SMTP server through which your application will be sending emails."),
