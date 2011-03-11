@@ -11,7 +11,7 @@ u"""
 
 **What kinds of questions can I ask here?**
 
-Most importantly - questions should be relevant to this community. Before you ask, please make sure to search for a similar question. You can search for questions by their title, ccontent, or tags.
+Most importantly - questions should be relevant to this community. Before you ask, please make sure to search for a similar question. You can search for questions by their title, content, or tags.
 
 **What kinds of questions should be avoided?**
 
