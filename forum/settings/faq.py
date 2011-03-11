@@ -9,6 +9,12 @@ u"""
 
 **Frequently Asked Questions (FAQ)**
 
+**How is a Question/Answer community different from a typical forum?**
+
+A Question/Answer community is different from a typical forum because it focuses on finding answers to the questions of its members.  A typical forum, by contrast, operates more like a discussion group, where people are free to give their opinions and topics tend to be more subjective.
+
+By keeping a laser focus on questions and answers, this community ensures that finding answers to existing questions, and getting answers to new questions, can be done without any distractions.
+
 **What kinds of questions can I ask here?**
 
 Most importantly - questions should be relevant to this community. Before you ask, please make sure to search for a similar question. You can search for questions by their title, content, or tags.
