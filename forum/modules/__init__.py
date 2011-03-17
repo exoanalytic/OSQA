@@ -1,28 +1,15 @@
-import os
 import types
 import logging
 
-MODULES_PACKAGE = 'forum_modules'
+from django.conf import settings
 
-MODULES_FOLDER = None
-MODULE_LIST = []
-
-
-def init_modules_engine(site_src_root, disabled_modules):
-    MODULES_FOLDER = os.path.join(site_src_root, MODULES_PACKAGE)
-
-    MODULE_LIST.extend(filter(lambda m: getattr(m, 'CAN_USE', True), [
-            __import__('forum_modules.%s' % f, globals(), locals(), ['forum_modules'])
-            for f in os.listdir(MODULES_FOLDER)
-            if os.path.isdir(os.path.join(MODULES_FOLDER, f)) and
-               os.path.exists(os.path.join(MODULES_FOLDER, "%s/__init__.py" % f)) and
-               not f in disabled_modules
-    ]))
+def get_modules_folder():
+    return get_modules_folder.value
 
 def get_modules_script(script_name):
     all = []
 
-    for m in MODULE_LIST:
+    for m in settings.MODULE_LIST:
         if hasattr(m, script_name):
             all.append(getattr(m, script_name))
             continue

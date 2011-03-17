@@ -8,7 +8,6 @@ from django.utils.safestring import mark_safe
 from django.utils.html import strip_tags
 from forum.utils.html import sanitize_html
 from forum.settings import SUMMARY_LENGTH
-from forum.modules import MODULES_PACKAGE
 from utils import PickledObjectField
 
 class NodeContent(models.Model):
@@ -145,15 +144,22 @@ class NodeManager(CachedManager):
     def get_query_set(self):
         CurrentUserHolder = None
 
-        moderation_import = 'from %s.moderation.startup import CurrentUserHolder' % MODULES_PACKAGE
-        exec moderation_import
+        # We try to import from the moderation module.
+        try:
+            moderation_import = 'from %s.moderation.startup import CurrentUserHolder' % MODULES_PACKAGE
+            exec moderation_import
+
+            moderation_enabled = True
+        except:
+            moderation_enabled = False
 
         qs = NodeQuerySet(self.model)
 
         if self.model is not Node:
             qs = qs.filter(node_type=self.model.get_type())
 
-        if CurrentUserHolder is not None:
+        # If the moderation module has been enabled we make the filtration
+        if CurrentUserHolder is not None and moderation_enabled:
             user = CurrentUserHolder.user
 
             try:

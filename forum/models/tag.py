@@ -1,20 +1,25 @@
 import datetime
 from base import *
 
-from forum.modules import MODULES_PACKAGE
-
 from django.utils.translation import ugettext as _
-import django.dispatch
 
 class ActiveTagManager(models.Manager):
     def get_query_set(self):
         qs = super(ActiveTagManager, self).get_query_set().exclude(used_count__lt=1)
 
         CurrentUserHolder = None
-        moderation_import = 'from %s.moderation.startup import CurrentUserHolder' % MODULES_PACKAGE
-        exec moderation_import
 
-        if CurrentUserHolder is not None:
+        # We try to import the moderation module and if the import is successful we make the filtration
+        try:
+            moderation_import = 'from %s.moderation.startup import CurrentUserHolder' % MODULES_PACKAGE
+            exec moderation_import
+
+            moderation_enabled= True
+        except:
+            moderation_enabled = False
+
+        # If the moderation module has been enabled we make the filtration
+        if CurrentUserHolder is not None and moderation_enabled:
             user = CurrentUserHolder.user
 
             try:
