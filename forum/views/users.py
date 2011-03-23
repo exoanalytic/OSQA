@@ -345,7 +345,7 @@ def user_reputation(request, user):
     redux = lambda x, y: x+y
 
     graph_data = simplejson.dumps([
-    (time.mktime(rep[i].date.timetuple()) * 1000, reduce(redux, values[:i], 0))
+    (time.mktime(rep[i].date.timetuple()) * 1000, reduce(redux, values[:i+1], 0))
     for i in range(len(values))
     ])
 
