@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-02 23:34+0000\n"
-"PO-Revision-Date: 2011-04-03 06:20\n"
-"Last-Translator:   <jordan@gape.bg>\n"
+"POT-Creation-Date: 2011-04-10 18:30+0300\n"
+"PO-Revision-Date: 2010-12-08 23:13\n"
+"Last-Translator: <jordan.jambazov@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,15 +17,16 @@ msgstr ""
 "X-Translated-Using: django-rosetta 0.6.0\n"
 
 #: forum/feed.py:70 forum/models/page.py:5 forum/utils/pagination.py:162
-#: forum/views/readers.py:171 forum/views/readers.py:285
+#: forum/views/readers.py:183 forum/views/readers.py:300
+#, fuzzy
 msgid "page"
 msgstr "страница"
 
-#: forum/feed.py:70 forum/utils/pagination.py:158 forum/views/readers.py:171
+#: forum/feed.py:70 forum/utils/pagination.py:158 forum/views/readers.py:183
 msgid "pagesize"
 msgstr ""
 
-#: forum/feed.py:70 forum/utils/pagination.py:166 forum/views/readers.py:171
+#: forum/feed.py:70 forum/utils/pagination.py:166 forum/views/readers.py:183
 msgid "sort"
 msgstr "подреди"
 
@@ -59,184 +60,194 @@ msgstr "отговор"
 msgid "question"
 msgstr "въпрос"
 
-#: forum/registry.py:18 forum/registry.py:53
+#: forum/registry.py:22 forum/registry.py:57
 #: forum/skins/default/templates/index.html:15
 #: forum/skins/default/templates/question_edit_tips.html:9
 msgid "faq"
 msgstr "чзв"
 
-#: forum/registry.py:19 forum/registry.py:54
+#: forum/registry.py:23 forum/registry.py:58
 #: forum/skins/default/templates/index.html:14
 msgid "about"
 msgstr "за нас"
 
-#: forum/registry.py:22
+#: forum/registry.py:26
 msgid "logout"
 msgstr "изход"
 
-#: forum/registry.py:22
+#: forum/registry.py:26
 msgid "login"
 msgstr "вход"
 
-#: forum/registry.py:35
+#: forum/registry.py:39
 msgid "administration"
 msgstr "администрация"
 
-#: forum/registry.py:48
+#: forum/registry.py:52
+#, fuzzy
 msgid "contact"
 msgstr "съдържание"
 
-#: forum/registry.py:51
+#: forum/registry.py:55
+#, fuzzy
 msgid "support"
 msgstr "поддръжка"
 
-#: forum/registry.py:52
+#: forum/registry.py:56
+#, fuzzy
 msgid "privacy"
 msgstr "privacy"
 
-#: forum/registry.py:67 forum/skins/default/templates/users/edit.html:33
+#: forum/registry.py:71 forum/skins/default/templates/users/edit.html:33
 msgid "edit profile"
 msgstr "Редакция на профила"
 
-#: forum/registry.py:73
+#: forum/registry.py:78
+#, fuzzy
 msgid "authentication settings"
 msgstr "Опции за оторизиране"
 
-#: forum/registry.py:79
+#: forum/registry.py:85
+#, fuzzy
 msgid "email notification settings"
 msgstr "Опции за оторизиране"
 
-#: forum/registry.py:85
+#: forum/registry.py:92
 msgid "other preferences"
 msgstr "други предпочитания"
 
-#: forum/registry.py:89
+#: forum/registry.py:97
 msgid "Moderation tools"
 msgstr "Модераторски инструменти"
 
-#: forum/registry.py:91
+#: forum/registry.py:99
+#, fuzzy
 msgid "withdraw suspension"
 msgstr "оттгели задържането"
 
-#: forum/registry.py:91
+#: forum/registry.py:99
 msgid "suspend this user"
 msgstr "спри този потребител"
 
-#: forum/registry.py:97
+#: forum/registry.py:106
 msgid "give/take karma"
 msgstr "дай/вземи карма"
 
-#: forum/registry.py:104
+#: forum/registry.py:114
 msgid "remove moderator status"
 msgstr "премахване на модераторски статут"
 
-#: forum/registry.py:104
+#: forum/registry.py:114
 msgid "grant moderator status"
 msgstr "дай модераторски статут"
 
-#: forum/registry.py:110
+#: forum/registry.py:121
 msgid "remove super user status"
 msgstr "премахване на супер потребителското състояние"
 
-#: forum/registry.py:110
+#: forum/registry.py:121
 msgid "grant super user status"
 msgstr "предоставяне на статут супер потребител"
 
-#: forum/urls.py:23
+#: forum/urls.py:22 forum/urls.py:24
 msgid "nimda/"
 msgstr ""
 
-#: forum/urls.py:32
+#: forum/urls.py:36
 msgid "upfiles/"
 msgstr ""
 
-#: forum/urls.py:34
+#: forum/urls.py:38
 msgid "faq/"
 msgstr ""
 
-#: forum/urls.py:34
+#: forum/urls.py:38
 msgid "FAQ"
 msgstr "ЧЗВ"
 
-#: forum/urls.py:35
+#: forum/urls.py:39
 msgid "about/"
 msgstr ""
 
-#: forum/urls.py:35
+#: forum/urls.py:39
 msgid "About"
 msgstr "За нас"
 
-#: forum/urls.py:36
+#: forum/urls.py:40
 msgid "markdown_help/"
 msgstr ""
 
-#: forum/urls.py:38
+#: forum/urls.py:42
 msgid "privacy/"
 msgstr ""
 
-#: forum/urls.py:39
+#: forum/urls.py:43
 msgid "logout/"
 msgstr ""
 
-#: forum/urls.py:40
+#: forum/urls.py:44
 msgid "answers/"
 msgstr ""
 
-#: forum/urls.py:40 forum/urls.py:50 forum/urls.py:92 forum/urls.py:139
+#: forum/urls.py:44 forum/urls.py:54 forum/urls.py:96 forum/urls.py:143
 msgid "edit/"
 msgstr ""
 
-#: forum/urls.py:41
+#: forum/urls.py:45
 msgid "revisions/"
 msgstr ""
 
-#: forum/urls.py:42 forum/urls.py:43 forum/urls.py:44 forum/urls.py:46
-#: forum/urls.py:47 forum/urls.py:50 forum/urls.py:51 forum/urls.py:52
-#: forum/urls.py:53 forum/urls.py:78 forum/urls.py:79 forum/urls.py:80
+#: forum/urls.py:46 forum/urls.py:47 forum/urls.py:48 forum/urls.py:50
+#: forum/urls.py:51 forum/urls.py:54 forum/urls.py:55 forum/urls.py:56
+#: forum/urls.py:57 forum/urls.py:82 forum/urls.py:83 forum/urls.py:84
 msgid "questions/"
 msgstr ""
 
-#: forum/urls.py:43
+#: forum/urls.py:47
 msgid "ask/"
 msgstr ""
 
-#: forum/urls.py:44
+#: forum/urls.py:48
+#, fuzzy
 msgid "related_questions/"
 msgstr "Подобни въпроси"
 
-#: forum/urls.py:46
+#: forum/urls.py:50
 msgid "unanswered/"
 msgstr ""
 
-#: forum/urls.py:51
+#: forum/urls.py:55
 msgid "close/"
 msgstr ""
 
-#: forum/urls.py:52
+#: forum/urls.py:56
 msgid "reopen/"
 msgstr ""
 
-#: forum/urls.py:53 forum/urls.py:64
+#: forum/urls.py:57 forum/urls.py:68
 msgid "answer/"
 msgstr ""
 
-#: forum/urls.py:54
+#: forum/urls.py:58
 msgid "pending-data/"
 msgstr ""
 
-#: forum/urls.py:56
+#: forum/urls.py:60
 msgid "vote/"
 msgstr ""
 
-#: forum/urls.py:57
+#: forum/urls.py:61
+#, fuzzy
 msgid "like_comment/"
 msgstr ""
 
-#: forum/urls.py:58
+#: forum/urls.py:62
+#, fuzzy
 msgid "comment/"
 msgstr ""
 
-#: forum/urls.py:59
+#: forum/urls.py:63
+#, fuzzy
 msgid "delete_comment/"
 msgstr ""
 
@@ -245,255 +256,267 @@ msgstr ""
 msgid "convert_comment/"
 msgstr "post a comment"
 
-#: forum/urls.py:61
+#: forum/urls.py:64
+#, fuzzy
+msgid "convert_comment/"
+msgstr "post a comment"
+
+#: forum/urls.py:65
 msgid "accept_answer/"
 msgstr ""
 
-#: forum/urls.py:62
+#: forum/urls.py:66
 #, fuzzy
 msgid "answer_link/"
 msgstr "отговор"
 
-#: forum/urls.py:63
+#: forum/urls.py:67
 msgid "mark_favorite/"
 msgstr ""
 
-#: forum/urls.py:64
+#: forum/urls.py:68
+#, fuzzy
 msgid "award_points/"
-msgstr ""
+msgstr "all badges"
 
-#: forum/urls.py:64
+#: forum/urls.py:68
 #, fuzzy
 msgid "user/"
 msgstr "потребители"
 
-#: forum/urls.py:66
+#: forum/urls.py:70
 msgid "flag/"
 msgstr ""
 
-#: forum/urls.py:67
+#: forum/urls.py:71
 msgid "delete/"
 msgstr ""
 
-#: forum/urls.py:68 forum/urls.py:69
+#: forum/urls.py:72 forum/urls.py:73
 msgid "subscribe/"
 msgstr ""
 
-#: forum/urls.py:70
+#: forum/urls.py:74
 msgid "matching_tags/"
 msgstr ""
 
-#: forum/urls.py:71
+#: forum/urls.py:75
 msgid "matching_users/"
 msgstr ""
 
-#: forum/urls.py:72
+#: forum/urls.py:76
 msgid "node_markdown/"
 msgstr ""
 
-#: forum/urls.py:73
+#: forum/urls.py:77
+#, fuzzy
 msgid "convert/"
 msgstr ""
 
-#: forum/urls.py:74
+#: forum/urls.py:78
 #, fuzzy
 msgid "convert_to_question/"
 msgstr "Подобни въпроси"
 
-#: forum/urls.py:75
+#: forum/urls.py:79
 msgid "wikify/"
 msgstr ""
 
-#: forum/urls.py:77
+#: forum/urls.py:81
 msgid "question/"
 msgstr ""
 
-#: forum/urls.py:83 forum/urls.py:84
+#: forum/urls.py:87 forum/urls.py:88
 msgid "tags/"
 msgstr ""
 
-#: forum/urls.py:85 forum/urls.py:86
+#: forum/urls.py:89 forum/urls.py:90
 msgid "mark-tag/"
 msgstr ""
 
-#: forum/urls.py:85
+#: forum/urls.py:89
 msgid "interesting/"
 msgstr ""
 
-#: forum/urls.py:86
+#: forum/urls.py:90
 msgid "ignored/"
 msgstr ""
 
-#: forum/urls.py:87
+#: forum/urls.py:91
 msgid "unmark-tag/"
 msgstr ""
 
-#: forum/urls.py:89 forum/urls.py:92 forum/urls.py:93 forum/urls.py:94
-#: forum/urls.py:95 forum/urls.py:96 forum/urls.py:97 forum/urls.py:98
+#: forum/urls.py:93 forum/urls.py:96 forum/urls.py:97 forum/urls.py:98
 #: forum/urls.py:99 forum/urls.py:100 forum/urls.py:101 forum/urls.py:102
+#: forum/urls.py:103 forum/urls.py:104 forum/urls.py:105 forum/urls.py:106
 msgid "users/"
 msgstr ""
 
-#: forum/urls.py:93
+#: forum/urls.py:97
+#, fuzzy
 msgid "award/"
 msgstr ""
 
-#: forum/urls.py:94
+#: forum/urls.py:98
+#, fuzzy
 msgid "suspend/"
 msgstr ""
 
-#: forum/urls.py:95
+#: forum/urls.py:99
 msgid "powers/"
 msgstr ""
 
-#: forum/urls.py:96
+#: forum/urls.py:100
 msgid "subscriptions/"
 msgstr ""
 
-#: forum/urls.py:97
+#: forum/urls.py:101
 msgid "preferences/"
 msgstr ""
 
-#: forum/urls.py:98
+#: forum/urls.py:102
 msgid "favorites/"
 msgstr ""
 
-#: forum/urls.py:99
+#: forum/urls.py:103
+#, fuzzy
 msgid "reputation/"
 msgstr ""
 
-#: forum/urls.py:100
+#: forum/urls.py:104
 msgid "votes/"
 msgstr ""
 
-#: forum/urls.py:101
+#: forum/urls.py:105
 msgid "recent/"
 msgstr ""
 
-#: forum/urls.py:103 forum/urls.py:104
+#: forum/urls.py:107 forum/urls.py:108
 msgid "badges/"
 msgstr ""
 
-#: forum/urls.py:107
+#: forum/urls.py:111
 msgid "upload/"
 msgstr ""
 
-#: forum/urls.py:108
+#: forum/urls.py:112
 msgid "search/"
 msgstr ""
 
-#: forum/urls.py:109
+#: forum/urls.py:113
+#, fuzzy
 msgid "contact/"
 msgstr ""
 
-#: forum/urls.py:113 forum/urls.py:114 forum/urls.py:115 forum/urls.py:116
 #: forum/urls.py:117 forum/urls.py:118 forum/urls.py:119 forum/urls.py:120
 #: forum/urls.py:121 forum/urls.py:122 forum/urls.py:123 forum/urls.py:124
+#: forum/urls.py:125 forum/urls.py:126 forum/urls.py:127 forum/urls.py:128
 #: forum_modules/localauth/urls.py:7
 msgid "account/"
 msgstr ""
 
-#: forum/urls.py:113 forum/urls.py:115
+#: forum/urls.py:117 forum/urls.py:119
 msgid "signin/"
 msgstr ""
 
-#: forum/urls.py:114
+#: forum/urls.py:118
 msgid "signout/"
 msgstr ""
 
-#: forum/urls.py:116
+#: forum/urls.py:120
 msgid "done/"
 msgstr ""
 
-#: forum/urls.py:117 forum_modules/localauth/urls.py:7
+#: forum/urls.py:121 forum_modules/localauth/urls.py:7
 msgid "register/"
 msgstr ""
 
-#: forum/urls.py:118
+#: forum/urls.py:122
 msgid "validate/"
 msgstr ""
 
-#: forum/urls.py:119 forum/urls.py:120
+#: forum/urls.py:123 forum/urls.py:124
 msgid "tempsignin/"
 msgstr ""
 
-#: forum/urls.py:121
+#: forum/urls.py:125
 msgid "authsettings/"
 msgstr ""
 
-#: forum/urls.py:122 forum/urls.py:123
+#: forum/urls.py:126 forum/urls.py:127
 msgid "providers/"
 msgstr ""
 
-#: forum/urls.py:122
+#: forum/urls.py:126
 msgid "remove/"
 msgstr ""
 
-#: forum/urls.py:123
+#: forum/urls.py:127
 msgid "add/"
 msgstr ""
 
-#: forum/urls.py:124
+#: forum/urls.py:128
 msgid "send-validation/"
 msgstr ""
 
-#: forum/urls.py:127 forum/urls.py:128 forum/urls.py:129 forum/urls.py:130
 #: forum/urls.py:131 forum/urls.py:132 forum/urls.py:133 forum/urls.py:134
-#: forum/urls.py:135 forum/urls.py:136 forum/urls.py:138 forum/urls.py:139
-#: forum/urls.py:141 forum/urls.py:143 forum/urls.py:145
+#: forum/urls.py:135 forum/urls.py:136 forum/urls.py:137 forum/urls.py:138
+#: forum/urls.py:139 forum/urls.py:140 forum/urls.py:142 forum/urls.py:143
+#: forum/urls.py:145 forum/urls.py:147 forum/urls.py:149
 #: forum_modules/exporter/urls.py:8 forum_modules/exporter/urls.py:9
 #: forum_modules/exporter/urls.py:10 forum_modules/sximporter/urls.py:8
 msgid "admin/"
 msgstr ""
 
-#: forum/urls.py:128
+#: forum/urls.py:132
 msgid "switch_interface/"
 msgstr ""
 
-#: forum/urls.py:129
+#: forum/urls.py:133
 msgid "statistics/"
 msgstr ""
 
-#: forum/urls.py:130
+#: forum/urls.py:134
 msgid "denormalize/"
 msgstr ""
 
-#: forum/urls.py:131
+#: forum/urls.py:135
 msgid "go_bootstrap/"
 msgstr ""
 
-#: forum/urls.py:132
+#: forum/urls.py:136
 msgid "go_defaults/"
 msgstr ""
 
-#: forum/urls.py:133 forum/urls.py:143
+#: forum/urls.py:137 forum/urls.py:147
+#, fuzzy
 msgid "settings/"
 msgstr ""
 
-#: forum/urls.py:134
+#: forum/urls.py:138
 msgid "maintenance/"
 msgstr ""
 
-#: forum/urls.py:135
+#: forum/urls.py:139
 msgid "flagged_posts/"
 msgstr ""
 
-#: forum/urls.py:136 forum/urls.py:138 forum/urls.py:139
+#: forum/urls.py:140 forum/urls.py:142 forum/urls.py:143
 msgid "static_pages/"
 msgstr ""
 
-#: forum/urls.py:138
+#: forum/urls.py:142
 msgid "new/"
 msgstr ""
 
-#: forum/urls.py:141
+#: forum/urls.py:145
 msgid "tools/"
 msgstr ""
 
-#: forum/urls.py:145
+#: forum/urls.py:149
 #, fuzzy
 msgid "test_email_settings/"
-msgstr "Опции за оторизиране"
+msgstr "karma"
 
 #: forum/actions/meta.py:39
 #, python-format
@@ -522,7 +545,7 @@ msgid "%(user)s flagged %(post_desc)s: %(reason)s"
 msgstr "%(user)s отбеляза %(post_desc)s: %(reason)s"
 
 #: forum/actions/meta.py:152 forum/actions/user.py:49
-#: forum/models/action.py:218
+#: forum/models/action.py:219
 msgid "your"
 msgstr "твой"
 
@@ -551,7 +574,7 @@ msgstr "%(user)s изтри %(post_desc)s"
 msgid "flagged by multiple users: "
 msgstr "отбелязан от няколко потребителя:"
 
-#: forum/actions/node.py:9 forum_modules/exporter/importer.py:494
+#: forum/actions/node.py:9 forum_modules/exporter/importer.py:496
 msgid "Initial revision"
 msgstr "Първоначална версия"
 
@@ -574,6 +597,7 @@ msgid "%(user)s answered %(asker)s on %(question)s"
 msgstr "%(user)s отговори %(asker)s на %(question)s"
 
 #: forum/actions/node.py:57
+#, fuzzy
 msgid "commented"
 msgstr "коментира"
 
@@ -583,6 +607,7 @@ msgid "%(user)s commented on %(post_desc)s"
 msgstr "Нов коментар на %(question_title)s"
 
 #: forum/actions/node.py:71 forum/actions/page.py:23
+#, fuzzy
 msgid "edited"
 msgstr "редактиран"
 
@@ -619,6 +644,7 @@ msgstr ""
 "до ревизия %(final)d (%(final_sum)s)"
 
 #: forum/actions/node.py:139
+#, fuzzy
 msgid "closed"
 msgstr "затворен"
 
@@ -628,6 +654,7 @@ msgid "%(user)s closed %(post_desc)s: %(reason)s"
 msgstr "%(user)s затвори %(post_desc)s: %(reason)s"
 
 #: forum/actions/node.py:160 forum/actions/node.py:184
+#, fuzzy
 msgid "converted"
 msgstr "конвертиран"
 
@@ -636,26 +663,26 @@ msgstr "конвертиран"
 msgid "%(user)s converted an answer to %(question)s into a comment"
 msgstr "%(user)s превърна отговора на %(question)s в коментар"
 
-#: forum/actions/node.py:194
+#: forum/actions/node.py:196
 #, fuzzy, python-format
 msgid "%(user)s converted comment on %(question)s into an answer"
 msgstr "%(user)s превърна отговора на %(question)s в коментар"
 
-#: forum/actions/node.py:200
+#: forum/actions/node.py:202
 #, fuzzy
 msgid "converted to question"
 msgstr "списък на всички въпроси"
 
-#: forum/actions/node.py:225
+#: forum/actions/node.py:227
 #, fuzzy, python-format
 msgid "%(user)s converted an answer to %(question)s into a separate question"
 msgstr "%(user)s превърна отговора на %(question)s в коментар"
 
-#: forum/actions/node.py:231
+#: forum/actions/node.py:233
 msgid "wikified"
 msgstr "уикифицира"
 
-#: forum/actions/node.py:243
+#: forum/actions/node.py:245
 #, python-format
 msgid "%(user)s marked %(node)s as community wiki."
 msgstr "%(user)s отбеляза %(node)s като част от уийки общност.\t"
@@ -722,6 +749,7 @@ msgid "%(user)s edited %(hes_or_your)s %(profile_link)s"
 msgstr "%(user)s редактира %(hes_or_your)s %(profile_link)s"
 
 #: forum/actions/user.py:50
+#, fuzzy
 msgid "profile"
 msgstr "профил"
 
@@ -743,8 +771,9 @@ msgstr "Благодаря"
 msgid "You have been penalized in %s reputation points."
 msgstr "Вие сте били санкционирани с %s точки."
 
-#: forum/actions/user.py:74 forum/templatetags/extra_tags.py:93
-#: forum/views/auth.py:221 forum_modules/exporter/templates/running.html:158
+#: forum/actions/user.py:74 forum/actions/user.py:112
+#: forum/templatetags/extra_tags.py:131 forum/views/auth.py:221
+#: forum_modules/exporter/templates/running.html:158
 msgid "unknown"
 msgstr "неизвестен"
 
@@ -764,10 +793,39 @@ msgstr "%(user)s наказа %(users)s с %(value)s точки: %(message)s\t"
 
 #: forum/actions/user.py:92
 #, fuzzy
+msgid "gave reputation points"
+msgstr "karma"
+
+#: forum/actions/user.py:105
+#, fuzzy, python-format
+msgid ""
+"Congratulations, you have been awarded an extra %(points)s reputation %"
+"(points_label)s on <a href=\"%(answer_url)s\">this</a> answer."
+msgstr "Поздравления, вие сте наградени с допълнителни %s точки."
+
+#: forum/actions/user.py:107
+#, fuzzy
+msgid "point"
+msgid_plural "points"
+msgstr[0] "Точки"
+msgstr[1] "Точки"
+
+#: forum/actions/user.py:116
+#, fuzzy, python-format
+msgid "%(user)s awarded an extra %(value)s reputation points to %(users)s"
+msgstr "%(user)s награди с %(value)s точки  %(users)s: %(message)s\t"
+
+#: forum/actions/user.py:121
+#, fuzzy, python-format
+msgid "%(user)s penalised %(users)s in %(value)s reputation points"
+msgstr "%(user)s наказа %(users)s с %(value)s точки: %(message)s\t"
+
+#: forum/actions/user.py:129
+#, fuzzy
 msgid "was awarded"
 msgstr "всички награди"
 
-#: forum/actions/user.py:120
+#: forum/actions/user.py:157
 #, python-format
 msgid ""
 "Congratulations, you have received a badge '%(badge_name)s'. Check out "
@@ -776,43 +834,44 @@ msgstr ""
 "Честито! Получихте значка '%(badge_name)s'. Проверете във <a "
 "href=\"%(profile_url)s\">профила си</a>.     "
 
-#: forum/actions/user.py:142
+#: forum/actions/user.py:179
 #, python-format
 msgid "%(user)s %(were_was)s awarded the %(badge_name)s badge"
 msgstr "%(user)s  %(were_was)s спечели %(badge_name)s значка"
 
-#: forum/actions/user.py:144
+#: forum/actions/user.py:181
+#, fuzzy
 msgid "were"
 msgstr "бяха"
 
-#: forum/actions/user.py:144
+#: forum/actions/user.py:181
 msgid "was"
 msgstr "беше"
 
-#: forum/actions/user.py:149
+#: forum/actions/user.py:186
 #, fuzzy
 msgid "suspended"
 msgstr "обновено"
 
-#: forum/actions/user.py:167
+#: forum/actions/user.py:204
 msgid "Your suspension has been removed."
 msgstr "Вашата забрана беше отменена."
 
-#: forum/actions/user.py:171
+#: forum/actions/user.py:208
 #, python-format
 msgid "for %s days"
 msgstr "за %s дена"
 
-#: forum/actions/user.py:173
+#: forum/actions/user.py:210
 msgid "indefinetely"
 msgstr "неопределено"
 
-#: forum/actions/user.py:175
+#: forum/actions/user.py:212
 #, python-format
 msgid "%(user)s suspended %(users)s %(suspension)s: %(msg)s"
 msgstr ""
 
-#: forum/actions/user.py:177 forum/views/users.py:241
+#: forum/actions/user.py:214 forum/views/users.py:241
 msgid "Bad behaviour"
 msgstr "Лошо поведение"
 
@@ -841,6 +900,7 @@ msgstr ""
 
 #: forum/forms/admin.py:37
 #: forum/skins/default/templates/users/karma_bonus.html:9
+#, fuzzy
 msgid "Message"
 msgstr "Съобщение"
 
@@ -875,6 +935,7 @@ msgstr ""
 
 #: forum/forms/admin.py:75
 #: forum/skins/default/templates/osqaadmin/nodeman.html:284
+#, fuzzy
 msgid "Title"
 msgstr "Заглавие"
 
@@ -883,6 +944,7 @@ msgid "Page URL"
 msgstr "URL адрес на страницата"
 
 #: forum/forms/admin.py:79
+#, fuzzy
 msgid "Page Content"
 msgstr "Съдържание"
 
@@ -911,6 +973,7 @@ msgid "Sidebar Render Mode"
 msgstr ""
 
 #: forum/forms/admin.py:92
+#, fuzzy
 msgid "Allow comments"
 msgstr "Разреши коментарите"
 
@@ -920,6 +983,7 @@ msgid "send validation email"
 msgstr "Stop Email"
 
 #: forum/forms/admin.py:104
+#, fuzzy
 msgid "email address"
 msgstr "Имейл адрес (не го споделяме)"
 
@@ -1035,7 +1099,7 @@ msgid "please enter a descriptive title for your question"
 msgstr "въведете описателно заглавие на въпроса"
 
 #: forum/forms/qanda.py:28
-#, python-format
+#, fuzzy, python-format
 msgid "title must be must be at least %s characters"
 msgstr ""
 
@@ -1044,22 +1108,22 @@ msgid "content"
 msgstr "съдържание"
 
 #: forum/forms/qanda.py:49
-#, python-format
+#, fuzzy, python-format
 msgid "question content must be at least %s characters"
 msgstr ""
 
 #: forum/forms/qanda.py:60
-#, python-format
+#, fuzzy, python-format
 msgid "answer content must be at least %s characters"
 msgstr ""
 
 #: forum/forms/qanda.py:71 forum/skins/default/templates/header.html:35
-#: forum/skins/default/templates/search.html:20 forum/views/readers.py:223
+#: forum/skins/default/templates/search.html:20 forum/views/readers.py:238
 msgid "tags"
 msgstr "тагове"
 
 #: forum/forms/qanda.py:73
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "Tags are short keywords, with no spaces within. At least %(min)s and up"
 " to %(max)s tags can be used."
@@ -1078,6 +1142,7 @@ msgid "please use between %(min)s and %(max)s characters in you tags"
 msgstr "използвайте от %(min)s до %(max)s символа в таговете"
 
 #: forum/forms/qanda.py:97
+#, fuzzy
 msgid ""
 "please use following characters in tags: letters , numbers, and "
 "characters '.-_'"
@@ -1182,8 +1247,10 @@ msgstr "Без известия"
 #, python-format
 msgid ""
 "\n"
-"                    The e-mail settings of this community are not configured yet. We strongly recommend you to\n"
-"                    do that from the <a href=\"%(email_settings_url)s\">e-mail settings page</a> as soon as possible.\n"
+"                    The e-mail settings of this community are not configured "
+"yet. We strongly recommend you to\n"
+"                    do that from the <a href=\"%(email_settings_url)s\">e-"
+"mail settings page</a> as soon as possible.\n"
 "                    "
 msgstr ""
 
@@ -1191,45 +1258,48 @@ msgstr ""
 #, fuzzy
 msgid ""
 "\n"
-"                       Please, configure your APP_URL setting from the local settings file.\n"
+"                       Please, configure your APP_URL setting from the local "
+"settings file.\n"
 "                    "
 msgstr ""
 "\n"
-"<div class=\"questions-count\">%(q_num)s</div><p>question containing <strong><span class=\"darkred\">%(searchtitle)s</span></strong></p>"
+"<div class=\"questions-count\">%(q_num)s</div><p>question containing "
+"<strong><span class=\"darkred\">%(searchtitle)s</span></strong></p>"
 
 #: forum/middleware/anon_user.py:34
 #, python-format
 msgid "First time here? Check out the <a href=\"%s\">FAQ</a>!"
 msgstr "За първи път тук? Проверете <a href=\"%s\">ЧЗВ</a>."
 
-#: forum/models/action.py:215
+#: forum/models/action.py:216
 msgid "You"
 msgstr "Вие"
 
-#: forum/models/action.py:230
+#: forum/models/action.py:231
 #, python-format
 msgid "on %(link)s"
 msgstr "в %(link)s"
 
-#: forum/models/action.py:234
+#: forum/models/action.py:235
 #, python-format
 msgid "%(user)s %(node_name)s %(node_desc)s"
 msgstr ""
 
-#: forum/models/comment.py:6 forum/views/commands.py:230
-#: forum/views/commands.py:256 forum_modules/akismet/startup.py:77
+#: forum/models/comment.py:6 forum/views/commands.py:229
+#: forum/views/commands.py:255 forum_modules/akismet/startup.py:77
+#, fuzzy
 msgid "comment"
 msgstr "коментар"
 
-#: forum/models/meta.py:63
+#: forum/models/meta.py:46
 msgid "Unknown"
 msgstr "Неизвестен"
 
-#: forum/models/meta.py:68
+#: forum/models/meta.py:51
 msgid "No description available"
 msgstr "Няма описание"
 
-#: forum/models/node.py:239
+#: forum/models/node.py:247
 #, fuzzy
 msgid "post"
 msgstr "добавено"
@@ -1247,24 +1317,25 @@ msgstr "[изтрит]"
 msgid "[closed] "
 msgstr "[затворен]"
 
-#: forum/models/tag.py:42
+#: forum/models/tag.py:60
 msgid "interesting"
 msgstr "интересно"
 
-#: forum/models/tag.py:42
+#: forum/models/tag.py:60
 msgid "ignored"
 msgstr "игнорирано"
 
-#: forum/models/user.py:203 forum/views/readers.py:120
+#: forum/models/user.py:206 forum/views/readers.py:132
+#, fuzzy
 msgid "asked-by"
 msgstr "зададен от"
 
-#: forum/models/user.py:207 forum/views/readers.py:123
+#: forum/models/user.py:210 forum/views/readers.py:135
 #, fuzzy
 msgid "answered-by"
 msgstr "отговорено"
 
-#: forum/models/user.py:211 forum/views/readers.py:126
+#: forum/models/user.py:214 forum/views/readers.py:138
 #, fuzzy
 msgid "subscribed-by"
 msgstr "абонирай ме"
@@ -1330,6 +1401,7 @@ msgstr ""
 
 #: forum/settings/basic.py:9
 #: forum/skins/default/templates/osqaadmin/djstyle_base.html:67
+#, fuzzy
 msgid "Basic settings"
 msgstr "Основни настройки"
 
@@ -1421,8 +1493,14 @@ msgid "Email server and other email related settings."
 msgstr ""
 
 #: forum/settings/email.py:10
+#, fuzzy
 msgid "E-Mail settings test"
-msgstr "Тест на Имейл настройките"
+msgstr ""
+"<span class='big strong'>Adjust frequency of email updates.</span> Receive "
+"updates on interesting questions by email, <strong><br/>help the community</"
+"strong> by answering questions of your colleagues. If you do not wish to "
+"receive emails - select 'no email' on all items below.<br/>Updates are only "
+"sent when there is any new activity on selected items."
 
 #: forum/settings/email.py:11
 msgid "Test the current E-Mail configuration."
@@ -1488,9 +1566,9 @@ msgstr "Welcome to the Q&A forum"
 
 #: forum/settings/email.py:48
 msgid ""
-"Every email sent through your website will have the subject prefixed by"
-" this string. It's usually a good idea to have such a prefix so your "
-"users can easily set up a filter on theyr email clients."
+"Every email sent through your website will have the subject prefixed by this "
+"string. It's usually a good idea to have such a prefix so your users can "
+"easily set up a filter on theyr email clients."
 msgstr ""
 
 #: forum/settings/email.py:52
@@ -1718,8 +1796,7 @@ msgstr ""
 
 #: forum/settings/minrep.py:8
 msgid ""
-"If the user has less reputation, captcha is used to when adding new "
-"content."
+"If the user has less reputation, captcha is used to when adding new content."
 msgstr ""
 
 #: forum/settings/minrep.py:11
@@ -1890,8 +1967,8 @@ msgstr "user karma"
 
 #: forum/settings/minrep.py:76
 msgid ""
-"The minimum reputation an user must have to be allowed to convert "
-"comments into an answer."
+"The minimum reputation an user must have to be allowed to convert comments "
+"into an answer."
 msgstr ""
 
 #: forum/settings/minrep.py:79
@@ -1901,8 +1978,8 @@ msgstr "user karma"
 
 #: forum/settings/minrep.py:80
 msgid ""
-"The minimum reputation an user must have to be allowed to convert an "
-"answer into a question."
+"The minimum reputation an user must have to be allowed to convert an answer "
+"into a question."
 msgstr ""
 
 #: forum/settings/minrep.py:83
@@ -2057,19 +2134,19 @@ msgid ""
 "users."
 msgstr ""
 
-#: forum/settings/sidebar.py:69
+#: forum/settings/sidebar.py:71
 msgid "Upper block rendering mode"
 msgstr ""
 
-#: forum/settings/sidebar.py:70
+#: forum/settings/sidebar.py:72
 msgid "How to render your upper block code."
 msgstr ""
 
-#: forum/settings/sidebar.py:98
+#: forum/settings/sidebar.py:100
 msgid "Lower block rendering mode"
 msgstr ""
 
-#: forum/settings/sidebar.py:99
+#: forum/settings/sidebar.py:101
 msgid "How to render your lower block code."
 msgstr ""
 
@@ -2313,6 +2390,7 @@ msgid "edit"
 msgstr "редактирай"
 
 #: forum/settings/users.py:19 forum/views/auth.py:392 forum/views/auth.py:397
+#, fuzzy
 msgid "save"
 msgstr "запази"
 
@@ -2349,104 +2427,123 @@ msgid ""
 msgstr ""
 
 #: forum/settings/users.py:26
-msgid "Show status diamonds"
-msgstr ""
+#, fuzzy
+msgid "Truncate long usernames"
+msgstr "Choose screen name"
 
 #: forum/settings/users.py:27
-msgid "Show status \"diamonds\" next to moderators or superusers usernames."
+msgid "The long usernames will be truncated.."
 msgstr ""
 
 #: forum/settings/users.py:32
+msgid "Truncate usernames longer than"
+msgstr ""
+
+#: forum/settings/users.py:33
+msgid ""
+"The usernames that are longer than this will be truncated and ... will be "
+"appended."
+msgstr ""
+
+#: forum/settings/users.py:36
+msgid "Show status diamonds"
+msgstr ""
+
+#: forum/settings/users.py:37
+msgid "Show status \"diamonds\" next to moderators or superusers usernames."
+msgstr ""
+
+#: forum/settings/users.py:42
 #, fuzzy
 msgid "Force unique email"
 msgstr ""
 "<strong>Нов имейл:</strong> (няма да бъде споделян, трябва да бъде "
 "действителен)"
 
-#: forum/settings/users.py:33
+#: forum/settings/users.py:43
 msgid "Should each user have an unique email."
 msgstr ""
 
-#: forum/settings/users.py:37
+#: forum/settings/users.py:47
 msgid "Require email validation to..."
 msgstr ""
 
-#: forum/settings/users.py:38
+#: forum/settings/users.py:48
 msgid ""
 "Which actions in this site, users without a valid email will be "
 "prevented from doing."
 msgstr ""
 
-#: forum/settings/users.py:40
+#: forum/settings/users.py:50
 #, fuzzy
 msgid "ask questions"
 msgstr "задай въпрос"
 
-#: forum/settings/users.py:40
+#: forum/settings/users.py:50
 #, fuzzy
 msgid "provide answers"
 msgstr "най-старите"
 
-#: forum/settings/users.py:40
+#: forum/settings/users.py:50
 #, fuzzy
 msgid "make comments"
 msgstr "post a comment"
 
-#: forum/settings/users.py:40
+#: forum/settings/users.py:50
 #, fuzzy
 msgid "report posts"
 msgstr "karma"
 
-#: forum/settings/users.py:45
+#: forum/settings/users.py:55
 msgid "Don't notify to invalid emails"
 msgstr ""
 
-#: forum/settings/users.py:46
+#: forum/settings/users.py:56
 msgid "Do not notify users with unvalidated emails."
 msgstr ""
 
-#: forum/settings/users.py:50
+#: forum/settings/users.py:60
 msgid "Hold pending posts for X minutes"
 msgstr ""
 
-#: forum/settings/users.py:51
+#: forum/settings/users.py:61
 msgid ""
 "How much time in minutes a post should be kept in session until the "
 "user logs in or validates the email."
 msgstr ""
 
-#: forum/settings/users.py:55
+#: forum/settings/users.py:65
 msgid "Warn about pending posts afer X minutes"
 msgstr ""
 
-#: forum/settings/users.py:56
+#: forum/settings/users.py:66
 msgid ""
 "How much time in minutes a user that just logged in or validated his "
 "email should be warned about a pending post instead of publishing it "
 "automatically."
 msgstr ""
 
-#: forum/settings/users.py:60
+#: forum/settings/users.py:70
 msgid "suitable for display on all websites with any audience type."
 msgstr ""
 
-#: forum/settings/users.py:61
+#: forum/settings/users.py:71
 msgid ""
 "may contain rude gestures, provocatively dressed individuals, the "
 "lesser swear words, or mild violence."
 msgstr ""
 
-#: forum/settings/users.py:62
+#: forum/settings/users.py:72
 msgid ""
 "may contain such things as harsh profanity, intense violence, nudity, "
 "or hard drug use."
 msgstr ""
 
-#: forum/settings/users.py:63
+#: forum/settings/users.py:73
 msgid "may contain hardcore sexual imagery or extremely disturbing violence."
 msgstr ""
 
-#: forum/settings/users.py:67
+#: forum/settings/users.py:77
 #, fuzzy
 msgid "Gravatar rating"
 msgstr ""
@@ -2458,31 +2555,31 @@ msgstr ""
 "snowflake-like figure. You can <strong>set your image</strong> at <a "
 "href='http://gravatar.com'><strong>gravatar.com</strong></a>"
 
-#: forum/settings/users.py:68
+#: forum/settings/users.py:78
 msgid ""
 "Gravatar allows users to self-rate their images so that they can "
 "indicate if an image is appropriate for a certain audience."
 msgstr ""
 
-#: forum/settings/users.py:74
+#: forum/settings/users.py:84
 msgid ""
 "(mystery-man) a simple, cartoon-style silhouetted outline of a person "
 "(does not vary by email hash)"
 msgstr ""
 
-#: forum/settings/users.py:75
+#: forum/settings/users.py:85
 msgid "a geometric pattern based on an email hash"
 msgstr ""
 
-#: forum/settings/users.py:76
+#: forum/settings/users.py:86
 msgid "a generated \"monster\" with different colors, faces, etc"
 msgstr ""
 
-#: forum/settings/users.py:77
+#: forum/settings/users.py:87
 msgid "generated faces with differing features and backgrounds"
 msgstr ""
 
-#: forum/settings/users.py:81
+#: forum/settings/users.py:91
 #, fuzzy
 msgid "Gravatar default"
 msgstr ""
@@ -2494,7 +2591,7 @@ msgstr ""
 "snowflake-like figure. You can <strong>set your image</strong> at <a "
 "href='http://gravatar.com'><strong>gravatar.com</strong></a>"
 
-#: forum/settings/users.py:82
+#: forum/settings/users.py:92
 msgid ""
 "Gravatar has a number of built in options which you can also use as "
 "defaults."
@@ -2514,8 +2611,8 @@ msgstr ""
 
 #: forum/settings/view.py:9
 msgid ""
-"The number of characters that are going to be displayed in order to get"
-" the content summary."
+"The number of characters that are going to be displayed in order to get the "
+"content summary."
 msgstr ""
 
 #: forum/settings/view.py:12
@@ -2524,8 +2621,7 @@ msgstr ""
 
 #: forum/settings/view.py:13
 msgid ""
-"The number of tags to display in the recent tags block in the front "
-"page."
+"The number of tags to display in the recent tags block in the front page."
 msgstr ""
 
 #: forum/settings/view.py:16
@@ -2565,8 +2661,8 @@ msgstr "user karma"
 
 #: forum/settings/voting.py:8
 msgid ""
-"The user reputation is added to the static MAX_VOTES_PER_DAY option. "
-"Users with higher reputation can vote more."
+"The user reputation is added to the static MAX_VOTES_PER_DAY option. Users "
+"with higher reputation can vote more."
 msgstr ""
 
 #: forum/settings/voting.py:11
@@ -2683,6 +2779,7 @@ msgid "report this problem"
 msgstr "оповестете за проблема"
 
 #: forum/skins/default/templates/403.html:29
+#, fuzzy
 msgid "to home page"
 msgstr "към началната страница"
 
@@ -2701,6 +2798,7 @@ msgid "404 Error"
 msgstr "Грешка 404"
 
 #: forum/skins/default/templates/404.html:20
+#, fuzzy
 msgid "404 Not Found"
 msgstr "404 Нищо не беше намерено"
 
@@ -2717,6 +2815,7 @@ msgid "url has error - please check it;"
 msgstr "адреса има грешка -- проверете го;"
 
 #: forum/skins/default/templates/404.html:30
+#, fuzzy
 msgid "if you believe this error 404 should not have occurred, please"
 msgstr "ако смятате, че тази страница 404 не е трябвало да се показва"
 
@@ -2849,7 +2948,7 @@ msgid "Save edit"
 msgstr "Запази промените"
 
 #: forum/skins/default/templates/answer_edit.html:102
-#: forum/skins/default/templates/base_content.html:38
+#: forum/skins/default/templates/base_content.html:43
 #: forum/skins/default/templates/close.html:29
 #: forum/skins/default/templates/feedback.html:50
 #: forum/skins/default/templates/question_edit.html:154
@@ -2953,6 +3052,7 @@ msgstr ""
 "точки."
 
 #: forum/skins/default/templates/badges.html:14
+#, fuzzy
 msgid ""
 "Below is the list of available badges and number of times each type of badge has been awarded.\n"
 "    "
@@ -3004,46 +3104,50 @@ msgstr "бронз"
 msgid "bronze badge description"
 msgstr "Ако сте активен, няма как да не се отличите с тази значка."
 
-#: forum/skins/default/templates/base_content.html:34
+#: forum/skins/default/templates/base_content.html:39
 msgid "Are you sure?"
 msgstr ""
 
-#: forum/skins/default/templates/base_content.html:35
+#: forum/skins/default/templates/base_content.html:40
 msgid "Yes"
 msgstr ""
 
-#: forum/skins/default/templates/base_content.html:36
+#: forum/skins/default/templates/base_content.html:41
 msgid "No"
 msgstr ""
 
-#: forum/skins/default/templates/base_content.html:37
+#: forum/skins/default/templates/base_content.html:42
 #, fuzzy
 msgid "Message:"
 msgstr "Вашето съобщение:"
 
-#: forum/skins/default/templates/base_content.html:39
+#: forum/skins/default/templates/base_content.html:44
+#, fuzzy
 msgid "Close"
 msgstr "Затвори"
 
-#: forum/skins/default/templates/base_content.html:40
+#: forum/skins/default/templates/base_content.html:45
 msgid "Ok"
 msgstr ""
 
-#: forum/skins/default/templates/base_content.html:42
+#: forum/skins/default/templates/base_content.html:47
 #: forum/templatetags/node_tags.py:167
+#, fuzzy
 msgid "word"
 msgstr "дума"
 
-#: forum/skins/default/templates/base_content.html:43
+#: forum/skins/default/templates/base_content.html:48
+#, fuzzy
 msgid "words"
 msgstr "думи"
 
-#: forum/skins/default/templates/base_content.html:44
+#: forum/skins/default/templates/base_content.html:49
 #: forum/templatetags/node_tags.py:166
+#, fuzzy
 msgid "character"
 msgstr "символ"
 
-#: forum/skins/default/templates/base_content.html:45
+#: forum/skins/default/templates/base_content.html:50
 msgid "characters"
 msgstr ""
 
@@ -3117,7 +3221,7 @@ msgstr "търсене"
 
 #: forum/skins/default/templates/header.html:34
 #: forum/skins/default/templates/search.html:19 forum/views/readers.py:98
-#: forum/views/readers.py:100 forum/views/readers.py:144
+#: forum/views/readers.py:100 forum/views/readers.py:156
 #: forum/views/users.py:317
 msgid "questions"
 msgstr "въпроси"
@@ -3128,6 +3232,7 @@ msgid "users"
 msgstr "потребители"
 
 #: forum/skins/default/templates/index.html:11
+#, fuzzy
 msgid "welcome to "
 msgstr "добре дошли на"
 
@@ -3149,6 +3254,7 @@ msgid "Logout now"
 msgstr "Излез сега"
 
 #: forum/skins/default/templates/markdown_help.html:6
+#, fuzzy
 msgid "Markdown Help"
 msgstr "Markdown съвети"
 
@@ -3174,6 +3280,7 @@ msgstr ""
 "rel=\"nofollow\">Markdown</a>."
 
 #: forum/skins/default/templates/markdown_help.html:20
+#, fuzzy
 msgid "Headers"
 msgstr "Заглавия"
 
@@ -3241,6 +3348,7 @@ msgid "This is paragraph two."
 msgstr ""
 
 #: forum/skins/default/templates/markdown_help.html:93
+#, fuzzy
 msgid "Links"
 msgstr "Връзки"
 
@@ -3436,6 +3544,7 @@ msgstr "Аз съм Човек"
 #: forum/skins/default/templates/opensearch.html:4
 #: forum/skins/default/templates/opensearch.html:5
 #: forum/skins/default/templates/osqaadmin/nodeman.html:275
+#, fuzzy
 msgid "Search"
 msgstr "Търсене"
 
@@ -3550,7 +3659,7 @@ msgid ""
 msgstr "Въпроса беше затворен поради \"%(close_reason)s\" от"
 
 #: forum/skins/default/templates/question.html:141
-#, python-format
+#, fuzzy, python-format
 msgid "One Answer:"
 msgid_plural "%(counter)s Answers:"
 msgstr[0] "Един отговор:"
@@ -3565,6 +3674,7 @@ msgid "Be the first one to answer this question!"
 msgstr "Бъдете първия отговорил на този въпрос!"
 
 #: forum/skins/default/templates/question.html:199
+#, fuzzy
 msgid "You can answer anonymously and then login."
 msgstr ""
 "<span class='strong big'>Започнете да добавяте анонимно</span> - Вашия"
@@ -3574,6 +3684,7 @@ msgstr ""
 "<strong>моля, гласувайте</strong> (след като се оторизирате)!"
 
 #: forum/skins/default/templates/question.html:203
+#, fuzzy
 msgid "Answer your own question only to give an answer."
 msgstr ""
 "<span class='big strong'>Вие можете да отговорите на Вашия "
@@ -3584,6 +3695,7 @@ msgstr ""
 "отговорите, които харесвате (или не харесвате)"
 
 #: forum/skins/default/templates/question.html:205
+#, fuzzy
 msgid "Please only give an answer, no discussions."
 msgstr ""
 "<span class='big strong'>Отговора трябва да съдържа само съществена "
@@ -3702,8 +3814,8 @@ msgstr "отговори"
 
 #: forum/skins/default/templates/question_summary_list_roll.html:14
 #: forum/skins/default/templates/question_list/item.html:11
-#: forum/views/commands.py:77 forum/views/readers.py:62
-#: forum/views/readers.py:63 forum/views/readers.py:268
+#: forum/views/commands.py:78 forum/views/readers.py:62
+#: forum/views/readers.py:63 forum/views/readers.py:283
 #: forum/views/users.py:54 forum/views/users.py:55 forum/views/users.py:356
 msgid "votes"
 msgstr "гласове"
@@ -3715,6 +3827,7 @@ msgstr "видяно"
 
 #: forum/skins/default/templates/questions.html:18
 #: forum/skins/default/templates/users/stats.html:19
+#, fuzzy
 msgid "subscribe to question RSS feed"
 msgstr "абонирай се към RSS на този въпрос"
 
@@ -3765,10 +3878,12 @@ msgid ""
 msgstr ""
 
 #: forum/skins/default/templates/subscription_status.html:3
+#, fuzzy
 msgid "Follow this question"
 msgstr "Следвай този въпрос"
 
 #: forum/skins/default/templates/subscription_status.html:4
+#, fuzzy
 msgid "By Email"
 msgstr "По Имейл"
 
@@ -3785,17 +3900,17 @@ msgid "You are not subscribed to this question."
 msgstr "Вие не сте абониран за този въпрос."
 
 #: forum/skins/default/templates/subscription_status.html:19
-#: forum/views/commands.py:485
+#: forum/views/commands.py:484
 msgid "unsubscribe me"
 msgstr "махни абонамента ми"
 
 #: forum/skins/default/templates/subscription_status.html:21
-#: forum/views/commands.py:485
+#: forum/views/commands.py:484
 msgid "subscribe me"
 msgstr "абонирай ме"
 
 #: forum/skins/default/templates/subscription_status.html:26
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
 "            (you can adjust your notification settings on your <a href=\"%(subscriptions_url)s\">profile</a>)\n"
@@ -3816,18 +3931,22 @@ msgid "By RSS"
 msgstr "По RSS"
 
 #: forum/skins/default/templates/subscription_status.html:36
+#, fuzzy
 msgid "subscribe to answers"
 msgstr "абонамент за отговорите"
 
 #: forum/skins/default/templates/subscription_status.html:37
+#, fuzzy
 msgid "Answers"
 msgstr "Отговори"
 
 #: forum/skins/default/templates/subscription_status.html:41
+#, fuzzy
 msgid "subscribe to comments and answers"
 msgstr "абонирай ме за коментари и отговори"
 
 #: forum/skins/default/templates/subscription_status.html:42
+#, fuzzy
 msgid "Answers and Comments"
 msgstr "Отговори и Коментари"
 
@@ -3923,6 +4042,7 @@ msgstr ""
 "стандартно потребителско име и парола!"
 
 #: forum/skins/default/templates/auth/auth_settings.html:33
+#, fuzzy
 msgid "Create password"
 msgstr "Парола <i>(напишете отново)</i>"
 
@@ -3940,15 +4060,11 @@ msgstr "Вие сте тук за пръв път от "
 
 #: forum/skins/default/templates/auth/complete.html:19
 msgid ""
-"Please choose your screen name and confirm your email address. A valid "
-"email address is necessary to receive notifications about activity in "
-"the areas of this community you're most interested in, and will help "
-"you become an involved participant in this community."
+"Please choose your screen name and confirm your email address. A valid email "
+"address is necessary to receive notifications about activity in the areas of "
+"this community you're most interested in, and will help you become an "
+"involved participant in this community."
 msgstr ""
-"Моля, изберете потребителско име и подтвърдете имейл адреса си. "
-"Необходим е валиден имейл адрес, той ще бъде необходим за да "
-"получавате известия относно темите, които Ви интересуват и ще Ви "
-"направят ангажиран участник в общността."
 
 #: forum/skins/default/templates/auth/complete.html:22
 msgid "This account already exists, please use another."
@@ -3996,11 +4112,13 @@ msgid "%(prefix)s Your email validation link %(app_name)s"
 msgstr ""
 
 #: forum/skins/default/templates/auth/mail_validation.html:14
+#, fuzzy
 msgid "Please use the following link to help us verify your email address:"
 msgstr "Използването на посочения линк ще потвърди Вашия имейл."
 
 #: forum/skins/default/templates/auth/mail_validation.html:16
 #: forum/skins/default/templates/auth/welcome_email.html:26
+#, fuzzy
 msgid "Validate my email address"
 msgstr "Валидирай имейл адреса ми"
 
@@ -4054,8 +4172,9 @@ msgid "Click"
 msgstr "Кликнете"
 
 #: forum/skins/default/templates/auth/signin.html:102
+#, fuzzy
 msgid "if you're having trouble signing in."
-msgstr "ако имате проблеми с влизането."
+msgstr "ако имате проблем с влизането."
 
 #: forum/skins/default/templates/auth/signin.html:107
 msgid "Enter your "
@@ -4108,6 +4227,7 @@ msgstr ""
 "%(app_name)s"
 
 #: forum/skins/default/templates/auth/temp_login_email.html:17
+#, fuzzy
 msgid "Go to your account"
 msgstr "Отидете на профила си"
 
@@ -4129,6 +4249,7 @@ msgid "Account: request temporary login key"
 msgstr "Профил: поискай временен ключ за достъп"
 
 #: forum/skins/default/templates/auth/temp_login_request.html:8
+#, fuzzy
 msgid ""
 "\n"
 "    If you're experiencing problems accessing your account, or if you forgot your password,\n"
@@ -4140,6 +4261,7 @@ msgstr ""
 "Ако изпитвате проблеми с достъпа до Вашия акаунт или сте забравили паролата си, тук можете да поискате временен код за достъп. Попълнете Вашия имейл адрес и ние ще изпратим временна връзка, предоставяща достъп до профила. Това ще Ви даде шанс да получите достъп до профила си. Този код е достъпен само веднъж и за определен интервал от време. "
 
 #: forum/skins/default/templates/auth/temp_login_request.html:25
+#, fuzzy
 msgid "Send link"
 msgstr "Изпрати връзка"
 
@@ -4165,6 +4287,7 @@ msgstr "Това е Вашата информация за логин (запа�
 
 #: forum/skins/default/templates/auth/welcome_email.html:21
 #: forum/skins/default/templates/auth/welcome_email.html:37
+#, fuzzy
 msgid "Username: "
 msgstr "Потребителско име: "
 
@@ -4174,6 +4297,7 @@ msgid "Password: As IF we would send your password in cleartext!"
 msgstr "Парола: "
 
 #: forum/skins/default/templates/auth/welcome_email.html:24
+#, fuzzy
 msgid "The following link will help us verify your email address:"
 msgstr "Използването на посочения линк ще потвърди Вашия имейл."
 
@@ -4195,21 +4319,36 @@ msgid "mark this answer as the accepted answer"
 msgstr "отбележи този отговор като приет"
 
 #: forum/skins/default/templates/node/award_points.html:4
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
-"Award %(awarded_user)s with reputation points.\n"
-msgstr "sorry, file uploading requires karma >60"
+"If you like this answer you can award %(awarded_user)s with reputation "
+"points.\n"
+msgstr ""
+
+#: forum/skins/default/templates/node/award_points.html:10
+msgid ""
+"\n"
+"Use the slider below or the input field to choose the amount of points you "
+"would like to give.\n"
+msgstr ""
+
+#: forum/skins/default/templates/node/award_points.html:17
+#, fuzzy
+msgid "Points:"
+msgstr "Точки"
 
 #: forum/skins/default/templates/node/comments.html:13
 msgid "I like this comment (click again to cancel)"
 msgstr "Аз харесвам този коментар"
 
 #: forum/skins/default/templates/node/comments.html:17
+#, fuzzy
 msgid "Edit comment"
 msgstr "Редактирай коментара"
 
 #: forum/skins/default/templates/node/comments.html:21
+#, fuzzy
 msgid "Delete comment"
 msgstr "Изтрий коментара"
 
@@ -4229,6 +4368,7 @@ msgid "show all"
 msgstr "покажи всички"
 
 #: forum/skins/default/templates/node/comments.html:45
+#, fuzzy
 msgid "add new comment"
 msgstr "добави нов коментар"
 
@@ -4241,31 +4381,47 @@ msgid "characters left"
 msgstr "оставащи символи"
 
 #: forum/skins/default/templates/node/comments.html:59
+#, fuzzy
 msgid " comment"
 msgstr " коментар"
 
 #: forum/skins/default/templates/node/comments.html:60
+#, fuzzy
 msgid " cancel"
 msgstr "откажи"
 
 #: forum/skins/default/templates/node/comments.html:75
+#, fuzzy
 msgid "just now"
 msgstr "току що"
 
 #: forum/skins/default/templates/node/convert_to_comment.html:4
+#, fuzzy
 msgid "Place the comment under:"
 msgstr "Постави коментара под:"
 
 #: forum/skins/default/templates/node/convert_to_question.html:3
 #: forum/skins/default/templates/node/convert_to_question.html:4
+#, fuzzy
 msgid "Convert to question"
-msgstr "Превърни във въпрос"
+msgstr "Изпратете Вашия отговор"
 
 #: forum/skins/default/templates/node/favorite_mark.html:3
 msgid "mark/unmark this question as favorite (click again to cancel)"
 msgstr "отбележи въпроса като любим"
 
-#: forum/skins/default/templates/node/permanent_link.html:6
+#: forum/skins/default/templates/node/permanent_link.html:4
+msgid ""
+"\n"
+"Would you like to copy the permanent link to your clipboard?\n"
+msgstr ""
+
+#: forum/skins/default/templates/node/permanent_link.html:13
+#, fuzzy
+msgid "Permanent link"
+msgstr "link"
+
+#: forum/skins/default/templates/node/post_controls.html:14
 #, fuzzy
 msgid "Permanent link"
 msgstr "link"
@@ -4303,7 +4459,7 @@ msgid "Feel free to <a href=\"%(edit_url)s\">edit it</a>."
 msgstr "Чуствайте се свободни да <a href=\"%(edit_url)s\">редактирате</a>"
 
 #: forum/skins/default/templates/notifications/answeraccepted.html:15
-#, python-format
+#, fuzzy, python-format
 msgid "%(prefix)s An answer to: %(question_title)s has been accepted"
 msgstr ""
 
@@ -4347,12 +4503,12 @@ msgid "P.S. You can always fine-tune which notifications you receive here:"
 msgstr "P.S. Винаги можете да изберете кои известия да получавате тук:"
 
 #: forum/skins/default/templates/notifications/digest.html:14
-#, python-format
+#, fuzzy, python-format
 msgid "%(prefix)s Daily digest"
 msgstr "%(prefix)s Дневен бюлетин"
 
-#: forum/skins/default/templates/notifications/digest.html:18
-#, python-format
+#: forum/skins/default/templates/notifications/digest.html:24
+#, fuzzy, python-format
 msgid ""
 "\n"
 "            This is a brief of what's going on the %(app_name)s community since our last update.\n"
@@ -4361,7 +4517,7 @@ msgstr ""
 "\n"
 "Накратко какво става на %(app_name)s след последното ни обновяване."
 
-#: forum/skins/default/templates/notifications/digest.html:26
+#: forum/skins/default/templates/notifications/digest.html:32
 #, fuzzy, python-format
 msgid ""
 "\n"
@@ -4371,7 +4527,7 @@ msgstr ""
 "\n"
 "Има %(new_member_count)s нови потребители в общността. %(new_member_links)s са били най-активни до сега. "
 
-#: forum/skins/default/templates/notifications/digest.html:30
+#: forum/skins/default/templates/notifications/digest.html:36
 #, fuzzy, python-format
 msgid ""
 "\n"
@@ -4392,11 +4548,13 @@ msgstr ""
 "(един коментар)"
 
 #: forum/skins/default/templates/notifications/digest.html:53
+#: forum/skins/default/templates/notifications/digest.html:120
 #, fuzzy
 msgid "We think you might like the following questions:"
 msgstr "Това може да е станало поради следните причини:"
 
 #: forum/skins/default/templates/notifications/digest.html:66
+#: forum/skins/default/templates/notifications/digest.html:127
 msgid ""
 "These new questions didn't get many attention from the community, but "
 "we think you may be able to help:"
@@ -4412,6 +4570,61 @@ msgid ""
 msgstr ""
 "Междувременно, някои от Вашите %(subscriptions_link)s абонаменти имат "
 "обновявания след като последно сте ги прегледали:"
+
+#: forum/skins/default/templates/notifications/digest.html:98
+#, python-format
+msgid ""
+"\n"
+"            %(flagged_url)s have been marked as flagged.\n"
+"            "
+msgstr ""
+
+#: forum/skins/default/templates/notifications/digest.html:107
+#, fuzzy, python-format
+msgid ""
+"This is a brief of what's going on the %(app_name)s community since our last "
+"update."
+msgstr ""
+"\n"
+"(един коментар)"
+
+#: forum/skins/default/templates/notifications/digest.html:111
+#, fuzzy, python-format
+msgid ""
+"There are %(new_member_count)s new members in the community. %"
+"(new_member_links)s were the most active so far."
+msgstr ""
+"Има %(new_member_count)s нови потребители в общността. %(new_member_links)s "
+"са били най-активни до сега.\n"
+
+#: forum/skins/default/templates/notifications/digest.html:113
+#, fuzzy, python-format
+msgid "%(new_member_links)s have joined the %(app_name)s community."
+msgstr ""
+"\n"
+"<div class=\"questions-count\">%(q_num)s</div><p>тагнати въпроса</p><p><span "
+"class=\"tag\">%(tagname)s</span></p>"
+
+#: forum/skins/default/templates/notifications/digest.html:118
+#, fuzzy, python-format
+msgid "%(new_question_count)s new questions were posted since our last update."
+msgstr ""
+"\n"
+"(един коментар)"
+
+#: forum/skins/default/templates/notifications/digest.html:133
+#, fuzzy
+msgid ""
+"Meanwhile, some of your subscriptions have new updates since you last "
+"visited them:"
+msgstr ""
+"Междувременно, някои от Вашите %(subscriptions_link)s абонаменти имат "
+"обновявания след като последно сте ги прегледали:"
+
+#: forum/skins/default/templates/notifications/digest.html:142
+#, python-format
+msgid "%(flagged_count)s posts have been marked as flagged."
+msgstr ""
 
 #: forum/skins/default/templates/notifications/feedback.html:12
 #, fuzzy, python-format
@@ -4691,10 +4904,12 @@ msgid "Recent activity"
 msgstr ""
 
 #: forum/skins/default/templates/osqaadmin/djstyle_base.html:29
+#, fuzzy
 msgid "Administration Area"
 msgstr "Административна Зона"
 
 #: forum/skins/default/templates/osqaadmin/djstyle_base.html:33
+#, fuzzy
 msgid "Welcome,"
 msgstr "Добре дошли,"
 
@@ -4824,7 +5039,7 @@ msgstr ""
 #: forum/skins/default/templates/osqaadmin/mail_test.html:11
 #, fuzzy, python-format
 msgid "%(prefix)s Your email settings are correct: %(app_name)s"
-msgstr "%(prefix)s Добре дошли на %(app_name)s"
+msgstr "%(username)s е нов потребител на %(app_name)s"
 
 #: forum/skins/default/templates/osqaadmin/mail_test.html:14
 #: forum/skins/default/templates/osqaadmin/mail_test.html:18
@@ -4847,6 +5062,7 @@ msgid "You can adjust the settings bellow"
 msgstr ""
 
 #: forum/skins/default/templates/osqaadmin/maintenance.html:19
+#, fuzzy
 msgid "Adjust settings"
 msgstr "Регулиране на настройките"
 
@@ -5096,18 +5312,22 @@ msgid "Action"
 msgstr "Местоположение"
 
 #: forum/skins/default/templates/osqaadmin/nodeman.html:413
+#, fuzzy
 msgid "Mark deleted"
 msgstr "Отбележи като изтрит"
 
 #: forum/skins/default/templates/osqaadmin/nodeman.html:414
+#, fuzzy
 msgid "Undelete"
 msgstr "Премахни изтриването"
 
 #: forum/skins/default/templates/osqaadmin/nodeman.html:415
+#, fuzzy
 msgid "Delete completely"
 msgstr "Окончателно изтриване"
 
 #: forum/skins/default/templates/osqaadmin/nodeman.html:416
+#, fuzzy
 msgid "Close (questions only)"
 msgstr "Затвори (само въпроси)"
 
@@ -5149,8 +5369,8 @@ msgid "Last activity at"
 msgstr ""
 
 #: forum/skins/default/templates/osqaadmin/nodeman.html:461
-#: forum_modules/exporter/exporter.py:337
-#: forum_modules/exporter/importer.py:418
+#: forum_modules/exporter/exporter.py:344
+#: forum_modules/exporter/importer.py:420
 #, fuzzy
 msgid "Tags"
 msgstr "тагове"
@@ -5160,6 +5380,7 @@ msgid "by"
 msgstr ""
 
 #: forum/skins/default/templates/osqaadmin/set.html:18
+#, fuzzy
 msgid "Preview"
 msgstr "Преглед"
 
@@ -5201,25 +5422,32 @@ msgstr ""
 #: forum/skins/default/templates/osqaadmin/test_email_settings.html:10
 msgid ""
 "\n"
-"        Please, check your inbox and if you see the new test message your email STMP settings are correct.\n"
+"        Please, check your inbox and if you see the new test message your "
+"email STMP settings are correct.\n"
 "    "
 msgstr ""
 
 #: forum/skins/default/templates/osqaadmin/test_email_settings.html:16
 msgid ""
 "\n"
-"        If you do not see the new test message check your spam folder, and if you don't find it check your SMTP settings\n"
+"        If you do not see the new test message check your spam folder, and "
+"if you don't find it check your SMTP settings\n"
 "        again. It might be useful to take a look at the log file.\n"
 "    "
 msgstr ""
+
+#: forum/skins/default/templates/paginator/page_numbers.html:22
+#, fuzzy
+msgid "next"
+msgstr "текст"
 
 #: forum/skins/default/templates/paginator/sort_tabs.html:9
 msgid "Check to make the sort order sticky"
 msgstr ""
 
 #: forum/skins/default/templates/question_list/item.html:11
-#: forum/views/commands.py:66 forum/views/commands.py:69
-#: forum/views/commands.py:112
+#: forum/views/commands.py:67 forum/views/commands.py:70
+#: forum/views/commands.py:111
 msgid "vote"
 msgstr "глас"
 
@@ -5228,6 +5456,7 @@ msgid "this question has an accepted answer"
 msgstr ""
 
 #: forum/skins/default/templates/question_list/item.html:19
+#, fuzzy
 msgid "view"
 msgstr "гледане"
 
@@ -5250,7 +5479,7 @@ msgstr "последно задавани въпроси"
 
 #: forum/skins/default/templates/question_list/sort_tabs.html:5
 #: forum/views/readers.py:45 forum/views/readers.py:61
-#: forum/views/readers.py:266 forum/views/users.py:40 forum/views/users.py:53
+#: forum/views/readers.py:281 forum/views/users.py:40 forum/views/users.py:53
 msgid "newest"
 msgstr "последни"
 
@@ -5298,11 +5527,13 @@ msgid "Unanswered questions"
 msgstr "Въпроси без отговор"
 
 #: forum/skins/default/templates/question_list/title.html:20
-#: forum/views/readers.py:146
+#: forum/views/readers.py:158
+#, fuzzy
 msgid "All Questions"
 msgstr "Всички Въпроси"
 
 #: forum/skins/default/templates/sidebar/markdown_help.html:3
+#, fuzzy
 msgid "Markdown Basics"
 msgstr "Markdown съвети"
 
@@ -5446,6 +5677,7 @@ msgid "Points"
 msgstr "Точки"
 
 #: forum/skins/default/templates/users/menu.html:4
+#, fuzzy
 msgid "User tools"
 msgstr "Потребителски инструменти"
 
@@ -5482,15 +5714,20 @@ msgstr ""
 msgid "Allways remember the sort order I apply to the lists I view"
 msgstr "Запомняй подреждането на списъците, които гледам."
 
+#: forum/skins/default/templates/users/questions.html:11
+#, fuzzy
+msgid "No favorite questions to display."
+msgstr "редактиран въпрос"
+
 #: forum/skins/default/templates/users/signature.html:11
 #: forum/skins/default/templates/users/signature.html:17
 #: forum/skins/default/templates/users/signature.html:23
-#: forum/templatetags/extra_tags.py:76 forum/views/meta.py:89
+#: forum/templatetags/extra_tags.py:77 forum/views/meta.py:89
 msgid "badges"
 msgstr "точки"
 
 #: forum/skins/default/templates/users/signature.html:31
-#: forum/templatetags/extra_tags.py:49
+#: forum/templatetags/extra_tags.py:50
 msgid "(suspended)"
 msgstr ""
 
@@ -5538,7 +5775,7 @@ msgid "this answer has been selected as correct"
 msgstr ""
 
 #: forum/skins/default/templates/users/stats.html:67
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
 "                    <span class=\"count\">%(cnt)s</span> Vote\n"
@@ -5621,6 +5858,7 @@ msgid "show auto-subscribe"
 msgstr "махни абонамента ми"
 
 #: forum/skins/default/templates/users/subscriptions_settings.html:5
+#, fuzzy
 msgid "Notifications and subscription settings"
 msgstr "Настройки на известията и абонаментите"
 
@@ -5640,6 +5878,7 @@ msgid "A new member joins"
 msgstr "Се присъединява нов потребител"
 
 #: forum/skins/default/templates/users/subscriptions_settings.html:25
+#, fuzzy
 msgid "A new question is posted"
 msgstr "Се публикува нов въпрос"
 
@@ -5656,6 +5895,7 @@ msgid "Auto subscribe me to:"
 msgstr ""
 
 #: forum/skins/default/templates/users/subscriptions_settings.html:46
+#, fuzzy
 msgid "Questions I view"
 msgstr "Въпроси които гледам"
 
@@ -5672,6 +5912,7 @@ msgid "On my subscriptions, notify me when:"
 msgstr ""
 
 #: forum/skins/default/templates/users/subscriptions_settings.html:65
+#, fuzzy
 msgid "An answer is posted"
 msgstr "Публикуван е отговор"
 
@@ -5684,12 +5925,14 @@ msgid "A comment is posted"
 msgstr ""
 
 #: forum/skins/default/templates/users/subscriptions_settings.html:76
+#, fuzzy
 msgid "An answer is accepted"
 msgstr "Приет е отговор"
 
 #: forum/skins/default/templates/users/subscriptions_settings.html:84
+#, fuzzy
 msgid "Daily Digest:"
-msgstr "Дневен бюлетин:"
+msgstr "%(prefix)s Дневен бюлетин"
 
 #: forum/skins/default/templates/users/subscriptions_settings.html:89
 msgid "Send me the daily digest with information about the site activity"
@@ -5697,12 +5940,12 @@ msgstr ""
 
 #: forum/skins/default/templates/users/subscriptions_settings.html:94
 msgid "Notify When I'm Discussed:"
-msgstr "Извести ме когато ме обсъждат"
+msgstr ""
 
 #: forum/skins/default/templates/users/subscriptions_settings.html:99
 msgid ""
-"Notify me when someone replies to one of my comments on any post using "
-"the <pre>@username</pre> notation"
+"Notify me when someone replies to one of my comments on any post using the "
+"<pre>@username</pre> notation"
 msgstr ""
 "Уведоми ме, когато някой отговори на един от моите коментари по всеки "
 "пост използвайки <pre>@Потребителско име</pre> нотацията"
@@ -5729,6 +5972,7 @@ msgid "days"
 msgstr "дена"
 
 #: forum/skins/default/templates/users/suspend_user.html:20
+#, fuzzy
 msgid "Public message"
 msgstr "Публично съобщение"
 
@@ -5737,6 +5981,7 @@ msgid "This message will be visible through the user activity log."
 msgstr ""
 
 #: forum/skins/default/templates/users/suspend_user.html:31
+#, fuzzy
 msgid "Private message"
 msgstr "Лично съобщение"
 
@@ -5746,42 +5991,76 @@ msgstr ""
 
 #: forum/skins/default/templates/users/users.html:6
 #: forum/skins/default/templates/users/users.html:23
-#: forum_modules/exporter/exporter.py:345
-#: forum_modules/exporter/importer.py:342
+#: forum_modules/exporter/exporter.py:352
+#: forum_modules/exporter/importer.py:344
 msgid "Users"
 msgstr "Потребители"
 
 #: forum/skins/default/templates/users/votes.html:15
-#: forum/views/commands.py:72
+#: forum/views/commands.py:73
 msgid "upvote"
 msgstr "положителен вот"
 
 #: forum/skins/default/templates/users/votes.html:17
-#: forum/views/commands.py:72
+#: forum/views/commands.py:73
 msgid "downvote"
 msgstr "отрицателен вот"
 
-#: forum/templatetags/extra_tags.py:77
+#: forum/templatetags/extra_tags.py:78
 msgid "reputation points"
 msgstr "karma"
 
-#: forum/templatetags/extra_tags.py:103
+#: forum/templatetags/extra_tags.py:96
+#, fuzzy, python-format
+msgid "%(user)s has %(count)d accepted answers"
+msgstr "oldest"
+
+#: forum/templatetags/extra_tags.py:102
+#, fuzzy, python-format
+msgid "%s has one accepted answer"
+msgstr "oldest"
+
+#: forum/templatetags/extra_tags.py:105
+#, fuzzy, python-format
+msgid "%s has no accepted answers"
+msgstr "oldest"
+
+#: forum/templatetags/extra_tags.py:111
+#, fuzzy
+msgid "accept rate"
+msgstr "oldest"
+
+#: forum/templatetags/extra_tags.py:112
+#, fuzzy
+msgid "Rate of the user's accepted answers"
+msgstr "отбележи този отговор като приет"
+
+#: forum/templatetags/extra_tags.py:141
 msgid "%b %d at %H:%M"
 msgstr ""
 
-#: forum/templatetags/extra_tags.py:105
+#: forum/templatetags/extra_tags.py:143
 msgid "%b %d '%y at %H:%M"
 msgstr ""
 
-#: forum/templatetags/extra_tags.py:107
+#: forum/templatetags/extra_tags.py:145
 msgid "2 days ago"
 msgstr "преди 2 дена"
 
-#: forum/templatetags/extra_tags.py:109
+#: forum/templatetags/extra_tags.py:147
 msgid "yesterday"
 msgstr "вчера"
 
-#: forum/templatetags/extra_tags.py:111
+#: forum/templatetags/extra_tags.py:149
+#, fuzzy
+msgid "hour ago"
+msgstr "популярни тагове"
+
+#: forum/templatetags/extra_tags.py:149
+msgid "hours ago"
+msgstr ""
+
+#: forum/templatetags/extra_tags.py:149
 msgid "hour ago"
 msgstr "час назад"
 
@@ -5796,7 +6075,16 @@ msgid_plural "%(hr)d "
 msgstr[0] ""
 msgstr[1] ""
 
-#: forum/templatetags/extra_tags.py:113
+#: forum/templatetags/extra_tags.py:151
+#, fuzzy
+msgid "min ago"
+msgstr "снимка"
+
+#: forum/templatetags/extra_tags.py:151
+msgid "mins ago"
+msgstr ""
+
+#: forum/templatetags/extra_tags.py:151
 msgid "min ago"
 msgstr "минута назад"
 
@@ -5811,7 +6099,17 @@ msgid_plural "%(min)d "
 msgstr[0] ""
 msgstr[1] ""
 
-#: forum/templatetags/extra_tags.py:115
+#: forum/templatetags/extra_tags.py:153
+#, fuzzy
+msgid "sec ago"
+msgstr "виж таговете"
+
+#: forum/templatetags/extra_tags.py:153
+#, fuzzy
+msgid "secs ago"
+msgstr "виж таговете"
+
+#: forum/templatetags/extra_tags.py:153
 msgid "sec ago"
 msgstr "секунда"
 
@@ -5866,14 +6164,17 @@ msgid ""
 msgstr ""
 
 #: forum/templatetags/node_tags.py:127
+#, fuzzy
 msgid "undelete"
 msgstr "премахни изтриването"
 
 #: forum/templatetags/node_tags.py:134
+#, fuzzy
 msgid "see revisions"
 msgstr "виж версиите"
 
 #: forum/templatetags/node_tags.py:141
+#, fuzzy
 msgid "mark as community wiki"
 msgstr "отбележи като уики"
 
@@ -5888,8 +6189,9 @@ msgid "convert to comment"
 msgstr "post a comment"
 
 #: forum/templatetags/node_tags.py:153
+#, fuzzy
 msgid "convert to question"
-msgstr "превърни във въпрос"
+msgstr "Изпратете Вашия отговор"
 
 #: forum/templatetags/node_tags.py:221
 msgid "posted"
@@ -6026,6 +6328,7 @@ msgid "bulk close"
 msgstr "едновременно затваряне"
 
 #: forum/views/admin.py:466
+#, fuzzy
 msgid "Selected questions were closed"
 msgstr "Избраните въпроси са затворени"
 
@@ -6116,6 +6419,7 @@ msgid "save it"
 msgstr "Запази промените"
 
 #: forum/views/auth.py:393 forum/views/writers.py:279
+#, fuzzy
 msgid "review"
 msgstr "преглед"
 
@@ -6128,7 +6432,7 @@ msgstr "Откажи"
 msgid "Sorry, but this account is suspended"
 msgstr ""
 
-#: forum/views/commands.py:23
+#: forum/views/commands.py:24
 #, python-format
 msgid ""
 "Sorry, but you don't have enough reputation points to %(action)s.<br "
@@ -6138,7 +6442,7 @@ msgstr ""
 "действие: %(action)s.<br />Моля, проверете <a "
 "href='%(faq_url)s'>ЧЗВ</a>"
 
-#: forum/views/commands.py:31
+#: forum/views/commands.py:32
 #, python-format
 msgid ""
 "Sorry but you cannot %(action)s your own post.<br />Please check the <a"
@@ -6147,7 +6451,7 @@ msgstr ""
 "За съжаление не можете да %(action)s собствената си публикация.<br "
 "/>Моля, прочетете <a href='%(faq_url)s'>ЧЗВ</a>"
 
-#: forum/views/commands.py:39
+#: forum/views/commands.py:40
 #, python-format
 msgid ""
 "Sorry but anonymous users cannot %(action)s.<br />Please login or "
@@ -6156,7 +6460,7 @@ msgstr ""
 "Анонимните потребители не могат да %(action)s.<br />Влезте или си "
 "създайте профил <a href='%(signin_url)s'>тук</a>."
 
-#: forum/views/commands.py:47
+#: forum/views/commands.py:48
 #, python-format
 msgid ""
 "Sorry, but you don't have enough %(action)s left for today..<br />The "
@@ -6164,7 +6468,7 @@ msgid ""
 "href='%(faq_url)s'>faq</a>"
 msgstr ""
 
-#: forum/views/commands.py:55
+#: forum/views/commands.py:56
 #, python-format
 msgid ""
 "Sorry, but you cannot %(action)s twice the same post.<br />Please check"
@@ -6173,7 +6477,7 @@ msgstr ""
 "За съжаление не можете да %(action)s два пъти една и съща "
 "публикация.<br />Моля, прочетете <a href='%(faq_url)s'>ЧЗВ</a>"
 
-#: forum/views/commands.py:87
+#: forum/views/commands.py:88
 #, python-format
 msgid ""
 "Sorry but you cannot cancel a vote after %(ndays)d %(tdays)s from the "
@@ -6182,82 +6486,82 @@ msgstr ""
 "За съжаление не можете да отмените вот след %(ndays)d %(tdays)s от "
 "първоначалното гласуване"
 
-#: forum/views/commands.py:89
+#: forum/views/commands.py:90
 msgid "day"
 msgid_plural "days"
 msgstr[0] "ден"
 msgstr[1] "дни"
 
-#: forum/views/commands.py:111
+#: forum/views/commands.py:110
 #, python-format
 msgid "You have %(nvotes)s %(tvotes)s left today."
 msgstr ""
 
-#: forum/views/commands.py:125 forum/views/commands.py:131
+#: forum/views/commands.py:124 forum/views/commands.py:130
 msgid "flag posts"
 msgstr ""
 
-#: forum/views/commands.py:128
+#: forum/views/commands.py:127
 msgid "flag"
 msgstr ""
 
-#: forum/views/commands.py:136
+#: forum/views/commands.py:135
 msgid "flags"
 msgstr ""
 
-#: forum/views/commands.py:141
+#: forum/views/commands.py:140
 #, python-format
 msgid "You already flagged this post with the following reason: %(reason)s"
 msgstr ""
 
-#: forum/views/commands.py:146 forum/views/commands.py:375
+#: forum/views/commands.py:145 forum/views/commands.py:374
 #, fuzzy
 msgid "Reason is empty"
 msgstr "История на ревизиите"
 
-#: forum/views/commands.py:150
+#: forum/views/commands.py:149
 msgid ""
 "Thank you for your report. A moderator will review your submission "
 "shortly."
 msgstr ""
 
-#: forum/views/commands.py:158 forum/views/commands.py:164
+#: forum/views/commands.py:157 forum/views/commands.py:163
 #, fuzzy
 msgid "like comments"
 msgstr "post a comment"
 
-#: forum/views/commands.py:161
+#: forum/views/commands.py:160
 msgid "like"
 msgstr ""
 
-#: forum/views/commands.py:188 forum/views/commands.py:191
+#: forum/views/commands.py:187 forum/views/commands.py:190
 msgid "delete comments"
 msgstr "изтрий коментарите"
 
-#: forum/views/commands.py:207
+#: forum/views/commands.py:206
 msgid "mark a question as favorite"
 msgstr ""
 
-#: forum/views/commands.py:233 forum/views/commands.py:513
-#: forum/views/commands.py:524
+#: forum/views/commands.py:232 forum/views/commands.py:512
+#: forum/views/commands.py:523
 msgid "Invalid request"
 msgstr ""
 
-#: forum/views/commands.py:238
+#: forum/views/commands.py:237
 msgid "Comment is empty"
 msgstr ""
 
-#: forum/views/commands.py:241
+#: forum/views/commands.py:240
 #, python-format
 msgid "At least %d characters required on comment body."
 msgstr ""
 
-#: forum/views/commands.py:244
+#: forum/views/commands.py:243
 #, python-format
 msgid "No more than %d characters on comment body."
 msgstr "Не може да има повече от %d символа в тялото на коментара."
 
-#: forum/views/commands.py:250
+#: forum/views/commands.py:249
 #, fuzzy
 msgid "edit comments"
 msgstr "post a comment"
@@ -6329,23 +6633,28 @@ msgstr "превърни отговори в коментари"
 msgid "That is an invalid post to put the comment under"
 msgstr ""
 
-#: forum/views/commands.py:450 forum/views/commands.py:453
+#: forum/views/commands.py:449 forum/views/commands.py:452
+#, fuzzy
 msgid "convert comments to answers"
-msgstr "превърни коментари в отговори"
+msgstr "най-старите"
 
-#: forum/views/commands.py:468
+#: forum/views/commands.py:467
 msgid "You do not have the correct credentials to preform this action."
 msgstr ""
 
-#: forum/views/commands.py:562 forum/views/commands.py:566
-#: forum/views/commands.py:575
+#: forum/views/commands.py:558
+msgid "The permanent URL to the answer has been copied to your clipboard."
+msgstr ""
+
+#: forum/views/commands.py:569 forum/views/commands.py:573
+#: forum/views/commands.py:582
 #, fuzzy
 msgid "award"
-msgstr "Награди"
+msgstr "all badges"
 
-#: forum/views/commands.py:585
+#: forum/views/commands.py:589
 #, python-format
-msgid "You have awarded %(user)s with %(points)d points"
+msgid "You have awarded %(awarded_user)s with %(points)d points"
 msgstr ""
 
 #: forum/views/decorators.py:73
@@ -6384,7 +6693,7 @@ msgstr "отхвърлен"
 msgid "most <strong>voted</strong> questions"
 msgstr "въпроси с <strong>най-много гласове</strong>"
 
-#: forum/views/readers.py:60 forum/views/readers.py:264
+#: forum/views/readers.py:60 forum/views/readers.py:279
 #: forum/views/users.py:41 forum/views/users.py:52
 msgid "oldest"
 msgstr "най-старите"
@@ -6457,58 +6766,59 @@ msgstr "въпроса е отговорен, приет е верен отго�
 msgid "Unanswered Questions"
 msgstr "Неотговорени Въпроси"
 
-#: forum/views/readers.py:111
+#: forum/views/readers.py:123
 #, python-format
 msgid "questions tagged <span class=\"tag\">%(tag)s</span>"
 msgstr "въпроси с таг <span class=\"tag\">%(tag)s</span>"
 
-#: forum/views/readers.py:113
-#, python-format
+#: forum/views/readers.py:125
+#, fuzzy, python-format
 msgid "Questions Tagged With %(tag)s"
 msgstr "Въпроси с таг '%(tag)s'"
 
-#: forum/views/readers.py:122
-#, python-format
+#: forum/views/readers.py:134
+#, fuzzy, python-format
 msgid "Questions asked by %s"
 msgstr "Въпроси зададени от %s"
 
-#: forum/views/readers.py:125
-#, python-format
+#: forum/views/readers.py:137
+#, fuzzy, python-format
 msgid "Questions answered by %s"
 msgstr "Въпроси отговорени от %s"
 
-#: forum/views/readers.py:132
-#, python-format
+#: forum/views/readers.py:144
+#, fuzzy, python-format
 msgid "Questions you subscribed %s"
 msgstr "Въпроси към които сте абониран %s"
 
-#: forum/views/readers.py:134
-#, python-format
+#: forum/views/readers.py:146
+#, fuzzy, python-format
 msgid "Questions subscribed by %s"
 msgstr "Въпроси абонирани от %s"
 
-#: forum/views/readers.py:157
+#: forum/views/readers.py:169
 msgid "Questions"
 msgstr "Въпроси"
 
-#: forum/views/readers.py:211 forum/views/readers.py:212
+#: forum/views/readers.py:223 forum/views/readers.py:224
 msgid "ranking"
 msgstr ""
 
-#: forum/views/readers.py:211
+#: forum/views/readers.py:223
 msgid "relevance"
 msgstr ""
 
-#: forum/views/readers.py:211
+#: forum/views/readers.py:223
+#, fuzzy
 msgid "most relevant questions"
 msgstr "най-подходящите въпроси"
 
-#: forum/views/readers.py:217 forum/views/readers.py:219
+#: forum/views/readers.py:231 forum/views/readers.py:233
 #, python-format
 msgid "questions matching '%(keywords)s'"
 msgstr "въпроси съвпадащи с '%(keywords)s'"
 
-#: forum/views/readers.py:365
+#: forum/views/readers.py:380
 #, python-format
 msgid "Revision n. %(rev_number)d"
 msgstr ""
@@ -6591,8 +6901,9 @@ msgid "recent user activity"
 msgstr "последна потребителска дейност"
 
 #: forum/views/users.py:341
+#, fuzzy
 msgid "reputation history"
-msgstr "история на репутацията"
+msgstr "karma"
 
 #: forum/views/users.py:341
 msgid "graph of user karma"
@@ -7181,81 +7492,85 @@ msgid ""
 "How many usages a tag needs to have for the tag creator to be awarded the Taxonomist badge. \n"
 msgstr ""
 
-#: forum_modules/exporter/exporter.py:160
+#: forum_modules/exporter/exporter.py:167
 msgid "Compressing xml files"
 msgstr ""
 
-#: forum_modules/exporter/exporter.py:167
+#: forum_modules/exporter/exporter.py:174
 msgid "Importing uploaded files"
 msgstr ""
 
-#: forum_modules/exporter/exporter.py:172
+#: forum_modules/exporter/exporter.py:179
 msgid "Importing skins folder"
 msgstr ""
 
-#: forum_modules/exporter/exporter.py:176
+#: forum_modules/exporter/exporter.py:183
 msgid "Writing inf file."
 msgstr ""
 
-#: forum_modules/exporter/exporter.py:203
+#: forum_modules/exporter/exporter.py:210
 msgid "Saving backup file"
 msgstr ""
 
-#: forum_modules/exporter/exporter.py:235
-#: forum_modules/exporter/importer.py:233
+#: forum_modules/exporter/exporter.py:242
+#: forum_modules/exporter/importer.py:235
 msgid "Queued"
 msgstr ""
 
-#: forum_modules/exporter/exporter.py:238
-#: forum_modules/exporter/importer.py:236
+#: forum_modules/exporter/exporter.py:245
+#: forum_modules/exporter/importer.py:238
 #, fuzzy
 msgid "Starting"
 msgstr "интересно"
 
-#: forum_modules/exporter/exporter.py:259
+#: forum_modules/exporter/exporter.py:266
 #, python-format
 msgid "Exporting %s"
 msgstr ""
 
-#: forum_modules/exporter/exporter.py:260
+#: forum_modules/exporter/exporter.py:267
 msgid "Exporting"
 msgstr ""
 
-#: forum_modules/exporter/exporter.py:264
+#: forum_modules/exporter/exporter.py:271
 msgid "Writing temp file"
 msgstr ""
 
-#: forum_modules/exporter/exporter.py:265
+#: forum_modules/exporter/exporter.py:272
 #, python-format
 msgid "Writing %s temp file"
 msgstr ""
 
-#: forum_modules/exporter/exporter.py:270
-#: forum_modules/exporter/exporter.py:288
-#: forum_modules/exporter/importer.py:268
+#: forum_modules/exporter/exporter.py:277
+#: forum_modules/exporter/exporter.py:295
+#: forum_modules/exporter/importer.py:270
+#, fuzzy
 msgid "Done"
 msgstr "Направено"
 
-#: forum_modules/exporter/exporter.py:282
+#: forum_modules/exporter/exporter.py:289
 msgid "Compressing files"
 msgstr ""
 
-#: forum_modules/exporter/exporter.py:402
-#: forum_modules/exporter/importer.py:438
+#: forum_modules/exporter/exporter.py:409
+#: forum_modules/exporter/importer.py:440
+#, fuzzy
 msgid "Nodes"
 msgstr "Елементи"
 
-#: forum_modules/exporter/exporter.py:452
-#: forum_modules/exporter/importer.py:541
+#: forum_modules/exporter/exporter.py:460
+#: forum_modules/exporter/importer.py:543
+#, fuzzy
 msgid "Actions"
 msgstr "Действия"
 
-#: forum_modules/exporter/exporter.py:498
-#: forum_modules/exporter/importer.py:630
+#: forum_modules/exporter/exporter.py:506
+#: forum_modules/exporter/importer.py:632
+#, fuzzy
 msgid "Awards"
 msgstr "Награди"
 
-#: forum_modules/exporter/exporter.py:506
+#: forum_modules/exporter/exporter.py:514
 msgid "Settings"
 msgstr ""
 
@@ -7300,12 +7615,12 @@ msgstr ""
 msgid "Include skins folder in the backup"
 msgstr ""
 
-#: forum_modules/exporter/importer.py:262
+#: forum_modules/exporter/importer.py:264
 #, python-format
 msgid "Importing %s"
 msgstr ""
 
-#: forum_modules/exporter/importer.py:263
+#: forum_modules/exporter/importer.py:265
 msgid "Importing"
 msgstr ""
 
@@ -7342,11 +7657,11 @@ msgstr ""
 msgid "download/"
 msgstr "отхвърлен"
 
-#: forum_modules/exporter/views.py:20 forum_modules/exporter/views.py:68
+#: forum_modules/exporter/views.py:21 forum_modules/exporter/views.py:69
 msgid "exporter"
 msgstr ""
 
-#: forum_modules/exporter/views.py:20
+#: forum_modules/exporter/views.py:21
 msgid "XML data export"
 msgstr ""
 
@@ -7514,19 +7829,19 @@ msgstr "Нещо се обърка! Auth символите не съвпада�
 msgid "Sorry, but your input is not a valid OpenId"
 msgstr "За съжаление вашия вход не е валиден OpenID"
 
-#: forum_modules/openidauth/consumer.py:147
+#: forum_modules/openidauth/consumer.py:148
 msgid "The OpenId authentication request was canceled"
 msgstr "Удостоверяването с OpenID беше отменено"
 
-#: forum_modules/openidauth/consumer.py:149
+#: forum_modules/openidauth/consumer.py:150
 msgid "The OpenId authentication failed: "
 msgstr "Удостоверяването с OpenID се провали:"
 
-#: forum_modules/openidauth/consumer.py:151
+#: forum_modules/openidauth/consumer.py:152
 msgid "Setup needed"
 msgstr ""
 
-#: forum_modules/openidauth/consumer.py:153
+#: forum_modules/openidauth/consumer.py:154
 msgid "The OpenId authentication failed with an unknown status: "
 msgstr ""
 
@@ -7607,21 +7922,22 @@ msgstr ""
 #~ msgid "please choose one of the options above"
 #~ msgstr "изберете някоя от следните опции"
 
+#, fuzzy
 #~ msgid ""
 #~ "\n"
 #~ "                ask a question relevant to the %(app_title)s community \n"
 #~ "                "
 #~ msgstr ""
 #~ "\n"
-#~ "задайте въпрос отнасящ се към %(app_title)s"
+#~ "(one comment)"
 
 #~ msgid "please try provide enough details"
 #~ msgstr "уверете се, че уточнявате всички аспекти"
 
 #~ msgid ""
-#~ "Please create your screen name and save your email address. Saved email"
-#~ " address will let you subscribe for the updates on the most interesting"
-#~ " questions and will be used to create and retrieve your unique avatar "
+#~ "Please create your screen name and save your email address. Saved email "
+#~ "address will let you subscribe for the updates on the most interesting "
+#~ "questions and will be used to create and retrieve your unique avatar "
 #~ "image. "
 #~ msgstr ""
 #~ "Създайте Вашето публично име и запазете имейла си. Запазените имейл "
@@ -7630,45 +7946,60 @@ msgstr ""
 
 #~ msgid "receive updates motivational blurb"
 #~ msgstr ""
-#~ "<strong>Получавайте ъпдейти по имейл</strong> - това ще помогне на "
-#~ "нашата общност да помогне и да стане по-ползотворна.<br/>По "
-#~ "подразбиране, се изпраща само един имейл на седмица с цялата най-важна"
-#~ " информация.<br/>Ако желаете, можете да промените тази опция сега или "
-#~ "по всяко едно време през настройките на Вашия акаунт."
+#~ "<strong>Получавайте ъпдейти по имейл</strong> - това ще помогне на нашата "
+#~ "общност да помогне и да стане по-ползотворна.<br/>По подразбиране, се "
+#~ "изпраща само един имейл на седмица с цялата най-важна информация.<br/>Ако "
+#~ "желаете, можете да промените тази опция сега или по всяко едно време през "
+#~ "настройките на Вашия акаунт."
 
 #~ msgid "please select one of the options above"
 #~ msgstr "изберете една от посочените опции"
 
 #~ msgid "Tag filter tool will be your right panel, once you log in."
-#~ msgstr "Инстромент за филтриране на тагове, намира се отдясно след оторизация."
+#~ msgstr ""
+#~ "Инстромент за филтриране на тагове, намира се отдясно след оторизация."
 
+#, fuzzy
 #~ msgid "Questions I ask"
 #~ msgstr "Tags"
 
+#, fuzzy
 #~ msgid "Questions I answer"
 #~ msgstr "answer"
 
+#, fuzzy
 #~ msgid "Questions I comment"
 #~ msgstr "question comment"
 
+#, fuzzy
 #~ msgid "karma history"
 #~ msgstr "karma history"
 
+#, fuzzy
 #~ msgid "Application"
-#~ msgstr "Приложение"
+#~ msgstr "Лого"
 
+#, fuzzy
 #~ msgid "Progress"
-#~ msgstr "Прогрес"
+#~ msgstr "Точки"
 
+#, fuzzy
 #~ msgid "Messages"
-#~ msgstr "Съобщения"
+#~ msgstr "Вашето съобщение:"
 
+#, fuzzy
 #~ msgid "Translated"
-#~ msgstr "Преведено"
+#~ msgstr "обновено"
 
+#, fuzzy
 #~ msgid "File"
-#~ msgstr "Файл"
+#~ msgstr "сребро"
 
+#, fuzzy
+#~ msgid "Display:"
+#~ msgstr "Дневно"
+
+#, fuzzy
 #~ msgid "Skip to page:"
 #~ msgstr "обратно на началната страница"
 

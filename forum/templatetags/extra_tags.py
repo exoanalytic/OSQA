@@ -5,6 +5,7 @@ import datetime
 import math
 import re
 import logging
+import random
 from django import template
 from django.utils.encoding import smart_unicode
 from django.utils.safestring import mark_safe
@@ -77,6 +78,46 @@ def get_score_badge(user):
     'reputationword' : _('reputation points'),
     })
 
+# Usage: {% get_accept_rate node.author %}
+@register.simple_tag
+def get_accept_rate(user):
+    # We get the number of all user's answers.
+    total_answers_count = Answer.objects.filter(author=user).count()
+
+    # We get the number of the user's accepted answers.
+    accepted_answers_count = Answer.objects.filter(author=user, state_string__contains="(accepted)").count()
+
+    # In order to represent the accept rate in percentages we divide the number of the accepted answers to the
+    # total answers count and make a hundred multiplication.
+    try:
+        accept_rate = (float(accepted_answers_count) / float(total_answers_count) * 100)
+    except ZeroDivisionError:
+        accept_rate = 0
+
+    # If the user has more than one accepted answers the rate title will be in plural.
+    if accepted_answers_count > 1:
+        accept_rate_number_title = _('%(user)s has %(count)d accepted answers') % {
+            'user' :  user.username,
+            'count' : int(accepted_answers_count)
+        }
+    # If the user has one accepted answer we'll be using singular.
+    elif accepted_answers_count == 1:
+        accept_rate_number_title = _('%s has one accepted answer') % user.username
+    # This are the only options. Otherwise there are no accepted answers at all.
+    else:
+        accept_rate_number_title = _('%s has no accepted answers') % smart_unicode(user.username)
+
+    html_output = """
+    <span title="%(accept_rate_title)s" class="accept_rate">%(accept_rate_label)s:</span>
+    <span title="%(accept_rate_number_title)s">%(accept_rate)d&#37;</span>
+    """ % {
+        'accept_rate_label' : _('accept rate'),
+        'accept_rate_title' : _('Rate of the user\'s accepted answers'),
+        'accept_rate' : int(accept_rate),
+        'accept_rate_number_title' : u'%s' % accept_rate_number_title,
+    }
+
+    return mark_safe(html_output)
 
 @register.simple_tag
 def get_age(birthday):
@@ -249,3 +290,27 @@ def do_declare(parser, token):
     nodelist = parser.parse(('enddeclare',))
     parser.delete_first_token()
     return DeclareNode(nodelist)
+
+# Usage: {% random 1 999 %}
+# Generates random number in the template
+class RandomNumberNode(template.Node):
+    # We get the limiting numbers
+    def __init__(self, int_from, int_to):
+        self.int_from = int(int_from)
+        self.int_to = int(int_to)
+
+    # We generate the random number using the standard python interface
+    def render(self, context):
+        return str(random.randint(self.int_from, self.int_to))
+
+@register.tag(name="random")
+def random_number(parser, token):
+    # Try to get the limiting numbers from the token
+    try:
+        tag_name, int_from, int_to = token.split_contents()
+    except ValueError:
+        # If we had no success -- raise an exception
+        raise template.TemplateSyntaxError, "%r tag requires exactly two arguments" % token.contents.split()[0]
+
+    # Call the random Node
+    return RandomNumberNode(int_from, int_to)

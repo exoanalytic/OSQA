@@ -18,13 +18,18 @@ sitemaps = {
 
 APP_PATH = os.path.dirname(__file__)
 
+try:
+    admin_url = url(r'^%s(.*)' % _('nimda/'), admin.site.root)
+except AttributeError:
+    admin_url = url(r'^%s(.*)' % _('nimda/'), admin.site.urls)
+
 core_urls = (
-    url(r'^$', app.readers.index, name='index'),
-    url(r'^%s(.*)' % _('nimda/'), admin.site.root),
+    url(r'^$', app.readers.index, name='index'), admin_url,
                         
     url(r'^sitemap.xml$', 'forum.sitemap.index', {'sitemaps': sitemaps}),
-    url(r'^sitemap-(?P<section>.+)\.xml$', 'forum.sitemap.sitemap', {'sitemaps': sitemaps}),
-    
+    url(r'^sitemap-(?P<section>.+)-(?P<page>\d+)\.xml$', 'forum.sitemap.sitemap', {'sitemaps': sitemaps}, name="sitemap_section_page"),
+    url(r'^sitemap-(?P<section>.+)\.xml$', 'forum.sitemap.sitemap_section_index', {'sitemaps': sitemaps}, name="sitemap_section_index"),
+
     url(r'^favicon\.ico$', app.meta.favicon),
     url(r'^cstyle\.css$', app.meta.custom_css, name='custom_css'),
     
@@ -99,9 +104,9 @@ core_urls = (
     url(r'^%s(?P<id>\d+)/(?P<slug>.*)/%s$' % (_('users/'), _('reputation/')), app.users.user_reputation, name='user_reputation'),
     url(r'^%s(?P<id>\d+)/(?P<slug>.*)/%s$' % (_('users/'), _('votes/')), app.users.user_votes, name='user_votes'),
     url(r'^%s(?P<id>\d+)/(?P<slug>.*)/%s$' % (_('users/'), _('recent/')), app.users.user_recent, name='user_recent'),
-    url(r'^%s(?P<id>\d+)/(?P<slug>.*)/$' % _('users/'), app.users.user_profile, name='user_profile'),
+    url(r'^%s(?P<id>\d+)/(?P<slug>.*)$' % _('users/'), app.users.user_profile, name='user_profile'),
     url(r'^%s$' % _('badges/'), app.meta.badges, name='badges'),
-    url(r'^%s(?P<id>\d+)/(?P<slug>[\w-]+)/?$' % _('badges/'), app.meta.badge, name='badge'),
+    url(r'^%s(?P<id>\d+)/(?P<slug>[\w-]+)?$' % _('badges/'), app.meta.badge, name='badge'),
     # (r'^admin/doc/' % _('admin/doc'), include('django.contrib.admindocs.urls')),
     
     url(r'^%s$' % _('upload/'), app.writers.upload, name='upload'),

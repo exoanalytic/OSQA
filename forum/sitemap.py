@@ -1,5 +1,6 @@
 from django.contrib.sitemaps import Sitemap
 from forum.models import Question
+from forum.settings import QUESTIONS_SITEMAP_LIMIT, QUESTIONS_SITEMAP_CHANGEFREQ
 from django.conf import settings
 from django.http import HttpResponse, Http404
 from django.template import loader
@@ -14,15 +15,31 @@ def index(request, sitemaps):
             pages = site().paginator.num_pages
         else:
             pages = site.paginator.num_pages
-        sitemap_url = urlresolvers.reverse('forum.sitemap.sitemap', kwargs={'section': section})
+        sitemap_url = urlresolvers.reverse('sitemap_section_index', kwargs={'section': section})
         sites.append('%s%s' % (settings.APP_URL, sitemap_url))
-        if pages > 1:
-            for page in range(2, pages+1):
-                sites.append('%s%s?p=%s' % (settings.APP_URL, sitemap_url, page))
+
     xml = loader.render_to_string('sitemap_index.xml', {'sitemaps': sites})
     return HttpResponse(xml, mimetype='application/xml')
 
-def sitemap(request, sitemaps, section=None):
+def sitemap_section_index(request, section, sitemaps):
+    try:
+        sitemap = sitemaps[section]()
+    except KeyError:
+        raise Http404("Sitemap doesn't exist")
+
+    paginator = sitemap.paginator
+
+    locations = []
+
+    for page in paginator.page_range:
+        location = urlresolvers.reverse('sitemap_section_page', kwargs={ 'page' : page, 'section' : section })
+        location = '%s%s' % (settings.APP_URL, location)
+        locations.append(location)
+
+    xml = loader.render_to_string('sitemap_section_index.xml', { 'locations' : locations, })
+    return HttpResponse(xml, mimetype='application/xml')
+
+def sitemap(request, sitemaps, section=None, page=1):
     maps, urls = [], []
     if section is not None:
         if section not in sitemaps:
@@ -30,7 +47,6 @@ def sitemap(request, sitemaps, section=None):
         maps.append(sitemaps[section])
     else:
         maps = sitemaps.values()
-    page = request.GET.get("p", 1)
     
     for site in maps:
         try:
@@ -46,10 +62,11 @@ def sitemap(request, sitemaps, section=None):
     return HttpResponse(xml, mimetype='application/xml')
 
 class OsqaSitemap(Sitemap):
-    changefreq = 'daily'
+    limit = QUESTIONS_SITEMAP_LIMIT
+    changefreq = QUESTIONS_SITEMAP_CHANGEFREQ
     priority = 0.5
     def items(self):
-        return Question.objects.filter_state(deleted=False)
+        return Question.objects.filter_state(deleted=False).order_by('id')
 
     def lastmod(self, obj):
         return obj.last_activity_at
@@ -77,4 +94,4 @@ class OsqaSitemap(Sitemap):
                 'priority':   self.__get('priority', item, None)
             }
             urls.append(url_info)
-        return urls    
+        return urls

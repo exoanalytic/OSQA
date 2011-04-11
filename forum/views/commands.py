@@ -91,13 +91,11 @@ def vote_post(request, id, vote_type):
                     )
 
         old_vote.cancel(ip=request.META['REMOTE_ADDR'])
-        score_inc += (old_vote.__class__ == VoteDownAction) and 1 or -1
-
-    if old_vote.__class__ != new_vote_cls:
-        new_vote_cls(user=user, node=post, ip=request.META['REMOTE_ADDR']).save()
-        score_inc += (new_vote_cls == VoteUpAction) and 1 or -1
-    else:
+        score_inc = (old_vote.__class__ == VoteDownAction) and 1 or -1
         vote_type = "none"
+    else:
+        new_vote_cls(user=user, node=post, ip=request.META['REMOTE_ADDR']).save()
+        score_inc = (new_vote_cls == VoteUpAction) and 1 or -1
 
     response = {
     'commands': {
@@ -588,4 +586,4 @@ def award_points(request, user_id, answer_id):
         # We take points from the awarding user
         AwardPointsAction(user=request.user, node=answer, extra=extra).save(data=dict(value=points, affected=awarded_user))
 
-        return { 'message' : _("You have awarded %s with %d points") % (awarded_user, points) }
+        return { 'message' : _("You have awarded %(awarded_user)s with %(points)d points") % {'awarded_user' : awarded_user, 'points' : points} }

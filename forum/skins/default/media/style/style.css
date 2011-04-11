@@ -149,6 +149,11 @@ blockquote {
     max-width: 650px;
 }
 
+blockquote blockquote {
+    margin: 0;
+    padding: 0;
+}
+
 #wrapper, #announcement {
     margin: auto;
     padding: 0;
@@ -1106,7 +1111,7 @@ ins {
     color: #CC9933;
 }
 
-.score {
+.score, .accept_rate {
     color: #333333;
     font-size: 110%;
     font-weight: bold;
@@ -1719,7 +1724,7 @@ div.dialog, .context-menu-dropdown {
 }
 
 div.dialog .dialog-content {
-    padding: 12px 12px 37px 12px;
+    padding: 12px 12px 42px 12px;
     z-index: 1000;
 }
 

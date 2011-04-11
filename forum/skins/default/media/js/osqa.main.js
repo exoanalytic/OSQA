@@ -100,12 +100,12 @@ var response_commands = {
     },
 
     mark_deleted: function(post_type, post_id) {
-        if (post_type == 'answer') {
-            var $answer = $('#answer-container-' + post_id);
-            $answer.addClass('deleted');
-        } else {
+        if (post_type == 'question') {
             var $container = $('#question-table');
             $container.addClass('deleted');
+        } else {
+            var $el = $('#' + post_type + '-container-' + post_id);
+            $el.addClass('deleted');
         }
     },
 
@@ -328,19 +328,22 @@ $(function() {
     $('a.ajax-command').live('click', function(evt) {
         if (running) return false;
 
-        $('.context-menu-dropdown').slideUp('fast');
-
         var el = $(this);
 
+        var ajax_url = el.attr('href')
+        ajax_url = ajax_url + "?nocache=" + new Date().getTime()
+
+        $('.context-menu-dropdown').slideUp('fast');
+
         if (el.is('.withprompt')) {
-            load_prompt(evt, el, el.attr('href'));
+            load_prompt(evt, el, ajax_url);
         } else if(el.is('.confirm')) {
             var doptions = {
                 html: messages.confirm,
                 extra_class: 'confirm',
                 yes_callback: function() {
                     start_command();
-                    $.getJSON(el.attr('href'), function(data) {
+                    $.getJSON(ajax_url, function(data) {
                         process_ajax_response(data, evt);
                         $dialog.fadeOut('fast', function() {
                             $dialog.remove();
@@ -358,7 +361,7 @@ $(function() {
             var $dialog = show_dialog(doptions);
         } else {
             start_command();
-            $.getJSON(el.attr('href'), function(data) {
+            $.getJSON(ajax_url, function(data) {
                 process_ajax_response(data, evt);
             });
         }

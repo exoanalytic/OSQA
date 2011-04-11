@@ -43,7 +43,12 @@ class NodeContent(models.Model):
 
     @property
     def headline(self):
-        return self.title
+        title = self.title
+
+        # Replaces multiple spaces with single ones.
+        title = re.sub(' +',' ', title)
+
+        return title
 
     def tagname_list(self):
         if self.tagnames:
@@ -309,7 +314,15 @@ class Node(BaseModel, NodeContent):
 
     @property
     def summary(self):
-        return strip_tags(self.html)[:SUMMARY_LENGTH]
+        content = strip_tags(self.html)[:SUMMARY_LENGTH]
+
+        # Remove multiple spaces.
+        content = re.sub(' +',' ', content)
+
+        # Remove line breaks. We don't need them at all.
+        content = content.replace("\n", '')
+
+        return content
 
     @models.permalink
     def get_revisions_url(self):
@@ -424,6 +437,10 @@ class Node(BaseModel, NodeContent):
                 tag.save()
 
     def delete(self, *args, **kwargs):
+        for tag in self.tags.all():
+            tag.add_to_usage_count(-1)
+            tag.save()
+
         self.active_revision = None
         self.save()
 
@@ -450,7 +467,8 @@ class Node(BaseModel, NodeContent):
         tags_changed = self._process_changes_in_tags()
         
         super(Node, self).save(*args, **kwargs)
-        if tags_changed: self.tags = list(Tag.objects.filter(name__in=self.tagname_list()))
+        if tags_changed:
+            self.tags = list(Tag.objects.filter(name__in=self.tagname_list()))
 
     class Meta:
         app_label = 'forum'

@@ -5,6 +5,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User as DjangoUser, AnonymousUser as DjangoAnonymousUser
 from django.db.models import Q
 
+from django.utils.encoding import smart_unicode
+
+from forum.settings import TRUNCATE_LONG_USERNAMES, TRUNCATE_USERNAMES_LONGER_THAN
+
 import string
 from random import Random
 
@@ -127,7 +131,7 @@ class User(BaseModel, DjangoUser):
     vote_down_count = DenormalizedField("actions", canceled=False, action_type="votedown")
 
     def __unicode__(self):
-        return self.username
+        return smart_unicode(self.username)
 
     @property
     def prop(self):
@@ -146,12 +150,17 @@ class User(BaseModel, DjangoUser):
 
     @property
     def decorated_name(self):
+        username = smart_unicode(self.username)
+
+        if len(username) > TRUNCATE_USERNAMES_LONGER_THAN and TRUNCATE_LONG_USERNAMES:
+            username = '%s...' % username[:TRUNCATE_USERNAMES_LONGER_THAN-3]
+
         if settings.SHOW_STATUS_DIAMONDS:
             if self.is_superuser:
-                return u"%s \u2666\u2666" % self.username
+                return u"%s \u2666\u2666" % username
 
             if self.is_staff:
-                return u"%s \u2666" % self.username
+                return u"%s \u2666" % username
 
         return self.username
 
@@ -189,7 +198,7 @@ class User(BaseModel, DjangoUser):
 
     @models.permalink
     def get_profile_url(self):
-        return ('user_profile', (), {'id': self.id, 'slug': slugify(self.username)})
+        return ('user_profile', (), {'id': self.id, 'slug': slugify(smart_unicode(self.username))})
 
     def get_absolute_url(self):
         return self.get_profile_url()
@@ -282,9 +291,9 @@ class User(BaseModel, DjangoUser):
     def can_delete_comment(self, comment):
         return self == comment.author or self.reputation >= int(settings.REP_TO_DELETE_COMMENTS)
 
-    @true_if_is_super_or_staff
     def can_convert_comment_to_answer(self, comment):
-        return self == comment.author or self.reputation >= int(settings.REP_TO_CONVERT_COMMENTS_TO_ANSWERS)
+        return (comment.parent.node_type in ('question', 'answer')) and (self.is_superuser or self.is_staff or (
+            self == comment.author) or (self.reputation >= int(settings.REP_TO_CONVERT_COMMENTS_TO_ANSWERS)))
 
     def can_convert_to_comment(self, answer):
         return (not answer.marked) and (self.is_superuser or self.is_staff or answer.author == self or self.reputation >= int
