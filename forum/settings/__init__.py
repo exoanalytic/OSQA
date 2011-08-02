@@ -14,7 +14,7 @@ SVN_REVISION = get_svn_revision(djsettings.SITE_SRC_ROOT)
 
 # We'll have to keep in mind this variable on every release.
 if SVN_REVISION == u'SVN-unknown':
-    SVN_REVISION = u'SVN-1000'
+    SVN_REVISION = u'SVN-1150'
 
 MAINTAINANCE_MODE = Setting('MAINTAINANCE_MODE', None)
 
